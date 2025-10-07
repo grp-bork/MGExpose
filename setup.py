@@ -26,8 +26,8 @@ with open(path.join(here, "DESCRIPTION.md"), encoding="utf-8") as description:
 		description=description,
 		long_description=long_description,
 		url="https://github.com/cschu/mgexpose",
-		author="Christian Schudoma",
-		author_email="christian.schudoma@embl.de",
+		author="Christian Schudoma, Anastasia Grekova, Supriya Khedkar",
+		author_email="christian.schudoma@embl.de, anastasiia.grekova@embl.de, khedkar@bioquant.uni-heidelberg.de ",
 		license="MIT",
 		classifiers=[
 			"Development Status :: 4 - Beta",
