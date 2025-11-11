@@ -7,8 +7,8 @@ import gzip
 import re
 import sys
 
-from chunk_reader import get_lines_from_chunks
-from recombinases import MgeRule
+from .chunk_reader import get_lines_from_chunks
+from .recombinases import MgeRule
 
 
 def read_prodigal_gff(f):

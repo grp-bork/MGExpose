@@ -1,4 +1,3 @@
-
 from .gene import Gene
 from .islands import GenomicIsland, MgeGenomicIsland
 
@@ -24,14 +23,13 @@ def read_genomic_islands_gff(fn):
         if island is not None:
             yield island
        
-def read_mge_genomic_islands_gff(fn, relevant_ids=None, parse_mge_id=True):
+def read_mge_genomic_islands_gff(fn, relevant_ids=None):
     """
     Generator function to read and parse MGEs and associated genes from a GFF file.
 
     Parameters:
     - fn: Path to the GFF file.
     - relevant_ids: Optional set of relevant MGE IDs to filter. If None, all MGEs are processed.
-    - parse_mge_id: Boolean indicating whether to parse the MGE ID into components.
 
     Yields:
     - MgeGenomicIsland objects that match the relevant IDs or all if None.
@@ -50,7 +48,7 @@ def read_mge_genomic_islands_gff(fn, relevant_ids=None, parse_mge_id=True):
                     if relevant_ids is None or mge_id in relevant_ids:
                         if island is not None:
                             yield island
-                        island = MgeGenomicIsland.from_gff(*cols, parse_mge_id=parse_mge_id)
+                        island = MgeGenomicIsland.from_gff(*cols)
 
                 elif cols[2] == "gene":
                     parent_id = attributes.get("Parent")

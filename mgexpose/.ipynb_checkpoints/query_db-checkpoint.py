@@ -188,7 +188,7 @@ def get_speci_taxonomy_df(speci_lst, conn, level="tax_species"):
     return taxa_df
 
 
-def get_gtdb_taxonomy_df(sample_ids, db, conn, level="s"):
+def get_gtdb_taxonomy_df(sample_ids, db, conn, level="tax_species"):
     ''' For each sample_id (bin_id or genome_id) get gtdb taxonomy information and return as taxa_df dataframe'''
     
     sample_ids= list(set(sample_ids)) # Ensure that it is a list
@@ -243,24 +243,9 @@ def get_microontology(sample_names, conn):
     
     return pd.DataFrame(result, columns=columns) if result else pd.DataFrame(columns=columns)
 
-# Given a contig_name query for its length
-# from this table 
-'''
-spire=> SELECT * FROM pg3.contigs LIMIT 10; 
- id | sample_id |           contig_name            | length 
-----+-----------+----------------------------------+--------
-  1 |   1004653 | 938639.SAMN02441251.ATTB01000002 | 138806
-  2 |   1004653 | 938639.SAMN02441251.ATTB01000003 |  88240
-  3 |   1004653 | 938639.SAMN02441251.ATTB01000004 |  86762
-'''
-def get_contig_length(contig_name, conn):
 
-    cursor = conn.cursor()
-    query = f"SELECT length FROM pg3.contigs WHERE contig_name = %s;"
-    cursor.execute(query, (contig_name,))
-    result = cursor.fetchone()
-    cursor.close()
-    return result[0] if result else None        
+
+
 
 
 

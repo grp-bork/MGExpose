@@ -4,9 +4,26 @@ import os
 
 from collections import Counter, defaultdict
 
-from .gffio import read_mge_genomic_islands_gff
+from .gffio import read_mge_genomic_islands_gff #  FIXME
 
 from .base_logger import logger
+
+
+''' Quick and dirty implementation - actually does not belong here ''' # FIXME
+def stat_core(gff_files):
+    """Calculate statistics on MGEs in the core genome and return as a dictionary."""
+    total = 0
+    core = 0
+    for f in gff_files:
+        island = read_mge_genomic_islands_gff(f)
+        if island.is_core:
+            core += 1
+        total += 1
+    return {
+        "total": total,
+        "core_count": core,
+        "accessory_count": total - core,
+    }
 
 def stat_nested(islands):
     """Calculate statistics on nested MGEs and return as a dictionary."""
@@ -40,26 +57,6 @@ def count_nested(islands):
     """
     nested = sum(1 for island in islands if island.mge_type == "nested")
     return nested
-
-
-def stat_core(islands):
-    """Calculate statistics on MGEs in the core genome and return as a dictionary."""
-    total = 0
-    core = 0
-    for island in islands:
-        if island.is_core:
-            core += 1
-        total += 1
-    core_percentage = (core / total * 100) if total > 0 else 0
-    accessory_percentage = ((total - core) / total * 100) if total > 0 else 0
-
-    return {
-        "total": total,
-        "core_count": core,
-        "accessory_count": total - core,
-        "core_percentage": core_percentage,
-        "accessory_percentage": accessory_percentage,
-    }
 
 
 def count_core(islands):

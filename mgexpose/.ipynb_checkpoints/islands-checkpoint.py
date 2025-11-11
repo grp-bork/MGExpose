@@ -644,7 +644,7 @@ class MgeGenomicIsland(AnnotatedGenomicIsland):
                 )
 
     @classmethod
-    def from_gff(cls, *cols, parse_mge_id=True):
+    def from_gff(cls, *cols):
         try:
             attribs = dict(item.split("=") for item in cols[-1].split(";"))
         except:
@@ -669,15 +669,8 @@ class MgeGenomicIsland(AnnotatedGenomicIsland):
             )
         except:
             raise ValueError(f"mge string weird? {attribs['mge'].split(',')}")
-        
-        if parse_mge_id:
-            genome_id, contig, start, end = cls.parse_mge_id(attribs["ID"])
-        else:
-            genome_id = attribs.get("genome", "")
-            contig = cols[0]
-            start = int(cols[3])
-            end = int(cols[4])
 
+        genome_id, contig, start, end = cls.parse_mge_id(attribs["ID"])
 
         return cls(
             "",  # TODO: where to get/ how to handle specI

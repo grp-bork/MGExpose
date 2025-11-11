@@ -20,7 +20,7 @@ from .island_processing import (
 )
 from .islands import MgeGenomicIsland
 from .readers import read_fasta, read_prodigal_gff, read_mge_rules
-from .gffio import read_genomic_islands_gff
+from .gffio import read_genomic_islands_gff, read_mge_genomic_islands_gff
 
 MGE_TABLE_HEADERS = \
     ("is_tn",) + \

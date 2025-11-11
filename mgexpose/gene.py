@@ -4,7 +4,7 @@
 
 from dataclasses import dataclass
 
-from readers import EggnogReader
+from .readers import EggnogReader
 
 
 @dataclass
