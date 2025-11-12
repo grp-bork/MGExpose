@@ -18,7 +18,7 @@ RECOMBINASE_SCAN_HEADER = (
 
 
 def run_pyhmmer(args):
-    with pyhmmer.easel.SequenceFile(args.proteins_fasta, digital=True) as seq_file:
+    with pyhmmer.easel.SequenceFile(args.proteins_fasta, digital=True, alphabet=pyhmmer.easel.Alphabet.amino()) as seq_file:
         protein_seqs = list(seq_file)
     with pyhmmer.plan7.HMMFile(args.recombinase_hmms) as hmm_file:
         hmm_hits = list(
