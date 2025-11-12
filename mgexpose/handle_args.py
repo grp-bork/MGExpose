@@ -17,15 +17,7 @@ def handle_args():
     ap.add_argument(
         "--version", action="version", version="%(prog)s " + __version__
     )
-
-    # ap.add_argument("--output_dir", "-o", type=str, default=".")
-    # ap.add_argument("--dbformat", type=str, choices=("PG3", "SPIRE"))
-    # ap.add_argument("--write_gff", action="store_true")
-    # ap.add_argument("--write_genes_to_gff", action="store_true")
-    # ap.add_argument("--dump_intermediate_steps", action="store_true")
-    # ap.add_argument("--output_suffix", type=str, default="full_length_MGE_assignments")
-    # ap.add_argument("--debug", action="store_true")
-
+    
     subparsers = ap.add_subparsers(dest="command", required=True)
 
     parent_subparser = argparse.ArgumentParser(add_help=False)
@@ -113,82 +105,16 @@ def handle_args():
 
     identify_mobile_islands_ap.set_defaults(func=None)  # TODO
 
-    return ap.parse_args()
 
+    call_genes_ap = subparsers.add_parser(
+        "call_genes",
+        help="Call genes with Pyrodigal",
+        parents=(parent_subparser,),
+    )
 
-def handle_args_old():
-    """ Argument handling """
-    ap = argparse.ArgumentParser()
-    ap.add_argument("genome_id", type=str)
-    ap.add_argument("prodigal_gff", type=str)
-    ap.add_argument("recombinase_hits", type=str)
-    ap.add_argument("speci", type=str)
-
-    ap.add_argument(
-        "txs_macsy_rules",
-        type=str,
-        help=(
-            "In macsyfinder v1, this is found in macsyfinder.summary(.txt)."
-            " In v2+, this is provided with the pipeline."
-        ),
-    )
-    ap.add_argument("txs_macsy_report", type=str)
-    ap.add_argument("phage_eggnog_data", type=str)
-    ap.add_argument("mge_rules", type=str)
-
-    ap.add_argument("--cluster_data", type=str)
-    ap.add_argument("--output_dir", "-o", type=str, default=".")
-    ap.add_argument("--phage_filter_terms", type=str)
-    ap.add_argument("--include_genome_id", action="store_true")
-    ap.add_argument("--core_threshold", type=float, default=0.95)
-    ap.add_argument("--macsy_version", type=int, choices=(1, 2), default=2)
-    ap.add_argument(
-        "--emapper_version",
-        type=str,
-        choices=EggnogReader.EMAPPER_FIELDS.keys(),
-        default="v2.1.2",
-    )
-    ap.add_argument(
-        "--allow_batch_data",
-        action="store_true",
-        help=(
-            "SPIRE annotation may have data that does not relate to the current bin."
-            " Ignore those data."
-        ),
-    )
-    ap.add_argument(
-        "--use_y_clusters",
-        action="store_true",
-        help=(
-            "Gene clustering is performed against annotated"
-            " and redundancy-reduced reference sets."
-        ),
-    )
-    ap.add_argument(
-        "--single_island",
-        action="store_true",
-        help="Input is genomic region, skips island computation."
-    )
-    ap.add_argument(
-        "--precomputed_islands",
-        type=str,
-        help="Input is set of genomic regions, skips island computation."
-    )
-    ap.add_argument("--write_gff", action="store_true")
-    ap.add_argument("--write_genes_to_gff", action="store_true")
-    ap.add_argument("--add_functional_annotation",
-                    action="store_true",
-                    help="If specified, per gene emapper annotations are stored in the gff.")
-    # ensure newest eggnog version
-    ap.add_argument("--dump_intermediate_steps", action="store_true")
-    ap.add_argument("--output_suffix", type=str, default="full_length_MGE_assignments")
-    ap.add_argument("--dbformat", type=str, choices=("PG3", "SPIRE"))
-    ap.add_argument(
-        "--precomputed_core_genes",
-        action="store_true",
-        help="Core/accessory gene sets were precomputed."
-    )
-    ap.add_argument("--skip_island_identification", action="store_true")
-    ap.add_argument("--extract_islands", type=str)
+    call_genes_ap.add_argument("genome_fa", type=str)
+    call_genes_ap.add_argument("genome_id", type=str)
+    call_genes_ap.add_argument("--threads", "-t", type=int, default=1)
+    call_genes_ap.set_defaults(func=None)  # TODO
 
     return ap.parse_args()

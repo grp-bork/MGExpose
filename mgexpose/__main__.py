@@ -11,6 +11,7 @@ import os
 import pathlib
 
 from .gene_annotator import GeneAnnotator
+from .gene_calling import run_pyrodigal
 from .handle_args import handle_args
 from .island_processing import (
     generate_island_set,
@@ -234,11 +235,7 @@ def write_final_results(
                             f">{island.get_id()} {attrib_str}", seq[island.start - 1: island.end], sep="\n", file=_out
                         )
 
-                    
-
-
-def denovo_annotation(args, debug_dir=None):
-    """ denovo annotation """
+def annotate_genes(args, debug_dir=None,):
     annotator = GeneAnnotator(
         args.genome_id,
         args.speci,
@@ -248,25 +245,75 @@ def denovo_annotation(args, debug_dir=None):
         dbformat=args.dbformat,
     )
 
-    annotated_genes = annotator.annotate_genes(
-        args.recombinase_hits,
-        (
-            args.phage_eggnog_data,
-            args.phage_filter_terms,
-        ),
-        (
-            args.txs_macsy_report,
-            args.txs_macsy_rules,
-            # args.macsy_version,
-        ),
-        clusters=args.cluster_data,
-        use_y_clusters=args.use_y_clusters,
-        core_threshold=(args.core_threshold, -1)[args.precomputed_core_genes],
-        output_dir=args.output_dir,
-        pyhmmer=args.pyhmmer_input,
-    )
+    with open(
+            os.path.join(args.output_dir, f"{args.genome_id}.gene_info.txt"),
+            "wt",
+            encoding="UTF-8",
+    ) as gene_info_out:
 
+        annotated_genes = annotator.annotate_genes(
+            args.recombinase_hits,
+            (
+                args.phage_eggnog_data,
+                args.phage_filter_terms,
+            ),
+            (
+                args.txs_macsy_report,
+                args.txs_macsy_rules,
+                # args.macsy_version,
+            ),
+            clusters=args.cluster_data,
+            use_y_clusters=args.use_y_clusters,
+            core_threshold=(args.core_threshold, -1)[args.precomputed_core_genes],
+            output_dir=args.output_dir,
+            pyhmmer=args.pyhmmer_input,
+        )
+
+        annotator.dump_genes(gene_info_out)
+
+        return list(annotated_genes)
+
+
+
+def denovo_annotation(args, debug_dir=None):
+    """ denovo annotation """
     out_prefix = os.path.join(args.output_dir, args.genome_id)
+
+    annotated_genes = annotate_genes(args, debug_dir=debug_dir,)
+    # annotator = GeneAnnotator(
+    #     args.genome_id,
+    #     args.speci,
+    #     read_prodigal_gff(args.prodigal_gff),
+    #     include_genome_id=args.include_genome_id,
+    #     has_batch_data=args.allow_batch_data,
+    #     dbformat=args.dbformat,
+    # )
+
+    
+    # with open(
+    #         # os.path.join(args.output_dir, f"{args.genome_id}.gene_info.txt"),
+    #         f"{out_prefix}.gene_info.txt",
+    #         "wt",
+    #         encoding="UTF-8",
+    # ) as gene_info_out:        
+    #     annotated_genes = annotator.annotate_genes(
+    #         args.recombinase_hits,
+    #         (
+    #             args.phage_eggnog_data,
+    #             args.phage_filter_terms,
+    #         ),
+    #         (
+    #             args.txs_macsy_report,
+    #             args.txs_macsy_rules,
+    #             # args.macsy_version,
+    #         ),
+    #         clusters=args.cluster_data,
+    #         use_y_clusters=args.use_y_clusters,
+    #         core_threshold=(args.core_threshold, -1)[args.precomputed_core_genes],
+    #         output_dir=args.output_dir,
+    #         pyhmmer=args.pyhmmer_input,
+    #         dump_gene_info=gene_info_out,
+    #     )
 
     genomic_islands = list(
         process_islands(
@@ -298,12 +345,12 @@ def denovo_annotation(args, debug_dir=None):
         #     add_functional_annotation=args.add_functional_annotation,
         # )
 
-    with open(
-            os.path.join(args.output_dir, f"{args.genome_id}.gene_info.txt"),
-            "wt",
-            encoding="UTF-8",
-    ) as _out:
-        annotator.dump_genes(_out)
+    # with open(
+    #         os.path.join(args.output_dir, f"{args.genome_id}.gene_info.txt"),
+    #         "wt",
+    #         encoding="UTF-8",
+    # ) as _out:
+    #     annotator.dump_genes(_out)
 
     return genomic_islands
 
@@ -321,13 +368,23 @@ def main():
     pathlib.Path(cdir).mkdir(exist_ok=True, parents=True)
 
     genomic_islands = None
+    skip_island_identification = args.skip_island_identification
+
     if args.command == "denovo":
         genomic_islands = denovo_annotation(args, debug_dir=debug_dir)
+
+    elif args.command == "annotate_genes":
+        skip_island_identification = True
+        annotate_genes(args, debug_dir=debug_dir,)
+
+    elif args.command == "call_genes":
+        skip_island_identification = True
+        run_pyrodigal(args)
 
     elif args.command == "annotate":
         raise NotImplementedError
 
-    if not args.skip_island_identification:
+    if not skip_island_identification:
 
         recombinase_islands = identify_recombinase_islands(
             genomic_islands,
