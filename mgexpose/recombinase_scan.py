@@ -106,7 +106,7 @@ def run_pyhmmer(args):
                 protein = proteins.get(protein_id)
                 if protein is not None:
                     mge_attribs=";".join(
-                        f"{k}={v.replace(';', ',')}"
+                        f"{k}={str(v).replace(';', ',')}"
                         for k, v in zip(
                             ("recombinase", "PFAM", "predicted_mge", "evalue", "score", "confidence",),
                             (recombinase, hmm_name, ",".join(mges), hit.evalue, hit.score, confidence,)
