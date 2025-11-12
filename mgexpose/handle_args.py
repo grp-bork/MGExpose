@@ -112,7 +112,7 @@ def handle_args():
         parents=(parent_subparser,),
     )
 
-    call_genes_ap.add_argument("genome_fa", type=str)
+    call_genes_ap.add_argument("genome_fasta", type=str)
     call_genes_ap.add_argument("genome_id", type=str)
     call_genes_ap.add_argument("--threads", "-t", type=int, default=1)
     call_genes_ap.set_defaults(func=None)  # TODO
