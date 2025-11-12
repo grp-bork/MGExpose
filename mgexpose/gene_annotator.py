@@ -9,8 +9,8 @@ from contextlib import nullcontext
 from .clustering_parser import parse_full_seq_clusters, parse_y_clusters, parse_db_clusters
 from .gene import Gene
 from .phage import PhageDetection
-from .readers.eggnog import EggnogReader
-from .readers.readers import (
+from .eggnog import EggnogReader
+from .readers import (
     parse_macsyfinder_report,
     read_recombinase_hits,
 )
