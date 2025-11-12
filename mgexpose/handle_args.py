@@ -119,8 +119,8 @@ def handle_args():
 
 
     annotate_recombinases_ap = subparsers.add_parser(
-        "annotate_recombinases",
-        help="Annotate recombinases with PyHMMer",
+        "recombinase_scan",
+        help="Detect recombinases with PyHMMer",
         parents=(parent_subparser,),
     )
 

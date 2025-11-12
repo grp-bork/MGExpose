@@ -382,7 +382,7 @@ def main():
     elif args.command == "call_genes":
         run_pyrodigal(args)
 
-    elif args.command == "annotate_recombinases":
+    elif args.command == "recombinase_scan":
         run_pyhmmer(args)
 
     elif args.command == "annotate":
