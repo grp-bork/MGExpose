@@ -368,17 +368,16 @@ def main():
     pathlib.Path(cdir).mkdir(exist_ok=True, parents=True)
 
     genomic_islands = None
-    skip_island_identification = args.skip_island_identification
+    skip_island_identification = True
 
     if args.command == "denovo":
+        skip_island_identification = args.skip_island_identification
         genomic_islands = denovo_annotation(args, debug_dir=debug_dir)
 
     elif args.command == "annotate_genes":
-        skip_island_identification = True
         annotate_genes(args, debug_dir=debug_dir,)
 
     elif args.command == "call_genes":
-        skip_island_identification = True
         run_pyrodigal(args)
 
     elif args.command == "annotate":
