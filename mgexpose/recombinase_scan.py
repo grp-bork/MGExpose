@@ -112,17 +112,18 @@ def run_pyhmmer(args):
                             (recombinase, hmm_name, ",".join(mges), hit.evalue, hit.score, confidence,)
                         )
                     )
+                    attrib_str = ";".join(f"{item[0]}={item[1]}" for item in protein.attribs.items() if item[1])
                     recombinases.append(
                         (
                             protein_id[:protein_id.rfind("_")],
                             "proMGE_recombinase_scan",
                             "gene",
-                            protein["start"],
-                            protein["end"],
+                            protein.start,
+                            protein.end,
                             hit.score,
-                            protein["strand"],
+                            protein.strand,
                             ".",
-                            ";".join((mge_attribs, protein["attribs"],))
+                            ";".join((mge_attribs, attrib_str,))
                         )
                     )
 
