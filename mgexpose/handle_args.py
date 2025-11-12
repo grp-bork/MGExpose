@@ -117,4 +117,18 @@ def handle_args():
     call_genes_ap.add_argument("--threads", "-t", type=int, default=1)
     call_genes_ap.set_defaults(func=None)  # TODO
 
+
+    annotate_recombinases_ap = subparsers.add_parser(
+        "annotate_recombinases",
+        help="Annotate recombinases with PyHMMer",
+        parents=(parent_subparser,),
+    )
+
+    annotate_recombinases_ap.add_argument("proteins_fasta", type=str)
+    annotate_recombinases_ap.add_argument("recombinase_hmms", type=str)
+    annotate_recombinases_ap.add_argument("mge_rules", type=str)
+    annotate_recombinases_ap.add_argument("genome_id", type=str)
+    annotate_recombinases_ap.add_argument("--threads", "-t", type=int, default=1)
+    annotate_recombinases_ap.set_defaults(func=None)  # TODO
+
     return ap.parse_args()
