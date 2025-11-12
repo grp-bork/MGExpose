@@ -8,7 +8,6 @@ import re
 import sys
 
 from ..utils.chunk_reader import get_lines_from_chunks
-from ..gene import Gene
 from ..recombinases import MgeRule
 
 
