@@ -20,6 +20,7 @@ def run_pyrodigal(args):
 
 	with faa_out, ffn_out, gff_out:
 		for i, (sid, seq) in enumerate(zip(ids, seqs), start=1):
+			sid = sid[:sid.find(".")]
 			genes = gf.find_genes(seq)
 			genes.write_translations(faa_out, sid)
 			genes.write_genes(ffn_out, sid)
