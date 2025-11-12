@@ -22,7 +22,7 @@ from .island_processing import (
 from .islands import MgeGenomicIsland
 from .readers.readers import read_fasta, read_prodigal_gff, read_mge_rules
 from .gffio import read_genomic_islands_gff
-from .recombinase_annotation import run_pyhmmer
+from .recombinase_scan import run_pyhmmer
 
 
 MGE_TABLE_HEADERS = \
