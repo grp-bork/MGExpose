@@ -120,7 +120,7 @@ def run_pyhmmer(args):
                             "gene",
                             protein.start,
                             protein.end,
-                            hit.score,
+                            f"{hit.score:.5f}",
                             protein.strand,
                             ".",
                             # ";".join((mge_attribs, attrib_str,))
