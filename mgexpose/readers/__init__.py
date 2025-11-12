@@ -1,1 +1,1 @@
-from readers import read_fasta
+from .readers import read_fasta
