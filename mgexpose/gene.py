@@ -97,7 +97,7 @@ class Gene:
     @classmethod
     def from_gff(cls, *cols):
         """ construct gene from gff record """
-        attribs = dict(item.split("=") for item in cols[-1].split(";"))
+        attribs = dict(item.split("=") for item in cols[-1].strip(";").split(";"))
         return cls(
             id=attribs["ID"],
             genome=attribs.get("genome"),
