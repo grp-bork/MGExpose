@@ -7,8 +7,10 @@ import gzip
 import re
 import sys
 
-from .chunk_reader import get_lines_from_chunks
+from ..utils.chunk_reader import get_lines_from_chunks
+from ..gene import Gene
 from ..recombinases import MgeRule
+
 
 
 def read_fasta(f):
@@ -23,25 +25,6 @@ def read_fasta(f):
             seq.append(line.strip())
     if seq:
         yield header, "".join(seq)
-
-
-def read_prodigal_gff(f):
-    """ Prodigal gff output reader.
-
-    Returns (gene_id, gff_line) tuples via generator.
-    """
-    for line in get_lines_from_chunks(f):
-        line = line.strip()
-        if line and line[0] != "#":
-            line = line.split("\t")
-            _id = [
-                item.split("=")[1]
-                for item in line[8].split(";")
-                if item.startswith("ID")
-            ][0]
-            # gene_id = f"{line[0]}_{_id.split('_')[1]}"
-            # yield gene_id, line
-            yield _id, line
 
 
 def read_recombinase_hits(f, pyhmmer=True):

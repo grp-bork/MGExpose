@@ -125,6 +125,7 @@ def handle_args():
     )
 
     annotate_recombinases_ap.add_argument("proteins_fasta", type=str)
+    annotate_recombinases_ap.add_argument("gff", type=str)
     annotate_recombinases_ap.add_argument("recombinase_hmms", type=str)
     annotate_recombinases_ap.add_argument("mge_rules", type=str)
     annotate_recombinases_ap.add_argument("genome_id", type=str)

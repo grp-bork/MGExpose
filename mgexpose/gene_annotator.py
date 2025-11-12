@@ -37,21 +37,33 @@ class GeneAnnotator:
         self.has_batch_data = has_batch_data
         self.include_genome_id = include_genome_id
 
-        for gene_id, annotation in genes:
+        # for gene_id, annotation in genes:
+        for gene in genes:
 
             if dbformat != "PG3":
-                gene_id = f'{annotation[0]}_{gene_id.split("_")[-1]}'
+                # PG3 input is preprocessed (no gffs), so the gene ids are
+                # already in the correct format
+                # for all other prodigal-based input
+                # the gene ids are combined from the contig id and the 
+                # suffix of col9's ID record:
+                # CALOLV020000065.1	[...]	ID=65_14;... -> CALOLV020000065.1_14
+                # gene_id = f'{annotation[0]}_{gene_id.split("_")[-1]}'
+                gene.id = f'{gene.contig}_{gene.id.split("_")[-1]}'
 
-            logger.info("Adding gene %s", gene_id)
-            self.genes[gene_id] = Gene(
-                id=gene_id,
-                genome=self.genome_id,
-                speci=self.speci,
-                contig=annotation[0],
-                start=int(annotation[3]),
-                end=int(annotation[4]),
-                strand=annotation[6],
-            )
+            logger.info("Adding gene %s", gene.id)
+
+            gene.genome, gene.speci = self.genome_id, self.speci
+            self[gene.id] = gene
+
+            # self.genes[gene_id] = Gene(
+            #     id=gene_id,
+            #     genome=self.genome_id,
+            #     speci=self.speci,
+            #     contig=annotation[0],
+            #     start=int(annotation[3]),
+            #     end=int(annotation[4]),
+            #     strand=annotation[6],
+            # )
 
     def add_recombinases(self, recombinases):
         """ Add information from recombinase scan """

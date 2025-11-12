@@ -9,7 +9,7 @@ from collections import Counter
 from contextlib import nullcontext
 from dataclasses import dataclass
 
-from .readers.chunk_reader import get_lines_from_chunks
+from .utils.chunk_reader import get_lines_from_chunks
 
 
 logger = logging.getLogger(__name__)

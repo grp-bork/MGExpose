@@ -2,6 +2,7 @@ import pathlib
 
 import pyhmmer
 
+from .gffio import read_prodigal_gff
 from .recombinases import MGE_ALIASES
 from .readers import read_mge_rules
 
@@ -16,8 +17,23 @@ RECOMBINASE_SCAN_HEADER = (
     "MGE_prediction_confidence",
 )
 
+def get_protein_coords(gff):
+    proteins = {}
+    for gene in read_prodigal_gff(gff):
+        gene.id = f'{gene.contig}_{gene.id.split("_")[-1]}'
+        proteins[gene.id] = gene
+    return proteins
+
+
 
 def run_pyhmmer(args):
+    proteins = get_protein_coords(args.gff)
+
+    if args.mge_rules and pathlib.Path(args.mge_rules).is_file():
+        mge_rules = read_mge_rules(args.mge_rules, recombinase_scan=True)
+    else:
+        raise ValueError("Cannot read mge_rules.")
+
     with pyhmmer.easel.SequenceFile(args.proteins_fasta, digital=True, alphabet=pyhmmer.easel.Alphabet.amino()) as seq_file:
         protein_seqs = list(seq_file)
     with pyhmmer.plan7.HMMFile(args.recombinase_hmms) as hmm_file:
@@ -32,12 +48,12 @@ def run_pyhmmer(args):
         outpath / f"{args.genome_id}.recombinase_hmmsearch.out",
         "wb"
     )
-    filtered_table_out = open(
-        outpath / f"{args.genome_id}.recombinase_hmmsearch.besthits.out",
-        "wb"
-    )
+    # filtered_table_out = open(
+    #     outpath / f"{args.genome_id}.recombinase_hmmsearch.besthits.out",
+    #     "wb"
+    # )
 
-    with raw_table_out, filtered_table_out:
+    with raw_table_out:  #, filtered_table_out:
         seen = {}
         for i, hits in enumerate(hmm_hits):
             write_header = i == 0
@@ -49,11 +65,10 @@ def run_pyhmmer(args):
                     print(hit.score, best_score)
                     if hit.score > best_score:
                         seen[hit_name] = hit.score, domain, hit
-            hits.write(filtered_table_out, header=write_header)
+            # hits.write(filtered_table_out, header=write_header)
 
-    if seen and args.mge_rules and pathlib.Path(args.mge_rules).is_file():
-        mge_rules = read_mge_rules(args.mge_rules, recombinase_scan=True)
-
+    if seen:
+        recombinases = []
         with open(
             outpath / f"{args.genome_id}.recombinase_scan.tsv",
             "wt",
@@ -61,9 +76,9 @@ def run_pyhmmer(args):
         ) as rscan_out:
             print(*RECOMBINASE_SCAN_HEADER, sep="\t", file=rscan_out)
 
-            for protein, (score, domain, hit) in seen.items():
+            for protein_id, (score, domain, hit) in sorted(seen.items()):
                 hmm_name = domain.alignment.hmm_name.decode()
-                print(protein, score, hmm_name)
+                print(protein_id, score, hmm_name)
 
                 recombinase = hmm_name.lower()
                 for name, alias in MGE_ALIASES.items():
@@ -77,7 +92,7 @@ def run_pyhmmer(args):
                 confidence = ("low", "high")[len(mges) == 1]
 
                 print(
-                    protein,
+                    protein_id,
                     recombinase,
                     domain.alignment.hmm_accession.decode(),
                     ";".join(mges),
@@ -87,3 +102,36 @@ def run_pyhmmer(args):
                     sep="\t",
                     file=rscan_out,
                 )
+
+                protein = proteins.get(protein_id)
+                if protein is not None:
+                    mge_attribs=";".join(
+                        f"{k}={v.replace(';', ',')}"
+                        for k, v in zip(
+                            ("recombinase", "PFAM", "predicted_mge", "evalue", "score", "confidence",),
+                            (recombinase, hmm_name, ",".join(mges), hit.evalue, hit.score, confidence,)
+                        )
+                    )
+                    recombinases.append(
+                        (
+                            protein_id[:protein_id.rfind("_")],
+                            "proMGE_recombinase_scan",
+                            "gene",
+                            protein["start"],
+                            protein["end"],
+                            hit.score,
+                            protein["strand"],
+                            ".",
+                            ";".join((mge_attribs, protein["attribs"],))
+                        )
+                    )
+
+        with open(
+            outpath / f"{args.genome_id}.recombinase_scan.gff3",
+            "wt",
+            encoding="UTF-8",
+        ) as rscan_gff:
+            print("##gff-version 3", file=rscan_gff)
+            for line in sorted(recombinases, key=lambda x:(x[0], int(x[3]), int(x[4]))):
+                # gnl|AGSH|NT12270_27_3   dde_tnp_is1     PF03400.12      is_tn   3.1e-74 245.6   high
+                print(*line, sep="\t", file=rscan_gff,)
