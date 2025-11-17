@@ -49,10 +49,8 @@ class Gene:
         return ("ACC", "COR")[is_core]
     
     @staticmethod
-    def is_core_gene(occ, n_genomes, core_threshold=0.95, strict=True):
-        if strict or n_genomes == 2 or n_genomes > 20:
-            return occ / n_genomes > core_threshold
-        return occ >= n_genomes - 1
+    def is_core_gene(occ, n_genomes, core_threshold=0.95):
+        return occ / n_genomes > core_threshold
 
     def stringify_eggnog(self):
         """ convert eggnog annotation into gff-col9 key-value pairs """
