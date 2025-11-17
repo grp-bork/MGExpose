@@ -88,12 +88,12 @@ class GenomicIsland:
         )
 
     @classmethod
-    def from_region_string(cls, region):
+    def from_region_string(cls, region, genome_id=None,):
         """ Creates island from a predefined region string. """
         _, _, contig, start_end, *_ = region.strip().split(".")
         contig = contig.split(".")[-1]
         start, end = map(int, start_end.split("-"))
-        return cls(None, None, None, contig, start, end, region.strip())
+        return cls(None, genome_id, None, contig, start, end, region.strip())
 
     @classmethod
     def from_gene(cls, gene):
@@ -249,7 +249,7 @@ class GenomicIsland:
 
         if write_genes:
             # GFF3 child term: genes
-            for gene in sorted(self.genes, key=lambda g: g.id):
+            for gene in sorted(self.genes, key=lambda g: (g.start, g.end,)):
                 gene.to_gff(
                     gff_outstream,
                     genomic_island_id=island_id,
@@ -630,7 +630,7 @@ class MgeGenomicIsland(AnnotatedGenomicIsland):
 
         if write_genes:
             # GFF3 child term: genes
-            for gene in sorted(self.genes, key=lambda g: g.id):
+            for gene in sorted(self.genes, key=lambda g: (g.start, g.end,)):
                 gene.to_gff(
                     gff_outstream,
                     genomic_island_id=attribs["ID"],

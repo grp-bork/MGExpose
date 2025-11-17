@@ -173,16 +173,16 @@ def evaluate_islands(islands, rules, outstream=None, outstream2=None):
         yield mge_island
 
 
-def prepare_precomputed_islands(single_island=None, island_file=None):
+def prepare_precomputed_islands(single_island=None, island_file=None, genome_id=None,):
     """ Helper function to deal with precomputed regions/islands. """
     precomputed_islands = None
     if single_island and island_file:
         raise ValueError("Both --single_island and --precomputed_islands set.")
     if single_island and not island_file:
-        precomputed_islands = [GenomicIsland.from_region_string(single_island)]
+        precomputed_islands = [GenomicIsland.from_region_string(single_island, genome_id=genome_id,)]
     elif not single_island and island_file:
         with open(island_file, "rt", encoding="UTF-8",) as _in:
-            precomputed_islands = [GenomicIsland.from_region_string(line) for line in _in]
+            precomputed_islands = [GenomicIsland.from_region_string(line, genome_id=genome_id,) for line in _in]
 
     if precomputed_islands is not None:
         precomputed_islands_by_contig = {}

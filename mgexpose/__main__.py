@@ -10,7 +10,7 @@ import os
 import pathlib
 
 from .gene_annotator import GeneAnnotator
-from .gffio import read_genomic_islands_gff, write_island_gff
+from .gffio import write_island_gff
 from .handle_args import handle_args
 from .island_processing import (
     annotate_islands,
@@ -18,7 +18,7 @@ from .island_processing import (
     generate_island_set,
     prepare_precomputed_islands
 )
-from .readers import read_fasta, read_mge_rules, read_prodigal_gff
+from .readers.readers import read_fasta, read_prodigal_gff, read_mge_rules
 from .writers import write_final_results
 
 
@@ -34,7 +34,8 @@ def process_islands(genes, genome_id, single_island=None, island_file=None, outp
     """ helper function to declutter main() """
     precomputed_islands = prepare_precomputed_islands(
         single_island=single_island,
-        island_file=island_file
+        island_file=island_file,
+        genome_id=genome_id,
     )
 
     if output_dir:

@@ -4,7 +4,7 @@
 
 from dataclasses import dataclass
 
-from .readers import EggnogReader
+from .readers.eggnog import EggnogReader
 
 
 @dataclass
@@ -34,7 +34,7 @@ class Gene:
     # specify optional annotations here
     # when adding new class variables,
     # otherwise output will be suppressed.
-    OPTIONAL_ANNOTATIONS = ("phage", "secretion_system", "secretion_rule", "recombinase", "eggnog")
+    OPTIONAL_ANNOTATIONS = ("phage", "secretion_system", "secretion_rule", "recombinase", "eggnog",)
     # these are only optional when core genome calculations
     # are disabled, e.g. co-transferred region inputs
     CLUSTER_ANNOTATIONS = ("cluster", "is_core",)
@@ -42,7 +42,15 @@ class Gene:
     @staticmethod
     def rtype(is_core):
         """ Returns is_core-tag. """
+        if is_core is None:
+            return "NA"
         return ("ACC", "COR")[is_core]
+    
+    @staticmethod
+    def is_core_gene(occ, n_genomes, core_threshold=0.95, strict=True):
+        if strict or n_genomes == 2 or n_genomes > 20:
+            return occ / n_genomes > core_threshold
+        return occ >= n_genomes - 1
 
     def stringify_eggnog(self):
         """ convert eggnog annotation into gff-col9 key-value pairs """
