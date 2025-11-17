@@ -25,6 +25,7 @@ from .gffio import read_prodigal_gff
 from .recombinase_scan import run_pyhmmer
 
 
+
 MGE_TABLE_HEADERS = \
     ("is_tn",) + \
     MgeGenomicIsland.TABLE_HEADERS[1:6] + \

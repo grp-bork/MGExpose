@@ -545,6 +545,8 @@ class MgeGenomicIsland(AnnotatedGenomicIsland):
         island = cls(
             **ag_island.__dict__
         )
+        for gene in island.genes:
+            gene.parent = island.get_id()
         return island
 
     def get_id(self):
