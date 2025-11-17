@@ -203,7 +203,7 @@ def main():
     args = handle_args(sys.argv[1:])
     logger.info("ARGS: %s", str(args))
 
-    debug_dir = None    
+    debug_dir = None
     cdir = args.output_dir
     if args.dump_intermediate_steps:
         cdir = debug_dir = os.path.join(args.output_dir, "debug")

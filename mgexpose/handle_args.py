@@ -32,7 +32,7 @@ def handle_args(args):
     ap.add_argument(
         "--version", action="version", version="%(prog)s " + __version__
     )
-    
+
     subparsers = ap.add_subparsers(dest="command", required=True)
 
     parent_subparser = argparse.ArgumentParser(add_help=False)

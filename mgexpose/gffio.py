@@ -4,6 +4,7 @@ from .gene import Gene
 from .islands import GenomicIsland, MgeGenomicIsland
 from .utils.chunk_reader import get_lines_from_chunks
 
+
 def read_island_gff(fn, island_cls):
     """ Read island gff """
     with open(fn, "rt", encoding="UTF-8") as _in:
@@ -26,10 +27,10 @@ def read_island_gff(fn, island_cls):
             yield island
 
 
-
 def read_genomic_islands_gff(fn):
     """ reads a set of genomic islands + genes from a gff3 """
     yield from read_island_gff(fn, GenomicIsland)
+
 
 def read_mge_genomic_islands_gff(fn):
     """ reads a set of mge genomic islands + genes from a gff3 """
@@ -53,5 +54,4 @@ def read_prodigal_gff(f):
             # yield gene_id, line
             # yield _id, line
 
-            yield Gene.from_gff(*cols, composite_gene_ids=False,)
-
+            yield Gene.from_gff(*cols,)

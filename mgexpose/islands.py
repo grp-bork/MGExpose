@@ -551,7 +551,7 @@ class MgeGenomicIsland(AnnotatedGenomicIsland):
 
     def get_id(self):
         return f"MGE_{self.genome}_{self.contig}:{self.start}-{self.end}"
-    
+
     def get_attribs(self):
         mge_metrics = self.get_annotated_mge_metrics()
         attribs = {

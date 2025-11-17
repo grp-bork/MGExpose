@@ -96,7 +96,7 @@ def write_final_results(
 
         if genome_seqs is not None:
             with gzip.open(
-                f"{out_prefix}.ffn.gz", 
+                f"{out_prefix}.ffn.gz",
                 "wt",
             ) as _out:
                 for header, seq in read_fasta(genome_seqs):

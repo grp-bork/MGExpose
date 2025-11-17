@@ -3,7 +3,6 @@
 """ Module contains various reader/parser functions """
 
 import csv
-import gzip
 import re
 import sys
 

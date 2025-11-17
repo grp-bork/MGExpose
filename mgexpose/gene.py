@@ -4,6 +4,7 @@
 
 import re
 
+from ast import literal_eval
 from dataclasses import dataclass
 
 from .eggnog import EggnogReader
@@ -49,7 +50,7 @@ class Gene:
         if is_core is None:
             return "NA"
         return ("ACC", "COR")[is_core]
-    
+
     @staticmethod
     def is_core_gene(occ, n_genomes, core_threshold=0.95):
         return occ / n_genomes > core_threshold
@@ -97,7 +98,7 @@ class Gene:
         return start <= self.start <= self.end <= end
 
     @classmethod
-    def from_gff(cls, *cols, composite_gene_ids=False,):
+    def from_gff(cls, *cols,):
         """ construct gene from gff record """
         attribs = dict(item.split("=") for item in cols[-1].strip(";").split(";"))
 
@@ -126,7 +127,6 @@ class Gene:
     def to_gff(
         self,
         gff_outstream,
-        genomic_island_id,
         add_functional_annotation=False,
         intermediate_dump=False,
         add_header=False,
@@ -184,7 +184,7 @@ class Gene:
         if secretion_rule is not None:
             secretion_rule = secretion_rule.strip()
             if re.match(r"\{'mandatory': [0-9]+, 'accessory': [0-9]+\}", secretion_rule):
-                secretion_rule = eval(secretion_rule)
+                secretion_rule = literal_eval(secretion_rule)
             else:
                 secretion_rule = None
 
@@ -193,8 +193,7 @@ class Gene:
                 raise TypeError(f"{s=} is {type(s)} but has to be string.")
             if s is None or s.lower().capitalize() not in ("False", "True", "None"):
                 return None
-            return eval(s)
-            
+            return literal_eval(s)
 
         return cls(
             id=gene_id,

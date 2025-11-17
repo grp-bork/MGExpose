@@ -17,13 +17,13 @@ RECOMBINASE_SCAN_HEADER = (
     "MGE_prediction_confidence",
 )
 
+
 def get_protein_coords(gff):
     proteins = {}
     for gene in read_prodigal_gff(gff):
         gene.id = f'{gene.contig}_{gene.id.split("_")[-1]}'
         proteins[gene.id] = gene
     return proteins
-
 
 
 def run_pyhmmer(args):
@@ -53,7 +53,7 @@ def run_pyhmmer(args):
     #     "wb"
     # )
 
-    with raw_table_out:  #, filtered_table_out:
+    with raw_table_out:  # filtered_table_out:
         seen = {}
         for i, hits in enumerate(hmm_hits):
             write_header = i == 0
@@ -105,7 +105,7 @@ def run_pyhmmer(args):
 
                 protein = proteins.get(protein_id)
                 if protein is not None:
-                    mge_attribs=";".join(
+                    mge_attribs = ";".join(
                         f"{k}={str(v).replace(';', ',')}"
                         for k, v in zip(
                             ("recombinase", "PFAM", "predicted_mge", "evalue", "score", "confidence",),
@@ -134,6 +134,6 @@ def run_pyhmmer(args):
             encoding="UTF-8",
         ) as rscan_gff:
             print("##gff-version 3", file=rscan_gff)
-            for line in sorted(recombinases, key=lambda x:(x[0], int(x[3]), int(x[4]))):
+            for line in sorted(recombinases, key=lambda x: (x[0], int(x[3]), int(x[4]))):
                 # gnl|AGSH|NT12270_27_3   dde_tnp_is1     PF03400.12      is_tn   3.1e-74 245.6   high
                 print(*line, sep="\t", file=rscan_gff,)
