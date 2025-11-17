@@ -14,6 +14,21 @@ from .utils.chunk_reader import get_lines_from_chunks
 
 logger = logging.getLogger(__name__)
 
+def evaluate_y_clusters(cluster_data, genes, core_threshold=0.95,):
+    # print("EVALUATE_Y_CLUSTERS")
+    # print(*list(genes.items())[:10], sep="\n")
+    for line in get_lines_from_chunks(cluster_data):
+        last_cluster, float_frac = None, None
+        gene_id, cluster, _, _, _, frac = line.strip().split("\t")
+        if cluster != last_cluster:
+            last_cluster, float_frac = cluster, float(frac)
+        gene = genes.get(gene_id)
+        # print(gene_id, cluster, frac, "->", gene)
+        if gene is not None:
+            gene.cluster = f"{cluster}:{frac}"
+            gene.is_core = float_frac > core_threshold
+            # print("===>", gene)
+
 
 def extract_genome_id(gene_id):
     """ Extract genome id from gene id. """

@@ -1,17 +1,32 @@
 """ Module for argument handling """
 
 import argparse
+import logging
 
 from .eggnog import EggnogReader
 
-
 from . import __version__
 
-def handle_args():
+
+def handle_args(args):
     """ Argument handling """
+
+    log_ap = argparse.ArgumentParser(prog="mgexpose", add_help=False)
+    log_ap.add_argument("-l", "--log_level", type=int, choices=range(6), default=logging.INFO)
+    log_args, _ = log_ap.parse_known_args(args)
+
+    try:
+        logging.basicConfig(
+            level=10 * log_args.log_level,
+            format='[%(asctime)s] %(message)s'
+        )
+    except ValueError as invalid_loglevel_err:
+        raise ValueError(f"Invalid log level: {log_args.log_level}") from invalid_loglevel_err
+
     ap = argparse.ArgumentParser(
         prog="mgexpose",
         formatter_class=argparse.RawTextHelpFormatter,
+        parents=(log_ap,),
     )
 
     ap.add_argument(
@@ -37,7 +52,8 @@ def handle_args():
         parents=(parent_subparser,),
     )
     denovo_ap.add_argument("genome_id", type=str)
-    denovo_ap.add_argument("prodigal_gff", type=str)
+    # denovo_ap.add_argument("prodigal_gff", type=str)
+    denovo_ap.add_argument("input_genes", type=str)
     denovo_ap.add_argument("recombinase_hits", type=str)
     denovo_ap.add_argument("mge_rules", type=str)
     denovo_ap.add_argument("--speci", type=str, default="no_speci")
@@ -48,6 +64,7 @@ def handle_args():
     denovo_ap.add_argument("--skip_island_identification", action="store_true")
     denovo_ap.add_argument("--dump_genomic_islands", action="store_true")
     denovo_ap.add_argument("--phage_filter_terms", type=str)
+    denovo_ap.add_argument("--input_gene_type", type=str, choices=("prodigal", "preannotated",), default="prodigal",)
 
     denovo_ap.add_argument("--include_genome_id", action="store_true")
     denovo_ap.add_argument("--core_threshold", type=float, default=0.95)

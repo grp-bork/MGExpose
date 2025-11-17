@@ -7,8 +7,23 @@ import gzip
 import re
 import sys
 
+from ..gene import Gene
 from ..utils.chunk_reader import get_lines_from_chunks
 from ..recombinases import MgeRule
+
+
+def read_preannotated_genes(f):
+    """ Read genes from previous run via gene_info.txt.
+    Returns Gene objects via generator.
+    """
+    header = None
+    for line in get_lines_from_chunks(f):
+        line = line.strip().split("\t")
+        if header is None:
+            header = line
+        else:
+            line = [(item, None)[item == "None"] for item in line]
+            yield Gene.from_geneinfo(**dict(zip(header, line)))
 
 
 

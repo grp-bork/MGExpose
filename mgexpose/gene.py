@@ -2,6 +2,8 @@
 
 """ Gene module """
 
+import re
+
 from dataclasses import dataclass
 
 from .eggnog import EggnogReader
@@ -95,9 +97,10 @@ class Gene:
         return start <= self.start <= self.end <= end
 
     @classmethod
-    def from_gff(cls, *cols):
+    def from_gff(cls, *cols, composite_gene_ids=False,):
         """ construct gene from gff record """
         attribs = dict(item.split("=") for item in cols[-1].strip(";").split(";"))
+
         return cls(
             id=attribs["ID"],
             genome=attribs.get("genome"),
@@ -167,4 +170,50 @@ class Gene:
             attrib_str,
             sep="\t",
             file=gff_outstream,
+        )
+
+    @classmethod
+    def from_geneinfo(cls, composite_gene_id=False, **kwargs):
+        # id      genome  speci   contig  start   end     strand  recombinase     cluster is_core phage   secretion_system        secretion_rule  cog_fcat        seed_eggNOG_ortholog    seed_ortholog_evalue    seed_ortholog_score     eggnog_ogs      max_annot_lvl   goes    ec      kegg_ko kegg_pathway    kegg_module     kegg_reaction   kegg_rclass     brite   cazy    bigg_reaction   pfam
+        gene_id = kwargs.get("id")
+        genome_id = kwargs.get("genome")
+        if composite_gene_id:
+            gene_id = f"{genome_id}.{gene_id}"
+
+        secretion_rule = kwargs.get("secretion_rule")
+        if secretion_rule is not None:
+            secretion_rule = secretion_rule.strip()
+            if re.match(r"\{'mandatory': [0-9]+, 'accessory': [0-9]+\}", secretion_rule):
+                secretion_rule = eval(secretion_rule)
+            else:
+                secretion_rule = None
+
+        def parse_is_core(s: str):
+            if not isinstance(s, str):
+                raise TypeError(f"{s=} is {type(s)} but has to be string.")
+            if s is None or s.lower().capitalize() not in ("False", "True", "None"):
+                return None
+            return eval(s)
+            
+
+        return cls(
+            id=gene_id,
+            genome=genome_id,
+            speci=kwargs.get("speci"),
+            contig=kwargs.get("contig"),
+            start=int(kwargs.get("start")),
+            end=int(kwargs.get("end")),
+            strand=kwargs.get("strand"),
+            recombinase=kwargs.get("recombinase"),
+            cluster=kwargs.get("cluster"),
+            # is_core=kwargs.get("is_core") == "True",
+            is_core=parse_is_core(kwargs.get("is_core", "None")),
+            phage=kwargs.get("phage"),
+            secretion_system=kwargs.get("secretion_system"),
+            secretion_rule=secretion_rule,
+            eggnog=tuple(
+                (k, kwargs.get(k))
+                for k in EggnogReader.EMAPPER_FIELDS["v2.1.2"]
+                if kwargs.get(k) and k != "description"
+            ),
         )

@@ -39,7 +39,7 @@ def read_mge_genomic_islands_gff(fn):
 def read_prodigal_gff(f):
     """ Prodigal gff output reader.
 
-    Returns (gene_id, gff_line) tuples via generator.
+    Returns Gene objects via generator.
     """
     for line in get_lines_from_chunks(f):
         if line and line[0] != "#":
@@ -52,5 +52,6 @@ def read_prodigal_gff(f):
             # gene_id = f"{line[0]}_{_id.split('_')[1]}"
             # yield gene_id, line
             # yield _id, line
-            yield Gene.from_gff(*cols)
+
+            yield Gene.from_gff(*cols, composite_gene_ids=False,)
 

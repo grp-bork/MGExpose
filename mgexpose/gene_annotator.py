@@ -6,7 +6,7 @@ import logging
 
 from contextlib import nullcontext
 
-from .clustering_parser import parse_full_seq_clusters, parse_y_clusters, parse_db_clusters
+from .clustering_parser import parse_full_seq_clusters, parse_y_clusters, parse_db_clusters, evaluate_y_clusters
 from .gene import Gene
 from .phage import PhageDetection
 from .eggnog import EggnogReader
@@ -28,7 +28,7 @@ class GeneAnnotator:
         genes,
         include_genome_id=False,
         has_batch_data=False,
-        dbformat=None
+        composite_gene_ids=False,
     ):
         logger.info("Creating new %s for genome=%s specI=%s", self.__class__, genome_id, speci)
         self.genome_id = genome_id
@@ -40,7 +40,7 @@ class GeneAnnotator:
         # for gene_id, annotation in genes:
         for gene in genes:
 
-            if dbformat != "PG3":
+            if composite_gene_ids:
                 # PG3 input is preprocessed (no gffs), so the gene ids are
                 # already in the correct format
                 # for all other prodigal-based input
@@ -82,7 +82,10 @@ class GeneAnnotator:
         """ Add information from gene clustering to allow for core/accessory gene classification """
 
         if use_y_clusters:
-            parse_y_clusters(cluster_data, self.genes)
+            if core_threshold == -1:
+                parse_y_clusters(cluster_data, self.genes)
+            else:
+                evaluate_y_clusters(cluster_data, self.genes, core_threshold=core_threshold,)
             return None
 
         write_data = False
@@ -177,10 +180,11 @@ class GeneAnnotator:
             pyhmmer=True,
     ):
         """ Annotate genes with MGE-relevant data. """
-        self.add_recombinases(
-            read_recombinase_hits(recombinases, pyhmmer=pyhmmer,)
-        )
-        if all(secretion_annotation):
+        if recombinases is not None:
+            self.add_recombinases(
+                read_recombinase_hits(recombinases, pyhmmer=pyhmmer,)
+            )
+        if secretion_annotation is not None and all(secretion_annotation):
             self.add_secretion_system(
                 parse_macsyfinder_report(
                     *secretion_annotation[:2],
