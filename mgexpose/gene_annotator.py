@@ -151,7 +151,7 @@ class GeneAnnotator:
             if gene is not None:
                 for sgene, system, rule, *_ in secretion_data:
                     print("XXX", gene_id, sgene, system, rule)
-                    if gene.secretion_systems is None:
+                    if not gene.secretion_systems:
                         gene.secretion_systems = []
                         gene.secretion_rules = []
                     

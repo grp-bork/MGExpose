@@ -1,8 +1,9 @@
 # pylint: disable=R0902,R0917,R0913
 
 """ Gene module """
-import sys
-from dataclasses import dataclass
+
+from ast import literal_eval
+from dataclasses import dataclass, field
 
 from .readers.eggnog import EggnogReader
 
@@ -28,8 +29,8 @@ class Gene:
 
     phage: str = None
     eggnog: tuple = None
-    secretion_systems: list = None
-    secretion_rules: list = None
+    secretion_systems: list = field(default_factory=list)
+    secretion_rules: list = field(default_factory=list)
 
     parent: str = None
 
@@ -98,6 +99,8 @@ class Gene:
     def from_gff(cls, *cols):
         """ construct gene from gff record """
         attribs = dict(item.split("=") for item in cols[-1].split(";"))
+
+        secretion_rules = attribs.get("secretion_rules")
         return cls(
             id=attribs["ID"],
             genome=attribs.get("genome"),
@@ -110,8 +113,10 @@ class Gene:
             cluster=attribs.get("cluster") or attribs.get("Cluster"),
             is_core=attribs.get("genome_type") == "COR",
             phage=attribs.get("phage"),
-            secretion_systems=attribs.get("secretion_system"),
-            secretion_rules=attribs.get("secretion_rule"),
+            # "secretion_systems": ",".join(self.secretion_systems) if self.secretion_systems else None,
+            secretion_systems=attribs.get("secretion_systems", "").split(","),
+            # "secretion_rules": ",".join(str(s) for s in self.secretion_rules) if self.secretion_rules else None,
+            secretion_rules=literal_eval(f"[{secretion_rules}]") if secretion_rules else [],
             eggnog=tuple(
                 (k, attribs.get(k))
                 for k in EggnogReader.EMAPPER_FIELDS["v2.1.2"]
