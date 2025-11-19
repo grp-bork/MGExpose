@@ -105,8 +105,6 @@ def parse_macsyfinder_report(f, f_rules):
 
     rules = parse_macsyfinder_rules(f_rules)
 
-    # query_col, model_col, status_col = (1, 4, 8) if macsy_version == 2 else (0, 6, 9)
-
     with open(f, "rt", encoding="UTF-8") as _in:
         d = {}
         for line in _in:

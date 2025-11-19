@@ -138,8 +138,6 @@ class Gene:
         if add_header:
             print("##gff-version 3", file=gff_outstream)
 
-        print("YYY", self.__dict__, file=sys.stderr)
-
         attribs = {
             "ID": self.id,
             "Parent": self.parent,

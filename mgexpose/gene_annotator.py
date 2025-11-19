@@ -150,7 +150,6 @@ class GeneAnnotator:
             gene = self.genes.get(gene_id)
             if gene is not None:
                 for sgene, system, rule, *_ in secretion_data:
-                    print("XXX", gene_id, sgene, system, rule)
                     if not gene.secretion_systems:
                         gene.secretion_systems = []
                         gene.secretion_rules = []
