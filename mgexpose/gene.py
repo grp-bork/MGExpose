@@ -28,15 +28,15 @@ class Gene:
 
     phage: str = None
     eggnog: tuple = None
-    secretion_system: str = None
-    secretion_rule: dict = None
+    secretion_systems: list = None
+    secretion_rules: list = None
 
     parent: str = None
 
     # specify optional annotations here
     # when adding new class variables,
     # otherwise output will be suppressed.
-    OPTIONAL_ANNOTATIONS = ("phage", "secretion_system", "secretion_rule", "recombinase", "eggnog", "parent",)
+    OPTIONAL_ANNOTATIONS = ("phage", "secretion_systems", "secretion_rules", "recombinase", "eggnog", "parent",)
     # these are only optional when core genome calculations
     # are disabled, e.g. co-transferred region inputs
     CLUSTER_ANNOTATIONS = ("cluster", "is_core",)
@@ -110,8 +110,8 @@ class Gene:
             cluster=attribs.get("cluster") or attribs.get("Cluster"),
             is_core=attribs.get("genome_type") == "COR",
             phage=attribs.get("phage"),
-            secretion_system=attribs.get("secretion_system"),
-            secretion_rule=attribs.get("secretion_rule"),
+            secretion_systems=attribs.get("secretion_system"),
+            secretion_rules=attribs.get("secretion_rule"),
             eggnog=tuple(
                 (k, attribs.get(k))
                 for k in EggnogReader.EMAPPER_FIELDS["v2.1.2"]
@@ -138,8 +138,8 @@ class Gene:
             "Parent": self.parent,
             "cluster": self.cluster,
             "size": len(self),
-            "secretion_system": self.secretion_system,
-            "secretion_rule": self.secretion_rule,
+            "secretion_systems": ",".join(self.secretion_systems),
+            "secretion_rules": ",".join(str(s) for s in self.secretion_rules),
             "phage": self.phage,
             "recombinase": self.recombinase,
             "genome_type": self.rtype(self.is_core),

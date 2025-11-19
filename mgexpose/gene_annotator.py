@@ -144,14 +144,18 @@ class GeneAnnotator:
                 gene.eggnog = eggnog_data
                 gene.phage = phage_data
 
-    def add_secretion_system(self, secretion_annotation):
+    def add_secretion_systems(self, secretion_annotation):
         """ Add information from txsscan """
         for gene_id, secretion_data in secretion_annotation:
-            system, rule, *_ = secretion_data
+            sgene, system, rule, *_ = secretion_data
             gene = self.genes.get(gene_id)
             if gene is not None:
-                gene.secretion_system = system
-                gene.secretion_rule = rule
+                if gene.secretion_systems is None:
+                    gene.secretion_systems = []
+                    gene.secretion_rules = []
+                
+                gene.secretion_systems.append(f"{sgene}:{system}")
+                gene.secretion_rules.append(rule)
 
     def annotate_genes(
             self,
@@ -169,7 +173,7 @@ class GeneAnnotator:
             read_recombinase_hits(recombinases, pyhmmer=pyhmmer,)
         )
         if all(secretion_annotation):
-            self.add_secretion_system(
+            self.add_secretion_systems(
                 parse_macsyfinder_report(
                     *secretion_annotation[:2],
                     # macsy_version=secretion_annotation[-1],

@@ -3,6 +3,7 @@
 """ Module contains various reader/parser functions """
 
 import csv
+import json
 import os
 import re
 import sys
@@ -39,8 +40,6 @@ def read_prodigal_gff(f):
                 for item in line[8].split(";")
                 if item.startswith("ID")
             ][0]
-            # gene_id = f"{line[0]}_{_id.split('_')[1]}"
-            # yield gene_id, line
             yield _id, line
 
 
@@ -78,41 +77,43 @@ def read_recombinase_hits(f, pyhmmer=True):
 # 		yield gene_id, recombinase_annotation
 
 
-def parse_macsyfinder_rules(f, macsy_version=2):
-    """ Read macsyfinder rules.
+# def parse_macsyfinder_rules(f, macsy_version=2):
+#     """ Read macsyfinder rules.
 
-    Returns dictionary {secretion_system: {mandatory: count, accessory: count}}.
-    """
-    key_col, mandatory_col, accessory_col = (0, 1, 2) if macsy_version == 2 else (1, 5, 6)
+#     Returns dictionary {secretion_system: {mandatory: count, accessory: count}}.
+#     """
+#     key_col, mandatory_col, accessory_col = (0, 1, 2) if macsy_version == 2 else (1, 5, 6)
 
-    with open(f, "rt", encoding="UTF-8") as _in:
-        return {
-            row[key_col].replace("_putative", ""): {
-                "mandatory": int(row[mandatory_col]),
-                "accessory": int(row[accessory_col]),
-            }
-            for row_index, row in enumerate(csv.reader(_in, delimiter="\t"))
-            if row_index and row and not row[0].startswith("#")
-        }
+#     with open(f, "rt", encoding="UTF-8") as _in:
+#         return {
+#             row[key_col].replace("_putative", ""): {
+#                 "mandatory": int(row[mandatory_col]),
+#                 "accessory": int(row[accessory_col]),
+#             }
+#             for row_index, row in enumerate(csv.reader(_in, delimiter="\t"))
+#             if row_index and row and not row[0].startswith("#")
+#         }
+def parse_macsyfinder_rules(f):
+    with open(f, "rb") as _in:
+        return json.load(_in)
 
-
-def parse_macsyfinder_report(f, f_rules, macsy_version=2):
+def parse_macsyfinder_report(f, f_rules):
     """ Read macsyfinder/txsscan results.
 
     Returns (gene_id, txsscan_results) tuples via generator.
     """
 
-    rules = parse_macsyfinder_rules(f_rules, macsy_version=macsy_version)
+    rules = parse_macsyfinder_rules(f_rules)
 
-    key_col, col1, col2 = (1, 4, 8) if macsy_version == 2 else (0, 6, 9)
+    # query_col, model_col, status_col = (1, 4, 8) if macsy_version == 2 else (0, 6, 9)
 
     with open(f, "rt", encoding="UTF-8") as _in:
+        d = {}
         for line in _in:
             line = line.strip()
-            if line and line[0] != "#":
-                line = re.split(r"\s+", line.strip())
-                # system = line[col1].replace("TXSS/", "")
-                system = os.path.basename(line[col1])  # TXSS version update has revealed that this is a path!
+            if line and line[0] != "#" and line[:8] != "replicon":  # replicon is the start of header line                
+                _, hit_id, gene_name, _, model_fqn, _, _, hit_status, *_ = re.split(r"\s+", line.strip())
+                system = os.path.basename(model_fqn)  # TXSS version update has revealed that this is a path!
                 rule = rules.get(system)
                 if rule is None:
                     print(
@@ -120,9 +121,9 @@ def parse_macsyfinder_report(f, f_rules, macsy_version=2):
                         f"`{system}`",
                         file=sys.stderr,
                     )
-
-                if line and line[0] and line[0] != "replicon":
-                    yield line[key_col], (system, rule, line[col2])
+                d.setdefault(hit_id, []).append((gene_name, system, rule, hit_status))   
+        
+        yield from d.items()
 
 
 def read_mge_rules(f, recombinase_scan=False):
@@ -136,10 +137,5 @@ def read_mge_rules(f, recombinase_scan=False):
             for i, row in enumerate(csv.reader(_in, delimiter="\t"))
             if i != 0
         }
-
-    # #special case for Tn3 since it can carry conjugative system#
-    # for rule_id, rule in rules.items():
-    # 	if "tn3" in rule_id:
-    # 		rule.ce = 1
 
     return rules
