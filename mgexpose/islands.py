@@ -306,6 +306,7 @@ class AnnotatedGenomicIsland(GenomicIsland):
 
                 self.conj_man_count += has_mandatory_system
                 
+                logger.info("Secretion system: Gene %s -> conj_count = %s", gene.id, self.conj_man_count)
                 # self.conj_man_count += (
                 #     # gene.secretion_system.upper()[:4] in ("CONJ", "T4SS",)
                 #     gene.secretion_system.split("_")[0] in ("dCONJ", "T4SS", "MOB",)
@@ -581,6 +582,7 @@ class MgeGenomicIsland(AnnotatedGenomicIsland):
                 )
                 if self.recombinases else ""
             ),
+
         }
         if self.name:
             attribs["name"] = self.name
