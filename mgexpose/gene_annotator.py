@@ -148,15 +148,15 @@ class GeneAnnotator:
         """ Add information from txsscan """
         for gene_id, secretion_data in secretion_annotation:
             print("XXX", gene_id, secretion_data)
-            sgene, system, rule, *_ = secretion_data
             gene = self.genes.get(gene_id)
             if gene is not None:
-                if gene.secretion_systems is None:
-                    gene.secretion_systems = []
-                    gene.secretion_rules = []
-                
-                gene.secretion_systems.append(f"{sgene}:{system}")
-                gene.secretion_rules.append(rule)
+                for sgene, system, rule, *_ in secretion_data:
+                        if gene.secretion_systems is None:
+                            gene.secretion_systems = []
+                            gene.secretion_rules = []
+                        
+                        gene.secretion_systems.append(f"{sgene}:{system}")
+                        gene.secretion_rules.append(rule)
 
     def annotate_genes(
             self,
