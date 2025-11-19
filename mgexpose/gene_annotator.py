@@ -204,6 +204,7 @@ class GeneAnnotator:
         headers.remove("eggnog")
         headers.remove("secretion_systems")
         headers.remove("secretion_rules")
+        headers += ("secretion_systems", "secretion_rules",)
         headers += EggnogReader.EMAPPER_FIELDS["v2.1.2"]
         headers.remove("description")
 
