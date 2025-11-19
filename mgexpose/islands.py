@@ -296,13 +296,13 @@ class AnnotatedGenomicIsland(GenomicIsland):
 
                 has_mandatory_system = False
                 for system, rule in zip(gene.secretion_systems, gene.secretion_rules):
-                    sgene, system = system.split(":")
+                    _, system = system.split(":")
                     if system.split("_")[0] in ("dCONJ", "T4SS", "MOB",):
                         has_mandatory_system = True
                     if rule is not None:
                         cm_counts[(system, False)] += 1
                         cm_counts[(system, True)] += 1
-                        secretion_systems[gene.secretion_system] = gene.secretion_rule    
+                        secretion_systems[gene.secretion_system] = rule
 
                 self.conj_man_count += has_mandatory_system
                 
