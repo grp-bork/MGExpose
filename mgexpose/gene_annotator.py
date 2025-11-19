@@ -220,7 +220,7 @@ class GeneAnnotator:
                 if k != "description"
             )
 
-            secretion_systems = ",".join(self.secretion_systems) if gene.secretion_systems else []
+            secretion_systems = ",".join(gene.secretion_systems) if gene.secretion_systems else []
             secretion_rules = ",".join(str(s) for s in gene.secretion_rules) if gene.secretion_rules else []
 
             print(gene, *secretion_systems, *secretion_rules, *eggnog_cols, sep="\t", file=outstream)
