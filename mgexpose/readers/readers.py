@@ -3,7 +3,7 @@
 """ Module contains various reader/parser functions """
 
 import csv
-import gzip
+import os
 import re
 import sys
 
@@ -111,7 +111,8 @@ def parse_macsyfinder_report(f, f_rules, macsy_version=2):
             line = line.strip()
             if line and line[0] != "#":
                 line = re.split(r"\s+", line.strip())
-                system = line[col1].replace("TXSS/", "")
+                # system = line[col1].replace("TXSS/", "")
+                system = os.path.basename(line[col1])  # TXSS version update has revealed that this is a path!
                 rule = rules.get(system)
                 if rule is None:
                     print(
