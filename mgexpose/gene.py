@@ -105,17 +105,15 @@ class Gene:
             id=attribs["ID"],
             genome=attribs.get("genome"),
             speci=attribs.get("speci"),
-            contig=cols[0],  # contig
-            start=int(cols[3]),  # start
-            end=int(cols[4]),  # end
-            strand=cols[6],  # strand
+            contig=cols[0],
+            start=int(cols[3]),
+            end=int(cols[4]),
+            strand=cols[6],
             recombinase=attribs.get("recombinase"),
             cluster=attribs.get("cluster") or attribs.get("Cluster"),
             is_core=attribs.get("genome_type") == "COR",
             phage=attribs.get("phage"),
-            # "secretion_systems": ",".join(self.secretion_systems) if self.secretion_systems else None,
             secretion_systems=attribs.get("secretion_systems", "").split(","),
-            # "secretion_rules": ",".join(str(s) for s in self.secretion_rules) if self.secretion_rules else None,
             secretion_rules=literal_eval(f"[{secretion_rules}]") if secretion_rules else [],
             eggnog=tuple(
                 (k, attribs.get(k))
@@ -128,7 +126,7 @@ class Gene:
     def to_gff(
         self,
         gff_outstream,
-        genomic_island_id,
+        # genomic_island_id,
         add_functional_annotation=False,
         intermediate_dump=False,
         add_header=False,

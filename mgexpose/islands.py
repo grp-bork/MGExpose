@@ -251,7 +251,7 @@ class GenomicIsland:
             for gene in sorted(self.genes, key=lambda g: (g.start, g.end,)):
                 gene.to_gff(
                     gff_outstream,
-                    genomic_island_id=island_id,
+                    # genomic_island_id=island_id,
                     add_functional_annotation=add_functional_annotation,
                     intermediate_dump=intermediate_dump,
                 )
@@ -647,7 +647,7 @@ class MgeGenomicIsland(AnnotatedGenomicIsland):
             for gene in sorted(self.genes, key=lambda g: (g.start, g.end,)):
                 gene.to_gff(
                     gff_outstream,
-                    genomic_island_id=attribs["ID"],
+                    # genomic_island_id=attribs["ID"],
                     add_functional_annotation=add_functional_annotation,
                 )
 
