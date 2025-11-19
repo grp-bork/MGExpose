@@ -113,7 +113,7 @@ def parse_macsyfinder_report(f, f_rules):
             line = line.strip()
             if line and line[0] != "#" and line[:8] != "replicon":  # replicon is the start of header line                
                 _, hit_id, gene_name, _, model_fqn, _, _, hit_status, *_ = re.split(r"\s+", line.strip())
-                system = os.path.basename(model_fqn)  # TXSS version update has revealed that this is a path!
+                system = model_fqn.replace("CONJ/", "")
                 rule = rules.get(system)
                 if rule is None:
                     print(
