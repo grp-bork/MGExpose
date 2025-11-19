@@ -69,7 +69,7 @@ class Gene:
         """ String representation. """
         return "\t".join(
             f"{v}" for k, v in self.__dict__.items()
-            if k != "eggnog"
+            if k not in ("eggnog", "secretion_systems", "secretion_rules",)
         )
 
     def stringify_speci(self):

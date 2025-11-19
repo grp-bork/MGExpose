@@ -202,6 +202,8 @@ class GeneAnnotator:
 
         headers = list(Gene().__dict__.keys())
         headers.remove("eggnog")
+        headers.remove("secretion_systems")
+        headers.remove("secretion_rules")
         headers += EggnogReader.EMAPPER_FIELDS["v2.1.2"]
         headers.remove("description")
 
@@ -217,4 +219,8 @@ class GeneAnnotator:
                 for k in EggnogReader.EMAPPER_FIELDS["v2.1.2"]
                 if k != "description"
             )
-            print(gene, *eggnog_cols, sep="\t", file=outstream)
+
+            secretion_systems = ",".join(self.secretion_systems) if gene.secretion_systems else None
+            secretion_rules = ",".join(str(s) for s in gene.secretion_rules) if gene.secretion_rules else None
+
+            print(gene, *secretion_systems, *secretion_rules, *eggnog_cols, sep="\t", file=outstream)
