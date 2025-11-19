@@ -1,7 +1,7 @@
 # pylint: disable=R0902,R0917,R0913
 
 """ Gene module """
-
+import sys
 from dataclasses import dataclass
 
 from .readers.eggnog import EggnogReader
@@ -132,6 +132,8 @@ class Gene:
 
         if add_header:
             print("##gff-version 3", file=gff_outstream)
+
+        print("YYY", self.__dict__, file=sys.stderr)
 
         attribs = {
             "ID": self.id,
