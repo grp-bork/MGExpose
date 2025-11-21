@@ -164,10 +164,10 @@ class GeneAnnotator:
         for gene_id, secretion_data in secretion_annotation:
             gene = self.genes.get(gene_id)
             if gene is not None:
+                gene.secretion_systems = []
+                gene.secretion_rules = []
                 for sgene, system, rule, *_ in secretion_data:
-                    if not gene.secretion_systems:
-                        gene.secretion_systems = []
-                        gene.secretion_rules = []
+                    # if not gene.secretion_systems:
                     
                     gene.secretion_systems.append(f"{sgene}:{system}")
                     gene.secretion_rules.append(rule)
