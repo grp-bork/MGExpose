@@ -159,14 +159,18 @@ class GeneAnnotator:
                 gene.eggnog = eggnog_data
                 gene.phage = phage_data
 
-    def add_secretion_system(self, secretion_annotation):
+    def add_secretion_systems(self, secretion_annotation):
         """ Add information from txsscan """
         for gene_id, secretion_data in secretion_annotation:
-            system, rule, *_ = secretion_data
             gene = self.genes.get(gene_id)
             if gene is not None:
-                gene.secretion_system = system
-                gene.secretion_rule = rule
+                for sgene, system, rule, *_ in secretion_data:
+                    if not gene.secretion_systems:
+                        gene.secretion_systems = []
+                        gene.secretion_rules = []
+                    
+                    gene.secretion_systems.append(f"{sgene}:{system}")
+                    gene.secretion_rules.append(rule)
 
     def annotate_genes(
             self,
@@ -185,7 +189,7 @@ class GeneAnnotator:
                 read_recombinase_hits(recombinases, pyhmmer=pyhmmer,)
             )
         if secretion_annotation is not None and all(secretion_annotation):
-            self.add_secretion_system(
+            self.add_secretion_systems(
                 parse_macsyfinder_report(
                     *secretion_annotation[:2],
                     # macsy_version=secretion_annotation[-1],
@@ -214,6 +218,9 @@ class GeneAnnotator:
 
         headers = list(Gene().__dict__.keys())
         headers.remove("eggnog")
+        headers.remove("secretion_systems")
+        headers.remove("secretion_rules")
+        headers += ("secretion_systems", "secretion_rules",)
         headers += EggnogReader.EMAPPER_FIELDS["v2.1.2"]
         headers.remove("description")
 
@@ -229,4 +236,8 @@ class GeneAnnotator:
                 for k in EggnogReader.EMAPPER_FIELDS["v2.1.2"]
                 if k != "description"
             )
-            print(gene, *eggnog_cols, sep="\t", file=outstream)
+
+            secretion_systems = ",".join(gene.secretion_systems) if gene.secretion_systems else None
+            secretion_rules = ",".join(str(s) for s in gene.secretion_rules) if gene.secretion_rules else None
+
+            print(gene, secretion_systems, secretion_rules, *eggnog_cols, sep="\t", file=outstream)
