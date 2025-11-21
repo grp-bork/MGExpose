@@ -173,6 +173,7 @@ class GeneAnnotator:
                     
                     gene.secretion_systems.append(f"{sgene}:{system}")
                     gene.secretion_rules.append(rule)
+                print(gene.to_gff())
 
     def annotate_genes(
             self,
