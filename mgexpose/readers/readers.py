@@ -23,7 +23,7 @@ def read_preannotated_genes(f):
         if header is None:
             header = line
         else:
-            line = [(item, None)[item == "None"] for item in line]
+            line = [(item, None)[item == "None"] for item in line]            
             yield Gene.from_geneinfo(**dict(zip(header, line)))
 
 

@@ -182,7 +182,9 @@ class Gene:
             gene_id = f"{genome_id}.{gene_id}"
 
         secretion_rules = kwargs.get("secretion_rule", kwargs.get("secretion_rules"))
-        if secretion_rules is not None:
+        if secretion_rules is None:
+            secretion_rules = []
+        else:
             secretion_rules = secretion_rules.strip()
             if re.match(r"\[(\{'mandatory': [0-9]+, 'accessory': [0-9]+\})+\]", secretion_rules):
                 secretion_rules = literal_eval(secretion_rules)
@@ -199,6 +201,8 @@ class Gene:
         # secretion_systems=attribs.get("secretion_systems", "").split(","),
         # secretion_rules=literal_eval(f"[{secretion_rules}]") if secretion_rules else [],
         secretion_systems = kwargs.get("secretion_system", kwargs.get("secretion_systems", ""))
+        if secretion_systems is None:
+            secretion_systems = []        
 
         return cls(
             id=gene_id,
