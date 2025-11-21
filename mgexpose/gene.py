@@ -198,6 +198,7 @@ class Gene:
         
         # secretion_systems=attribs.get("secretion_systems", "").split(","),
         # secretion_rules=literal_eval(f"[{secretion_rules}]") if secretion_rules else [],
+        secretion_systems = kwargs.get("secretion_system", kwargs.get("secretion_systems", ""))
 
         return cls(
             id=gene_id,
@@ -212,7 +213,7 @@ class Gene:
             # is_core=kwargs.get("is_core") == "True",
             is_core=parse_is_core(kwargs.get("is_core", "None")),
             phage=kwargs.get("phage"),
-            secretion_systems=kwargs.get("secretion_system", kwargs.get("secretion_systems", "")).split(","),
+            secretion_systems=secretion_systems.split(",") if secretion_systems else [],
             secretion_rules=secretion_rules,
             eggnog=tuple(
                 (k, kwargs.get(k))
