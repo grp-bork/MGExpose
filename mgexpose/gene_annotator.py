@@ -3,6 +3,7 @@
 """ Classes for integrating gene annotations. """
 
 import logging
+import sys
 
 from contextlib import nullcontext
 
@@ -173,7 +174,7 @@ class GeneAnnotator:
                     
                     gene.secretion_systems.append(f"{sgene}:{system}")
                     gene.secretion_rules.append(rule)
-                print(gene.to_gff())
+                print(gene.to_gff(sys.stdout))
 
     def annotate_genes(
             self,
