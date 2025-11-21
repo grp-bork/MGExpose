@@ -181,13 +181,13 @@ class Gene:
         if composite_gene_id:
             gene_id = f"{genome_id}.{gene_id}"
 
-        secretion_rule = kwargs.get("secretion_rule")
-        if secretion_rule is not None:
-            secretion_rule = secretion_rule.strip()
-            if re.match(r"\{'mandatory': [0-9]+, 'accessory': [0-9]+\}", secretion_rule):
-                secretion_rule = literal_eval(secretion_rule)
+        secretion_rules = kwargs.get("secretion_rule", kwargs.get("secretion_rules"))
+        if secretion_rules is not None:
+            secretion_rules = secretion_rules.strip()
+            if re.match(r"\[(\{'mandatory': [0-9]+, 'accessory': [0-9]+\})+\]", secretion_rules):
+                secretion_rules = literal_eval(secretion_rules)
             else:
-                secretion_rule = None
+                secretion_rules = []
 
         def parse_is_core(s: str):
             if not isinstance(s, str):
@@ -195,6 +195,9 @@ class Gene:
             if s is None or s.lower().capitalize() not in ("False", "True", "None"):
                 return None
             return literal_eval(s)
+        
+        # secretion_systems=attribs.get("secretion_systems", "").split(","),
+        # secretion_rules=literal_eval(f"[{secretion_rules}]") if secretion_rules else [],
 
         return cls(
             id=gene_id,
@@ -209,8 +212,8 @@ class Gene:
             # is_core=kwargs.get("is_core") == "True",
             is_core=parse_is_core(kwargs.get("is_core", "None")),
             phage=kwargs.get("phage"),
-            secretion_system=kwargs.get("secretion_system"),
-            secretion_rule=secretion_rule,
+            secretion_systems=kwargs.get("secretion_system", kwargs.get("secretion_systems", "")).split(","),
+            secretion_rules=secretion_rules,
             eggnog=tuple(
                 (k, kwargs.get(k))
                 for k in EggnogReader.EMAPPER_FIELDS["v2.1.2"]
