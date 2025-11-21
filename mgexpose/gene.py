@@ -224,4 +224,5 @@ class Gene:
                 for k in EggnogReader.EMAPPER_FIELDS["v2.1.2"]
                 if kwargs.get(k) and k != "description"
             ),
+            parent=kwargs.get("parent"),
         )
