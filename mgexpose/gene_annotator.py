@@ -216,7 +216,8 @@ class GeneAnnotator:
                 core_threshold=core_threshold,
                 output_dir=output_dir,
             )
-        yield from self.genes.values()
+        # yield from self.genes.values()
+        return self.genes.values()
 
     def dump_genes(self, outstream):
         """ Write gene info to stream. """
