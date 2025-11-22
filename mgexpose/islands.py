@@ -296,7 +296,10 @@ class AnnotatedGenomicIsland(GenomicIsland):
 
                 has_mandatory_system = False
                 for system, rule in zip(gene.secretion_systems, gene.secretion_rules):
-                    _, system = system.split(":")
+                    try:
+                        _, system = system.split(":")
+                    except ValueError:
+                        continue
                     if system.split("/")[1].split("_")[0] in ("dCONJ", "T4SS", "MOB",):
                         has_mandatory_system = True
                     if rule is not None:
