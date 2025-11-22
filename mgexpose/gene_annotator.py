@@ -53,7 +53,9 @@ class GeneAnnotator:
 
             logger.info("Adding gene %s", gene.id)
 
-            gene.genome, gene.speci = self.genome_id, self.speci
+            gene.genome = self.genome_id
+            if gene.speci is None:
+                gene.speci =  self.speci
             self.genes[gene.id] = gene
 
             # self.genes[gene_id] = Gene(
@@ -166,15 +168,9 @@ class GeneAnnotator:
             
             gene = self.genes.get(gene_id)
             if gene is not None:
-                print("Annotating", gene_id, secretion_data)
-                # gene.secretion_systems = []
-                # gene.secretion_rules = []
                 for sgene, system, rule, *_ in secretion_data:
-                    # if not gene.secretion_systems:
-                    
                     gene.secretion_systems.append(f"{sgene}:{system}")
                     gene.secretion_rules.append(rule)
-                print(gene.to_gff(sys.stdout))
 
     def annotate_genes(
             self,
@@ -187,7 +183,6 @@ class GeneAnnotator:
             output_dir=None,
             pyhmmer=True,
     ):
-        print(locals())
         """ Annotate genes with MGE-relevant data. """
         if recombinases is not None:
             self.add_recombinases(
@@ -230,7 +225,6 @@ class GeneAnnotator:
         headers += EggnogReader.EMAPPER_FIELDS["v2.1.2"]
         headers.remove("description")
 
-        # print(*Gene().__dict__.keys(), sep="\t", file=outstream)
         print(*headers, sep="\t", file=outstream)
         for gene in self.genes.values():
             gene.stringify_speci()
@@ -245,7 +239,5 @@ class GeneAnnotator:
 
             secretion_systems = ",".join(gene.secretion_systems) if gene.secretion_systems else None
             secretion_rules = ",".join(str(s) for s in gene.secretion_rules) if gene.secretion_rules else None
-
-            print(gene, secretion_systems, secretion_rules)
 
             print(gene, secretion_systems, secretion_rules, *eggnog_cols, sep="\t", file=outstream)
