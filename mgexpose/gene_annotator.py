@@ -3,14 +3,15 @@
 """ Classes for integrating gene annotations. """
 
 import logging
+import sys
 
 from contextlib import nullcontext
 
-from .clustering_parser import parse_full_seq_clusters, parse_y_clusters, parse_db_clusters
+from .clustering_parser import parse_full_seq_clusters, parse_y_clusters, parse_db_clusters, evaluate_y_clusters
 from .gene import Gene
 from .phage import PhageDetection
-from .readers.eggnog import EggnogReader
-from .readers.readers import (
+from .eggnog import EggnogReader
+from .readers import (
     parse_macsyfinder_report,
     read_recombinase_hits,
 )
@@ -28,7 +29,7 @@ class GeneAnnotator:
         genes,
         include_genome_id=False,
         has_batch_data=False,
-        dbformat=None
+        composite_gene_ids=False,
     ):
         logger.info("Creating new %s for genome=%s specI=%s", self.__class__, genome_id, speci)
         self.genome_id = genome_id
@@ -37,21 +38,35 @@ class GeneAnnotator:
         self.has_batch_data = has_batch_data
         self.include_genome_id = include_genome_id
 
-        for gene_id, annotation in genes:
+        # for gene_id, annotation in genes:
+        for gene in genes:
 
-            if dbformat != "PG3":
-                gene_id = f'{annotation[0]}_{gene_id.split("_")[-1]}'
+            if composite_gene_ids:
+                # PG3 input is preprocessed (no gffs), so the gene ids are
+                # already in the correct format
+                # for all other prodigal-based input
+                # the gene ids are combined from the contig id and the
+                # suffix of col9's ID record:
+                # CALOLV020000065.1	[...]	ID=65_14;... -> CALOLV020000065.1_14
+                # gene_id = f'{annotation[0]}_{gene_id.split("_")[-1]}'
+                gene.id = f'{gene.contig}_{gene.id.split("_")[-1]}'
 
-            logger.info("Adding gene %s", gene_id)
-            self.genes[gene_id] = Gene(
-                id=gene_id,
-                genome=self.genome_id,
-                speci=self.speci,
-                contig=annotation[0],
-                start=int(annotation[3]),
-                end=int(annotation[4]),
-                strand=annotation[6],
-            )
+            logger.info("Adding gene %s", gene.id)
+
+            gene.genome = self.genome_id
+            if gene.speci is None:
+                gene.speci =  self.speci
+            self.genes[gene.id] = gene
+
+            # self.genes[gene_id] = Gene(
+            #     id=gene_id,
+            #     genome=self.genome_id,
+            #     speci=self.speci,
+            #     contig=annotation[0],
+            #     start=int(annotation[3]),
+            #     end=int(annotation[4]),
+            #     strand=annotation[6],
+            # )
 
     def add_recombinases(self, recombinases):
         """ Add information from recombinase scan """
@@ -70,7 +85,10 @@ class GeneAnnotator:
         """ Add information from gene clustering to allow for core/accessory gene classification """
 
         if use_y_clusters:
-            parse_y_clusters(cluster_data, self.genes)
+            if core_threshold == -1:
+                parse_y_clusters(cluster_data, self.genes)
+            else:
+                evaluate_y_clusters(cluster_data, self.genes, core_threshold=core_threshold,)
             return None
 
         write_data = False
@@ -144,14 +162,15 @@ class GeneAnnotator:
                 gene.eggnog = eggnog_data
                 gene.phage = phage_data
 
-    def add_secretion_system(self, secretion_annotation):
+    def add_secretion_systems(self, secretion_annotation):
         """ Add information from txsscan """
         for gene_id, secretion_data in secretion_annotation:
-            system, rule, *_ = secretion_data
+            
             gene = self.genes.get(gene_id)
             if gene is not None:
-                gene.secretion_system = system
-                gene.secretion_rule = rule
+                for sgene, system, rule, *_ in secretion_data:
+                    gene.secretion_systems.append(f"{sgene}:{system}")
+                    gene.secretion_rules.append(rule)
 
     def annotate_genes(
             self,
@@ -165,11 +184,12 @@ class GeneAnnotator:
             pyhmmer=True,
     ):
         """ Annotate genes with MGE-relevant data. """
-        self.add_recombinases(
-            read_recombinase_hits(recombinases, pyhmmer=pyhmmer,)
-        )
-        if all(secretion_annotation):
-            self.add_secretion_system(
+        if recombinases is not None:
+            self.add_recombinases(
+                read_recombinase_hits(recombinases, pyhmmer=pyhmmer,)
+            )
+        if secretion_annotation is not None and all(secretion_annotation):
+            self.add_secretion_systems(
                 parse_macsyfinder_report(
                     *secretion_annotation[:2],
                     # macsy_version=secretion_annotation[-1],
@@ -191,17 +211,20 @@ class GeneAnnotator:
                 core_threshold=core_threshold,
                 output_dir=output_dir,
             )
-        yield from self.genes.values()
+        # yield from self.genes.values()
+        return self.genes.values()
 
     def dump_genes(self, outstream):
         """ Write gene info to stream. """
 
         headers = list(Gene().__dict__.keys())
         headers.remove("eggnog")
+        headers.remove("secretion_systems")
+        headers.remove("secretion_rules")
+        headers += ("secretion_systems", "secretion_rules",)
         headers += EggnogReader.EMAPPER_FIELDS["v2.1.2"]
         headers.remove("description")
 
-        # print(*Gene().__dict__.keys(), sep="\t", file=outstream)
         print(*headers, sep="\t", file=outstream)
         for gene in self.genes.values():
             gene.stringify_speci()
@@ -213,4 +236,8 @@ class GeneAnnotator:
                 for k in EggnogReader.EMAPPER_FIELDS["v2.1.2"]
                 if k != "description"
             )
-            print(gene, *eggnog_cols, sep="\t", file=outstream)
+
+            secretion_systems = ",".join(gene.secretion_systems) if gene.secretion_systems else None
+            secretion_rules = ",".join(str(s) for s in gene.secretion_rules) if gene.secretion_rules else None
+
+            print(gene, secretion_systems, secretion_rules, *eggnog_cols, sep="\t", file=outstream)

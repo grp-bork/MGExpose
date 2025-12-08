@@ -251,7 +251,7 @@ class GenomicIsland:
             for gene in sorted(self.genes, key=lambda g: (g.start, g.end,)):
                 gene.to_gff(
                     gff_outstream,
-                    genomic_island_id=island_id,
+                    # genomic_island_id=island_id,
                     add_functional_annotation=add_functional_annotation,
                     intermediate_dump=intermediate_dump,
                 )
@@ -289,28 +289,44 @@ class AnnotatedGenomicIsland(GenomicIsland):
         secretion_systems = {}
         cm_counts = Counter()
 
-        # self.recombinases = [r for _, r in self.recombinases]
-
         for gene in self.genes:
             self.phage_count += gene.phage is not None
-            if gene.secretion_system is not None:
+            if gene.secretion_systems:
                 self.conj_count += 1
-                self.conj_man_count += (
-                        gene.secretion_system.upper().startswith("CONJ") or
-                        gene.secretion_system.upper().startswith("T4SS")
-                )
-                if gene.secretion_rule is not None:
-                    cm_counts[(gene.secretion_system, False)] += 1
-                    cm_counts[(gene.secretion_system, True)] += 1
 
-                    secretion_systems[gene.secretion_system] = gene.secretion_rule
+                has_mandatory_system = False
+                for system, rule in zip(gene.secretion_systems, gene.secretion_rules):
+                    try:
+                        _, system = system.split(":")
+                    except ValueError:
+                        continue
+                    if system.split("/")[1].split("_")[0] in ("dCONJ", "T4SS", "MOB",):
+                        has_mandatory_system = True
+                    if rule is not None:
+                        cm_counts[(system, False)] += 1
+                        cm_counts[(system, True)] += 1
+                        secretion_systems[system] = rule
 
+                self.conj_man_count += has_mandatory_system
+                
+                logger.info("Secretion system: Gene %s -> conj_count = %s", gene.id, self.conj_man_count)
+                # self.conj_man_count += (
+                #     # gene.secretion_system.upper()[:4] in ("CONJ", "T4SS",)
+                #     gene.secretion_system.split("_")[0] in ("dCONJ", "T4SS", "MOB",)
+                # )
+                # if gene.secretion_rule is not None:
+                #     cm_counts[(gene.secretion_system, False)] += 1
+                #     cm_counts[(gene.secretion_system, True)] += 1
+
+                #     secretion_systems[gene.secretion_system] = gene.secretion_rule
+
+        # TODO: validate if still works
         for system, rule in secretion_systems.items():
             self.valid_mandatory |= (cm_counts[(system, True)] >= rule["mandatory"] / 2)
             self.valid_accessory |= (cm_counts[(system, False)] >= rule["accessory"] / 2)
             self.valid_entire |= (
-                    cm_counts[(system, True)] == rule["mandatory"] and
-                    cm_counts[(system, False)] == rule["accessory"]
+                cm_counts[(system, True)] == rule["mandatory"] and
+                cm_counts[(system, False)] == rule["accessory"]
             )
 
     def __str__(self):
@@ -551,7 +567,7 @@ class MgeGenomicIsland(AnnotatedGenomicIsland):
 
     def get_id(self):
         return f"MGE_{self.genome}_{self.contig}:{self.start}-{self.end}"
-    
+
     def get_attribs(self):
         mge_metrics = self.get_annotated_mge_metrics()
         attribs = {
@@ -569,6 +585,7 @@ class MgeGenomicIsland(AnnotatedGenomicIsland):
                 )
                 if self.recombinases else ""
             ),
+
         }
         if self.name:
             attribs["name"] = self.name
@@ -633,7 +650,7 @@ class MgeGenomicIsland(AnnotatedGenomicIsland):
             for gene in sorted(self.genes, key=lambda g: (g.start, g.end,)):
                 gene.to_gff(
                     gff_outstream,
-                    genomic_island_id=attribs["ID"],
+                    # genomic_island_id=attribs["ID"],
                     add_functional_annotation=add_functional_annotation,
                 )
 
