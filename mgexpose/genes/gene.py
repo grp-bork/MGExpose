@@ -39,7 +39,14 @@ class Gene:
     # specify optional annotations here
     # when adding new class variables,
     # otherwise output will be suppressed.
-    OPTIONAL_ANNOTATIONS = ("phage", "secretion_systems", "secretion_rules", "recombinase", "eggnog", "parent",)
+    OPTIONAL_ANNOTATIONS = (
+        "phage",
+        "secretion_systems",
+        "secretion_rules",
+        "recombinase",
+        "eggnog",
+        "parent",
+    )
     # these are only optional when core genome calculations
     # are disabled, e.g. co-transferred region inputs
     CLUSTER_ANNOTATIONS = ("cluster", "is_core",)
@@ -53,6 +60,8 @@ class Gene:
 
     @staticmethod
     def is_core_gene(occ, n_genomes, core_threshold=0.95):
+        """ Calculate if a gene is a core gene 
+        according to its prevalence in a set of species cluster genomes. """
         return occ / n_genomes > core_threshold
 
     def stringify_eggnog(self):
@@ -143,8 +152,12 @@ class Gene:
             "Parent": self.parent,
             "cluster": self.cluster,
             "size": len(self),
-            "secretion_systems": ",".join(self.secretion_systems) if self.secretion_systems else None,
-            "secretion_rules": ",".join(str(s) for s in self.secretion_rules) if self.secretion_rules else None,
+            "secretion_systems": ",".join(
+                self.secretion_systems
+            ) if self.secretion_systems else None,
+            "secretion_rules": ",".join(
+                str(s) for s in self.secretion_rules
+            ) if self.secretion_rules else None,
             "phage": self.phage,
             "recombinase": self.recombinase,
             "genome_type": self.rtype(self.is_core),
@@ -176,7 +189,38 @@ class Gene:
 
     @classmethod
     def from_geneinfo(cls, composite_gene_id=False, **kwargs):
-        # id      genome  speci   contig  start   end     strand  recombinase     cluster is_core phage   secretion_system        secretion_rule  cog_fcat        seed_eggNOG_ortholog    seed_ortholog_evalue    seed_ortholog_score     eggnog_ogs      max_annot_lvl   goes    ec      kegg_ko kegg_pathway    kegg_module     kegg_reaction   kegg_rclass     brite   cazy    bigg_reaction   pfam
+        """ Parse a gene from a gene_info line:
+        - id
+        - genome
+        - speci
+        - contig
+        - start
+        - end
+        - strand
+        - recombinase
+        - cluster
+        - is_core
+        - phage
+        - secretion_system
+        - secretion_rule
+        - cog_fcat
+        - seed_eggNOG_ortholog
+        - seed_ortholog_evalue
+        - seed_ortholog_score
+        - eggnog_ogs
+        - max_annot_lvl
+        - gos
+        - ec
+        - kegg_ko
+        - kegg_pathway
+        - kegg_module
+        - kegg_reaction
+        - kegg_rclass
+        - brite
+        - cazy
+        - bigg_reaction
+        - pfam
+        """
         gene_id = kwargs.get("id")
         genome_id = kwargs.get("genome")
         if composite_gene_id:
@@ -198,12 +242,12 @@ class Gene:
             if s is None or s.lower().capitalize() not in ("False", "True", "None"):
                 return None
             return literal_eval(s)
-        
+
         # secretion_systems=attribs.get("secretion_systems", "").split(","),
         # secretion_rules=literal_eval(f"[{secretion_rules}]") if secretion_rules else [],
         secretion_systems = kwargs.get("secretion_system", kwargs.get("secretion_systems", ""))
         if secretion_systems is None:
-            secretion_systems = []        
+            secretion_systems = []
 
         return cls(
             id=gene_id,
