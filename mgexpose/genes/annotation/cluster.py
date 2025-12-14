@@ -6,10 +6,10 @@ import logging
 from contextlib import nullcontext
 
 from .clustering_parser import (
-	parse_db_clusters,
-	parse_full_seq_clusters,
-	parse_y_clusters,
-	evaluate_y_clusters
+    parse_db_clusters,
+    parse_full_seq_clusters,
+    parse_y_clusters,
+    evaluate_y_clusters
 )
 from ..gene import Gene
 

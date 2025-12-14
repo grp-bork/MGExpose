@@ -125,7 +125,6 @@ def handle_args(args):
 
     identify_mobile_islands_ap.set_defaults(func=None)  # TODO
 
-
     call_genes_ap = subparsers.add_parser(
         "call_genes",
         help="Call genes with Pyrodigal",
@@ -136,7 +135,6 @@ def handle_args(args):
     call_genes_ap.add_argument("genome_id", type=str)
     call_genes_ap.add_argument("--threads", "-t", type=int, default=1)
     call_genes_ap.set_defaults(func=None)  # TODO
-
 
     annotate_recombinases_ap = subparsers.add_parser(
         "recombinase_scan",

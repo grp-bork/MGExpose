@@ -166,7 +166,6 @@ def main():
     genomic_islands = None
     skip_island_identification = True
 
-
     if args.command == "denovo":
         skip_island_identification = args.skip_island_identification
         genomic_islands = denovo_annotation(args, debug_dir=debug_dir)

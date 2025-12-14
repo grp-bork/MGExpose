@@ -96,6 +96,7 @@ def parse_macsyfinder_rules(f):
     with open(f, "rb") as _in:
         return json.load(_in)
 
+
 def parse_macsyfinder_report(f, f_rules):
     """ Read macsyfinder/conjscan results.
 

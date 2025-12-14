@@ -46,9 +46,9 @@ class MgeRule:
         """
         if all(
                 (
-                        self.subfamily is not None,
-                        "tn3" in self.subfamily.lower(),
-                        not self.recombinase_scan,
+                    self.subfamily is not None,
+                    "tn3" in self.subfamily.lower(),
+                    not self.recombinase_scan,
                 )
         ):
             self.ce = 1
@@ -162,11 +162,11 @@ class MgeRule:
             c_ce = nov = 1
         elif all(
                 (
-                        bool(self.is_tn),
-                        bool(self.ce),
-                        # len(island.recombinases) >= 3,
-                        sum(island.recombinases.values()) >= 3,
-                        (island.tn3_found or island.ser_found)
+                    bool(self.is_tn),
+                    bool(self.ce),
+                    # len(island.recombinases) >= 3,
+                    sum(island.recombinases.values()) >= 3,
+                    (island.tn3_found or island.ser_found)
                 )
         ):
             c_ce = 1

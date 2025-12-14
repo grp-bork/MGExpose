@@ -1,4 +1,4 @@
-# pylint: disable=R0903
+# pylint: disable=R0903
 
 """ Module for eggnog-mapper data handling. Currently, phages are detected
     based on the regex signals in the emapper 'description' field """
@@ -15,24 +15,25 @@ EMAPPER_FIELDS = {
     "v2.0.0": {"cog_fcat": 20, "description": 21},
     "v2.0.2": {"cog_fcat": 20, "description": 21},
     "v2.1.0": {"cog_fcat": 9, "description": 10},
-    "v2.1.2": {"cog_fcat": 6, "description": 7,
-                "seed_eggNOG_ortholog": 1,
-                "seed_ortholog_evalue": 2,
-                "seed_ortholog_score": 3,
-                "eggnog_ogs": 4,
-                "max_annot_lvl": 5,
-                "goes": 9,
-                "ec": 10,
-                "kegg_ko": 11,
-                "kegg_pathway": 12,
-                "kegg_module": 13,
-                "kegg_reaction": 14,
-                "kegg_rclass": 15,
-                "brite": 16,
-                "cazy": 18,
-                "bigg_reaction": 19,
-                "pfam": 20
-                },
+    "v2.1.2": {
+        "cog_fcat": 6, "description": 7,
+        "seed_eggNOG_ortholog": 1,
+        "seed_ortholog_evalue": 2,
+        "seed_ortholog_score": 3,
+        "eggnog_ogs": 4,
+        "max_annot_lvl": 5,
+        "goes": 9,
+        "ec": 10,
+        "kegg_ko": 11,
+        "kegg_pathway": 12,
+        "kegg_module": 13,
+        "kegg_reaction": 14,
+        "kegg_rclass": 15,
+        "brite": 16,
+        "cazy": 18,
+        "bigg_reaction": 19,
+        "pfam": 20,
+    },
 }
 
 

@@ -46,5 +46,4 @@ def annotate_genes(args,):
     ) as gene_info_out:
         genes.dump(gene_info_out)
 
-
     return list(genes.values())

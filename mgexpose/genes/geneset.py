@@ -1,4 +1,4 @@
-# pylint: disable=R0913,R0917
+# pylint: disable=R0913,R0917
 """ Module to manage gene sets. """
 
 import logging
@@ -33,7 +33,7 @@ class GeneSet(dict):
                 # PG3 input is preprocessed (no gffs), so the gene ids are
                 # already in the correct format
                 # for all other prodigal-based input
-                # the gene ids are combined from the contig id and the
+                # the gene ids are combined from the contig id and the
                 # suffix of col9's ID record:
                 # CALOLV020000065.1	[...]	ID=65_14;... -> CALOLV020000065.1_14
                 # gene_id = f'{annotation[0]}_{gene_id.split("_")[-1]}'

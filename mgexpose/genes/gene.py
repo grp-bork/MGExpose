@@ -60,7 +60,7 @@ class Gene:
 
     @staticmethod
     def is_core_gene(occ, n_genomes, core_threshold=0.95):
-        """ Calculate if a gene is a core gene 
+        """ Calculate if a gene is a core gene
         according to its prevalence in a set of species cluster genomes. """
         return occ / n_genomes > core_threshold
 
