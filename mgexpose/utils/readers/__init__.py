@@ -1,3 +1,5 @@
+""" Reader functions. """
+
 from .readers import (
 	parse_macsyfinder_report,
 	parse_macsyfinder_rules,

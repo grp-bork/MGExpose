@@ -4,13 +4,12 @@
 
 import csv
 import json
-import os
 import re
 import sys
 
-from ..gene import Gene
-from ..utils.chunk_reader import get_lines_from_chunks
-from ..recombinases import MgeRule
+from ..chunk_reader import get_lines_from_chunks
+from ...genes.gene import Gene
+from ...recombinases import MgeRule
 
 
 def read_preannotated_genes(f):
@@ -23,12 +22,12 @@ def read_preannotated_genes(f):
         if header is None:
             header = line
         else:
-            line = [(item, None)[item == "None"] for item in line]            
+            line = [(item, None)[item == "None"] for item in line]
             yield Gene.from_geneinfo(**dict(zip(header, line)))
 
 
-
 def read_fasta(f):
+    """ Read a fasta file. """
     header, seq = None, []
     for line in get_lines_from_chunks(f):
         if line[0] == ">":
@@ -93,13 +92,14 @@ def read_recombinase_hits(f, pyhmmer=True):
 #             if row_index and row and not row[0].startswith("#")
 #         }
 def parse_macsyfinder_rules(f):
+    """ Read macsyfinder rules. """
     with open(f, "rb") as _in:
         return json.load(_in)
 
 def parse_macsyfinder_report(f, f_rules):
-    """ Read macsyfinder/txsscan results.
+    """ Read macsyfinder/conjscan results.
 
-    Returns (gene_id, txsscan_results) tuples via generator.
+    Returns (gene_id, conjscan_results) tuples via generator.
     """
 
     rules = parse_macsyfinder_rules(f_rules)
@@ -108,8 +108,10 @@ def parse_macsyfinder_report(f, f_rules):
         d = {}
         for line in _in:
             line = line.strip()
-            if line and line[0] != "#" and line[:8] != "replicon":  # replicon is the start of header line                
-                _, hit_id, gene_name, _, model_fqn, _, _, hit_status, *_ = re.split(r"\s+", line.strip())
+            if line and line[0] != "#" and line[:8] != "replicon":
+                # replicon is the start of header line
+                cols = re.split(r"\s+", line.strip())
+                _, hit_id, gene_name, _, model_fqn, _, _, hit_status, *_ = cols
                 system = model_fqn.replace("CONJ/", "")
                 rule = rules.get(system)
                 if rule is None:
@@ -118,8 +120,8 @@ def parse_macsyfinder_report(f, f_rules):
                         f"`{system}`",
                         file=sys.stderr,
                     )
-                d.setdefault(hit_id, []).append((gene_name, system, rule, hit_status))   
-        
+                d.setdefault(hit_id, []).append((gene_name, system, rule, hit_status))
+
         yield from d.items()
 
 
