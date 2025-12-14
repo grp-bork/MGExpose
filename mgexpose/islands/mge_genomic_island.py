@@ -1,4 +1,4 @@
-# pylint: disable=C0116,C0301,R0902,R0916,R0913,R0917
+# pylint: disable=C0116,C0301,R0902,R0916,R0913,R0917,W0613
 """
 Data Structures Module
 
@@ -17,14 +17,15 @@ The MGE type of each MGE Genomic Island is defined by applying MGE Rule.
 """
 import itertools as it
 import logging
-import sys
 import warnings
 
 from collections import Counter
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 
-from .gene import Gene
-from .recombinases import MgeRule, MGE_ALIASES
+from .annotated_genomic_island import AnnotatedGenomicIsland
+from .genomic_island import GenomicIsland
+from ..genes.gene import Gene
+from ..recombinases import MgeRule, MGE_ALIASES
 
 
 logger = logging.getLogger(__name__)
@@ -84,7 +85,9 @@ class MgeGenomicIsland(AnnotatedGenomicIsland):
         self.integron = int("integron" in recombinases)
 
         # self.recombinases = recombinases.split(",") if recombinases else []
-        self.recombinases = Counter(recombinases.split(","))
+        self.recombinases.clear()
+        self.recombinases.update(recombinases.split(","))
+        # self.recombinases = Counter(recombinases.split(","))
 
         # tag recombinase island with more than 3 recombinases
         self.c_nmi = sum(self.recombinases.values()) > 3
@@ -328,8 +331,8 @@ class MgeGenomicIsland(AnnotatedGenomicIsland):
     def from_gff(cls, *cols):
         try:
             attribs = dict(item.split("=") for item in cols[-1].split(";"))
-        except:
-            raise ValueError(f"not enough cols? {cols}")
+        except Exception as exc:
+            raise ValueError(f"not enough cols? {cols}") from exc
 
         try:
             recombinases = Counter(
@@ -338,8 +341,8 @@ class MgeGenomicIsland(AnnotatedGenomicIsland):
                       for item in attribs["mgeR"].split(","))
                      )
             )
-        except:
-            raise ValueError(f"recombinase string weird? {attribs['mgeR'].split(',')}")
+        except Exception as exc:
+            raise ValueError(f"recombinase string weird? {attribs['mgeR'].split(',')}") from exc
 
         try:
             mges = Counter(
@@ -348,8 +351,8 @@ class MgeGenomicIsland(AnnotatedGenomicIsland):
                       for item in attribs["mge"].split(","))
                      )
             )
-        except:
-            raise ValueError(f"mge string weird? {attribs['mge'].split(',')}")
+        except Exception as exc:
+            raise ValueError(f"mge string weird? {attribs['mge'].split(',')}") from exc
 
         if mges.get("is_tn"):
             mges["c_tn"] = mges["is_tn"]
