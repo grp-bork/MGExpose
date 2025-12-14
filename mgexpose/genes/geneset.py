@@ -81,10 +81,10 @@ class GeneSet(dict):
             )
 
     @classmethod
-    def from_file(cls, fn, genome_id=None, speci=None, gene_type="prodigal",):
+    def from_file(cls, fn, genome_id=None, speci=None, gene_type="prodigal", composite_gene_ids=False,):
         if gene_type == "prodigal":
             read_f = read_prodigal_gff
         else:
             read_f = read_preannotated_genes
         
-        return cls(read_f(fn), genome_id=genome_id, speci=speci,)
+        return cls(read_f(fn), genome_id=genome_id, speci=speci, composite_gene_ids=composite_gene_ids,)

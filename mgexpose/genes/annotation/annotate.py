@@ -1,9 +1,11 @@
+""" Module to annotate gene sets. """
+
 import os
 
-from cluster import add_clusters
-from eggnog import add_eggnog_annotation
-from recombinases import add_recombinases
-from secretion import add_secretion_systems
+from .cluster import add_clusters
+from .eggnog import add_eggnog_annotation
+from .recombinases import add_recombinases
+from .secretion import add_secretion_systems
 
 from ..geneset import GeneSet
 
@@ -24,10 +26,10 @@ def annotate_genes(args,):
 
     if args.txs_macsy_report is not None and args.txs_macy_rules is not None:
         add_secretion_systems(genes, args.txs_macsy_report, args.txs_macsy_rules,)
-        
+
     if args.phage_eggnog_data is not None and args.phage_filter_terms is not None:
         add_eggnog_annotation(genes, args.phage_eggnog_data, args.phage_filter_terms,)
-        
+
     if args.cluster_data is not None:
         add_clusters(
             genes,
@@ -46,4 +48,3 @@ def annotate_genes(args,):
 
 
     return list(genes.values())
-    
