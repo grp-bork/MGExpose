@@ -1,8 +1,11 @@
+# pylint: disable=R0913,R0914,R0917
+""" Module containing writer functions. """
+
 import contextlib
 import gzip
 import os
 
-from ..islands import MgeGenomicIsland
+from ...islands.mge_genomic_island import MgeGenomicIsland
 from ..readers import read_fasta
 
 
@@ -111,7 +114,11 @@ def write_final_results(
                             del attribs["name"]
                         except KeyError:
                             pass
-                        attrib_str = ";".join(f"{item[0]}={item[1]}" for item in attribs.items() if item[1])
+                        attrib_str = ";".join(
+                            f"{item[0]}={item[1]}" for item in attribs.items() if item[1]
+                        )
                         print(
-                            f">{island.get_id()} {attrib_str}", seq[island.start - 1: island.end], sep="\n", file=_out
+                            f">{island.get_id()} {attrib_str}",
+                            seq[island.start - 1: island.end],
+                            sep="\n", file=_out,
                         )
