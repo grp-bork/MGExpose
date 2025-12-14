@@ -1,4 +1,4 @@
-# pylint: disable=E0401,R0914
+# pylint: disable=C0301,E0401,R0914
 """ Module to detect and annotate recombinases via pyhmmer. """
 
 import pathlib
