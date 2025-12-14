@@ -1,4 +1,4 @@
-# pylint: disable=R0916
+# pylint: disable=C0301,R0916
 
 """ Recombinase rules and aliases """
 
