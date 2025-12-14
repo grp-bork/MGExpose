@@ -3,7 +3,7 @@
 import contextlib
 import logging
 
-from .islands import GenomicIsland, AnnotatedGenomicIsland, MgeGenomicIsland
+from . import GenomicIsland, AnnotatedGenomicIsland, MgeGenomicIsland
 
 
 logger = logging.getLogger(__name__)
@@ -179,10 +179,14 @@ def prepare_precomputed_islands(single_island=None, island_file=None, genome_id=
     if single_island and island_file:
         raise ValueError("Both --single_island and --precomputed_islands set.")
     if single_island and not island_file:
-        precomputed_islands = [GenomicIsland.from_region_string(single_island, genome_id=genome_id,)]
+        precomputed_islands = [
+            GenomicIsland.from_region_string(single_island, genome_id=genome_id,)
+        ]
     elif not single_island and island_file:
         with open(island_file, "rt", encoding="UTF-8",) as _in:
-            precomputed_islands = [GenomicIsland.from_region_string(line, genome_id=genome_id,) for line in _in]
+            precomputed_islands = [
+                GenomicIsland.from_region_string(line, genome_id=genome_id,) for line in _in
+            ]
 
     if precomputed_islands is not None:
         precomputed_islands_by_contig = {}
