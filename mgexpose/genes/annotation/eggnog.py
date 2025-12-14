@@ -78,15 +78,15 @@ class EggnogReader:
 
 
 def add_eggnog_annotation(genes, fn, phage_fn):
-	""" Add eggnog output and phage signals to each gene """
+    """ Add eggnog output and phage signals to each gene """
 
-	eggnog_annotations = EggnogReader.parse_emapper(
-		fn,
-		PhageDetection(phage_fn),
-	)
+    eggnog_annotations = EggnogReader.parse_emapper(
+        fn,
+        PhageDetection(phage_fn),
+    )
 
-	for gene_id, phage_data, eggnog_data in eggnog_annotations:
-		gene = genes.get(gene_id)
-		if gene is not None:
-			gene.eggnog = eggnog_data
-			gene.phage = phage_data
+    for gene_id, phage_data, eggnog_data in eggnog_annotations:
+        gene = genes.get(gene_id)
+        if gene is not None:
+            gene.eggnog = eggnog_data
+            gene.phage = phage_data
