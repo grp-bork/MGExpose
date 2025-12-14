@@ -20,7 +20,7 @@ import logging
 from collections import Counter
 from dataclasses import dataclass
 
-from . import GenomicIsland
+from .genomic_island import GenomicIsland
 
 
 logger = logging.getLogger(__name__)
