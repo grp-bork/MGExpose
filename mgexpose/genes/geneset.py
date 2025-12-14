@@ -2,7 +2,7 @@ import logging
 import os
 
 from .gene import Gene
-from .gene_annotation.eggnog import EggnogReader
+from .annotation.eggnog import EMAPPER_FIELDS
 from .gffio import read_prodigal_gff
 from .readers import read_preannotated_genes
 
@@ -51,7 +51,7 @@ class GeneSet(dict):
         headers.remove("secretion_systems")
         headers.remove("secretion_rules")
         headers += ("secretion_systems", "secretion_rules",)
-        headers += EggnogReader.EMAPPER_FIELDS["v2.1.2"]
+        headers += EMAPPER_FIELDS["v2.1.2"]
         headers.remove("description")
         
         print(*headers, sep="\t", file=outstream)
@@ -61,7 +61,7 @@ class GeneSet(dict):
                 eggnog_data = dict(gene.eggnog)
             eggnog_cols = (
                 eggnog_data.get(k)
-                for k in EggnogReader.EMAPPER_FIELDS["v2.1.2"]
+                for k in EMAPPER_FIELDS["v2.1.2"]
                 if k != "description"
             )
 

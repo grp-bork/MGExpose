@@ -7,7 +7,7 @@ import re
 from ast import literal_eval
 from dataclasses import dataclass, field
 
-from .eggnog import EggnogReader
+from .annotation.eggnog import EMAPPER_FIELDS
 
 
 @dataclass
@@ -120,7 +120,7 @@ class Gene:
             secretion_rules=literal_eval(f"[{secretion_rules}]") if secretion_rules else [],
             eggnog=tuple(
                 (k, attribs.get(k))
-                for k in EggnogReader.EMAPPER_FIELDS["v2.1.2"]
+                for k in EMAPPER_FIELDS["v2.1.2"]
                 if attribs.get(k) and k != "description"
             ),
             parent=attribs.get("Parent", "NA",),
@@ -222,7 +222,7 @@ class Gene:
             secretion_rules=secretion_rules,
             eggnog=tuple(
                 (k, kwargs.get(k))
-                for k in EggnogReader.EMAPPER_FIELDS["v2.1.2"]
+                for k in EMAPPER_FIELDS["v2.1.2"]
                 if kwargs.get(k) and k != "description"
             ),
             parent=kwargs.get("parent"),
