@@ -1,16 +1,19 @@
+# pylint: disable=R0913,R0917
+""" Module to manage gene sets. """
+
 import logging
-import os
 
 from .gene import Gene
 from .annotation.eggnog import EMAPPER_FIELDS
-from .gffio import read_prodigal_gff
-from .readers import read_preannotated_genes
+from ..utils.gffio import read_prodigal_gff
+from ..utils.readers import read_preannotated_genes
 
 
 logger = logging.getLogger(__name__)
 
 
 class GeneSet(dict):
+    """ Class to manage gene sets. """
     def __init__(
         self,
         genes,
@@ -35,14 +38,14 @@ class GeneSet(dict):
                 # CALOLV020000065.1	[...]	ID=65_14;... -> CALOLV020000065.1_14
                 # gene_id = f'{annotation[0]}_{gene_id.split("_")[-1]}'
                 gene.id = f'{gene.contig}_{gene.id.split("_")[-1]}'
-            
+
             if genome_id is not None and gene.genome_id is None:
                 gene.genome = genome_id
             if speci is not None and gene.speci is None:
                 gene.speci = speci
-            
+
             self[gene.id] = gene
-    
+
     def dump(self, outstream):
         """ Write gene info to stream. """
 
@@ -53,7 +56,7 @@ class GeneSet(dict):
         headers += ("secretion_systems", "secretion_rules",)
         headers += EMAPPER_FIELDS["v2.1.2"]
         headers.remove("description")
-        
+
         print(*headers, sep="\t", file=outstream)
         for gene in self.values():
             eggnog_data = {}
@@ -81,10 +84,23 @@ class GeneSet(dict):
             )
 
     @classmethod
-    def from_file(cls, fn, genome_id=None, speci=None, gene_type="prodigal", composite_gene_ids=False,):
+    def from_file(
+        cls,
+        fn,
+        genome_id=None,
+        speci=None,
+        gene_type="prodigal",
+        composite_gene_ids=False,
+    ):
+        """ Generate a GeneSet from a prodigal gff or mgexpose gene_info. """
         if gene_type == "prodigal":
             read_f = read_prodigal_gff
         else:
             read_f = read_preannotated_genes
-        
-        return cls(read_f(fn), genome_id=genome_id, speci=speci, composite_gene_ids=composite_gene_ids,)
+
+        return cls(
+            read_f(fn),
+            genome_id=genome_id,
+            speci=speci,
+            composite_gene_ids=composite_gene_ids,
+        )
