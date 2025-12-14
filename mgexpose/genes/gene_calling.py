@@ -1,4 +1,4 @@
-# pylint disable=E0401
+# pylint: disable=E0401
 """ Module for gene calling with pyrodigal. """
 
 import pathlib
