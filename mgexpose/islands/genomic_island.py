@@ -15,16 +15,14 @@ consisting of Genes.
 It can be saved in a tsv or gff3 format together with its attributes and gene annotations.
 The MGE type of each MGE Genomic Island is defined by applying MGE Rule.
 """
-import itertools as it
+
 import logging
 import sys
-import warnings
 
 from collections import Counter
 from dataclasses import dataclass, field
 
-from .gene import Gene
-from .recombinases import MgeRule, MGE_ALIASES
+from ..genes.gene import Gene
 
 
 logger = logging.getLogger(__name__)
