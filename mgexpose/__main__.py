@@ -163,46 +163,50 @@ def main():
         cdir = debug_dir = os.path.join(args.output_dir, "debug")
     pathlib.Path(cdir).mkdir(exist_ok=True, parents=True)
 
-    genomic_islands = None
-    skip_island_identification = True
+    if args.command in ("call_genes", "recombinase_scan",):
 
-    if args.command == "denovo":
-        skip_island_identification = args.skip_island_identification
-        genomic_islands = denovo_annotation(args, debug_dir=debug_dir)
+        if args.command == "call_genes":
+            run_pyrodigal(args)
 
-    elif args.command == "annotate_genes":
-        annotate_genes(args, debug_dir=debug_dir,)
+        elif args.command == "recombinase_scan":
+            run_pyhmmer(args)
 
-    elif args.command == "call_genes":
-        run_pyrodigal(args)
+    else:
 
-    elif args.command == "recombinase_scan":
-        run_pyhmmer(args)
+        genomic_islands = None
+        skip_island_identification = True
 
-    elif args.command == "annotate":
-        raise NotImplementedError
+        if args.command == "denovo":
+            skip_island_identification = args.skip_island_identification
+            genomic_islands = denovo_annotation(args, debug_dir=debug_dir)
 
-    if not skip_island_identification:
+        elif args.command == "annotate_genes":
+            annotate_genes(args, debug_dir=debug_dir,)
 
-        recombinase_islands = identify_recombinase_islands(
-            genomic_islands,
-            args.genome_id,
-            args.mge_rules,
-            output_dir=debug_dir,
-        )
+        elif args.command == "annotate":
+            raise NotImplementedError
 
-        if recombinase_islands:
-            write_final_results(
-                recombinase_islands,
-                args.output_dir,
+        if not skip_island_identification:
+
+            recombinase_islands = identify_recombinase_islands(
+                genomic_islands,
                 args.genome_id,
-                args.output_suffix,
-                dbformat=args.dbformat,
-                write_gff=args.write_gff,
-                write_genes_to_gff=args.write_genes_to_gff,
-                add_functional_annotation=args.add_functional_annotation,
-                genome_seqs=args.extract_islands,
+                args.mge_rules,
+                output_dir=debug_dir,
             )
+
+            if recombinase_islands:
+                write_final_results(
+                    recombinase_islands,
+                    args.output_dir,
+                    args.genome_id,
+                    args.output_suffix,
+                    dbformat=args.dbformat,
+                    write_gff=args.write_gff,
+                    write_genes_to_gff=args.write_genes_to_gff,
+                    add_functional_annotation=args.add_functional_annotation,
+                    genome_seqs=args.extract_islands,
+                )
 
 
 if __name__ == "__main__":
