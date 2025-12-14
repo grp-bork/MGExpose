@@ -48,12 +48,13 @@ def parse_db_clusters(cluster_data):
 
 
 def parse_full_seq_clusters(
-    genome_id_prefix,
     genes,
     cluster_data,
     output_dir=None,
 ):
     """ Parse data from linclust gene clustering. """
+
+    genome_id_prefix = genes[0].genome
 
     genomes = set()
     cluster_genes = Counter()

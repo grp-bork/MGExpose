@@ -211,7 +211,6 @@ class GeneAnnotator:
                 core_threshold=core_threshold,
                 output_dir=output_dir,
             )
-        # yield from self.genes.values()
         return self.genes.values()
 
     def dump_genes(self, outstream):
@@ -227,7 +226,6 @@ class GeneAnnotator:
 
         print(*headers, sep="\t", file=outstream)
         for gene in self.genes.values():
-            gene.stringify_speci()
             eggnog_data = {}
             if gene.eggnog:
                 eggnog_data = dict(gene.eggnog)

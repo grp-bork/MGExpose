@@ -2,6 +2,8 @@ import csv
 import gzip
 import re
 
+from phage import PhageDetection
+
 
 class EggnogReader:
     """
@@ -72,3 +74,19 @@ class EggnogReader:
                         )
                         phage_signal = (None, eggnog_freetext)[is_phage]
                     yield gene_id, phage_signal, eggnog_gene_ann
+
+
+
+def add_eggnog_annotation(genes, fn, phage_fn):
+	""" Add eggnog output and phage signals to each gene """
+
+	eggnog_annotations = EggnogReader.parse_emapper(
+		fn,
+		PhageDetection(phage_fn),
+	)
+
+	for gene_id, phage_data, eggnog_data in eggnog_annotations:
+		gene = genes.get(gene_id)
+		if gene is not None:
+			gene.eggnog = eggnog_data
+			gene.phage = phage_data

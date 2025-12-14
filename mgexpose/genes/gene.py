@@ -69,15 +69,16 @@ class Gene:
 
     def __str__(self):
         """ String representation. """
+
+        speci = self.speci
+        if not isinstance(speci, str):
+            # converts non-string speci annotation (coreg mode) to string.
+            speci = ":".join(sorted(speci))
+
         return "\t".join(
-            f"{v}" for k, v in self.__dict__.items()
+            f"{v if k != 'speci' else speci}" for k, v in self.__dict__.items()
             if k not in ("eggnog", "secretion_systems", "secretion_rules",)
         )
-
-    def stringify_speci(self):
-        """ Converts non-string speci annotation (coreg mode) to string. """
-        if not isinstance(self.speci, str):
-            self.speci = ":".join(sorted(self.speci))
 
     def __hash__(self):
         """ hash function """

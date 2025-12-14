@@ -3,7 +3,6 @@
 import contextlib
 import logging
 
-
 from .islands import GenomicIsland, AnnotatedGenomicIsland, MgeGenomicIsland
 
 
