@@ -1,8 +1,9 @@
 """ GFF I/O -- wannabe serialisation module """
 
-from .gene import Gene
-from .islands import GenomicIsland, MgeGenomicIsland
-from .utils.chunk_reader import get_lines_from_chunks
+from .chunk_reader import get_lines_from_chunks
+from ..genes.gene import Gene
+from ..islands.genomic_island import GenomicIsland
+from ..islands.mge_genomic_island import MgeGenomicIsland
 
 
 def read_island_gff(fn, island_cls):
