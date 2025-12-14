@@ -1,3 +1,6 @@
+# pylint: disable=E0401,R0914
+""" Module to detect and annotate recombinases via pyhmmer. """
+
 import pathlib
 
 import pyhmmer
@@ -19,6 +22,8 @@ RECOMBINASE_SCAN_HEADER = (
 
 
 def get_protein_coords(gff):
+    """ Read protein coordinates from gff. """
+
     proteins = {}
     for gene in read_prodigal_gff(gff):
         gene.id = f'{gene.contig}_{gene.id.split("_")[-1]}'
@@ -27,6 +32,8 @@ def get_protein_coords(gff):
 
 
 def run_pyhmmer(args):
+    """ Detect and annotate recombinases via pyhmmer. """
+
     proteins = get_protein_coords(args.gff)
 
     if args.mge_rules and pathlib.Path(args.mge_rules).is_file():
@@ -34,11 +41,21 @@ def run_pyhmmer(args):
     else:
         raise ValueError("Cannot read mge_rules.")
 
-    with pyhmmer.easel.SequenceFile(args.proteins_fasta, digital=True, alphabet=pyhmmer.easel.Alphabet.amino()) as seq_file:
+    with pyhmmer.easel.SequenceFile(
+        args.proteins_fasta,
+        digital=True,
+        alphabet=pyhmmer.easel.Alphabet.amino(),
+    ) as seq_file:
         protein_seqs = list(seq_file)
     with pyhmmer.plan7.HMMFile(args.recombinase_hmms) as hmm_file:
         hmm_hits = list(
-            pyhmmer.hmmsearch(hmm_file, protein_seqs, cpus=args.threads, backend="multiprocessing", bit_cutoffs="gathering")
+            pyhmmer.hmmsearch(
+                hmm_file,
+                protein_seqs,
+                cpus=args.threads,
+                backend="multiprocessing",
+                bit_cutoffs="gathering",
+            )
         )
 
     outpath = pathlib.Path(args.output_dir)
@@ -48,12 +65,8 @@ def run_pyhmmer(args):
         outpath / f"{args.genome_id}.recombinase_hmmsearch.out",
         "wb"
     )
-    # filtered_table_out = open(
-    #     outpath / f"{args.genome_id}.recombinase_hmmsearch.besthits.out",
-    #     "wb"
-    # )
 
-    with raw_table_out:  # filtered_table_out:
+    with raw_table_out:
         seen = {}
         for i, hits in enumerate(hmm_hits):
             write_header = i == 0
@@ -65,7 +78,6 @@ def run_pyhmmer(args):
                     print(hit.score, best_score)
                     if hit.score > best_score:
                         seen[hit_name] = hit.score, domain, hit
-            # hits.write(filtered_table_out, header=write_header)
 
     if seen:
         recombinases = []
