@@ -66,6 +66,7 @@ class GenomicIsland:
          Reverses get_id(). """
         cols = id_string.split("_")
         contig, coords = cols[3].split(':')
+        coords = coords.split("-")
 
         return "_".join(cols[1:3]), contig, int(coords[0]), int(coords[1])
 
