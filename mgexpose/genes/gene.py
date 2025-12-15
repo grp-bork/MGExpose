@@ -116,7 +116,7 @@ class Gene:
         return cls(
             id=attribs["ID"],
             genome=attribs.get("genome"),
-            speci=attribs.get("speci"),
+            speci=attribs.get("speci", "no_speci"),
             contig=cols[0],
             start=int(cols[3]),
             end=int(cols[4]),
