@@ -39,7 +39,7 @@ class GeneSet(dict):
                 # gene_id = f'{annotation[0]}_{gene_id.split("_")[-1]}'
                 gene.id = f'{gene.contig}_{gene.id.split("_")[-1]}'
 
-            if genome_id is not None and gene.genome_id is None:
+            if genome_id is not None and gene.genome is None:
                 gene.genome = genome_id
             if speci is not None and gene.speci is None:
                 gene.speci = speci
