@@ -20,6 +20,7 @@ def read_island_gff(fn, island_cls):
                     island = island_cls.from_gff(*cols)
                 elif cols[2] == "gene":
                     gene = Gene.from_gff(*cols)
+                    print(gene)
                     if island is not None:
                         if not island.genes:
                             island.genes = set()
