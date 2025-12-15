@@ -354,9 +354,14 @@ class MgeGenomicIsland(AnnotatedGenomicIsland):
         except Exception as exc:
             raise ValueError(f"mge string weird? {attribs['mge'].split(',')}") from exc
 
-        if mges.get("is_tn"):
-            mges["c_tn"] = mges["is_tn"]
-            del mges["is_tn"]
+
+        for mge_type, mge_type_ in [
+            ("is_tn", "c_tn"), ("mi", "c_mi"), ("pli", "c_pli"),
+            ("ce", "c_ce"), ("nmi", "c_nmi"), 
+        ]:
+            if mges.get(mge_type):
+                mges[mge_type_] = mges[mge_type]
+                del mges[mge_type]
 
         genome_id, *_ = GenomicIsland.parse_id(attribs["ID"])
         # TODO: check coordinates and ID overlap
