@@ -31,8 +31,8 @@ def compile_annotations(args):
             annotations.append(
                 partial(
                     add_secretion_systems,
-                    txs_macsy_report=args.txs_macsy_report,
-                    txs_macsy_rules=args.txs_macsy_rules,
+                    args.txs_macsy_report,
+                    args.txs_macsy_rules,
                 )
             )
     except AttributeError:
