@@ -218,11 +218,13 @@ def main():
             # genomic_islands = denovo_annotation(args, debug_dir=debug_dir)
         
         elif args.command == "reannotate":
+            from .islands.genomic_island import GenomicIsland
             from .islands.annotated_genomic_island import AnnotatedGenomicIsland
             from .islands.mge_genomic_island import MgeGenomicIsland
-            from .utils.gffio import read_mge_genomic_islands_gff
+            from .utils.gffio import read_mge_genomic_islands_gff, read_island_gff
             from .utils.writers import extract_mge_seqs
-            genomic_islands = read_mge_genomic_islands_gff(args.input_gff)
+            # genomic_islands = read_mge_genomic_islands_gff(args.input_gff)
+            genomic_islands = read_island_gff(args.input_gff, GenomicIsland)
             mge_rules = read_mge_rules(args.mge_rules)
             out_prefix = os.path.join(
                 args.output_dir,
@@ -235,10 +237,10 @@ def main():
                 for island in genomic_islands:
                     genes = GeneSet.from_island(island)
                     annotated_genes = annotate_genes(genes, args,)
-                    # annotated_island = AnnotatedGenomicIsland.from_genomic_island(island)
-                    # mge_island = MgeGenomicIsland.from_annotated_genomic_island(annotated_island)
-                    mge_island = island
-                    # mge_island.evaluate_recombinases(mge_rules)
+                    annotated_island = AnnotatedGenomicIsland.from_genomic_island(island)
+                    mge_island = MgeGenomicIsland.from_annotated_genomic_island(annotated_island)
+                    # mge_island = island
+                    mge_island.evaluate_recombinases(mge_rules)
                     mge_island.to_gff(
                         _out,
                         source_db=None,

@@ -14,7 +14,7 @@ def read_island_gff(fn, island_cls):
             line = line.strip()
             if line and line[0] != "#":
                 cols = line.split("\t")
-                if cols[2] == island_cls.GFFTYPE:
+                if cols[2] in ("region", "mobile_genetic_element"):
                     if island is not None:
                         yield island
                     island = island_cls.from_gff(*cols)
