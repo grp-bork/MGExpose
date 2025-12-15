@@ -12,143 +12,145 @@ import sys
 
 from .genes.annotation.annotate import annotate_genes
 from .genes.gene_calling import run_pyrodigal
+from .genes.geneset import GeneSet
 from .handle_args import handle_args
-from .islands.island_processing import (
-    generate_island_set,
-    annotate_islands,
-    evaluate_islands,
-    prepare_precomputed_islands
-)
+from .islands.island_processing import annotate_islands, evaluate_islands, prepare_islands
+# from .islands.island_processing import (
+#     generate_island_set,
+#     annotate_islands,
+#     evaluate_islands,
+#     prepare_precomputed_islands
+# )
 from .recombinases.recombinase_scan import run_pyhmmer
-from .utils.readers import read_mge_rules
+from .utils.readers import read_precomputed_islands, read_mge_rules
 from .utils.writers import dump_islands, write_final_results
 
 
 logger = logging.getLogger(__name__)
 
 
-def process_islands(genes, genome_id, single_island=None, island_file=None, output_dir=None,):
-    """ helper function to declutter main() """
-    precomputed_islands = prepare_precomputed_islands(
-        single_island=single_island,
-        island_file=island_file,
-        genome_id=genome_id,
-    )
+# def process_islands_x(genes, genome_id, single_island=None, island_file=None, output_dir=None,):
+#     """ helper function to declutter main() """
+#     precomputed_islands = prepare_precomputed_islands(
+#         single_island=single_island,
+#         island_file=island_file,
+#         genome_id=genome_id,
+#     )
 
-    if output_dir:
-        pang_calls_out = open(
-            os.path.join(
-                output_dir,
-                f"{genome_id}.pan_genome_calls.txt"),
-            "wt",
-            encoding="UTF-8",
-        )
+#     if output_dir:
+#         pang_calls_out = open(
+#             os.path.join(
+#                 output_dir,
+#                 f"{genome_id}.pan_genome_calls.txt"),
+#             "wt",
+#             encoding="UTF-8",
+#         )
 
-        islands_out = open(
-            os.path.join(
-                output_dir,
-                f"{genome_id}.pan_genome_islands.txt",
-            ),
-            "wt",
-            encoding="UTF-8",
-        )
+#         islands_out = open(
+#             os.path.join(
+#                 output_dir,
+#                 f"{genome_id}.pan_genome_islands.txt",
+#             ),
+#             "wt",
+#             encoding="UTF-8",
+#         )
 
-        raw_islands_out = open(
-            os.path.join(
-                output_dir,
-                "..",  # temporary! this is only until i know if this is final output or not
-                f"{genome_id}.pan_genome_islands_raw.txt",
-            ),
-            "wt",
-            encoding="UTF-8",
-        )
-    else:
-        pang_calls_out, islands_out, raw_islands_out = [contextlib.nullcontext() for _ in range(3)]
+#         raw_islands_out = open(
+#             os.path.join(
+#                 output_dir,
+#                 "..",  # temporary! this is only until i know if this is final output or not
+#                 f"{genome_id}.pan_genome_islands_raw.txt",
+#             ),
+#             "wt",
+#             encoding="UTF-8",
+#         )
+#     else:
+#         pang_calls_out, islands_out, raw_islands_out = [contextlib.nullcontext() for _ in range(3)]
 
-    with pang_calls_out, islands_out, raw_islands_out:
-        yield from generate_island_set(
-            genes,
-            pang_calls_out=pang_calls_out,
-            raw_islands_out=raw_islands_out,
-            islands_out=islands_out,
-            precomputed_islands=precomputed_islands,
-        )
-
-
-def identify_recombinase_islands(islands, genome_id, mge_rules, output_dir=None):
-    """Identify MGE-islands according to a set of rules
-     using various signals annotated in the corresponding gene set. """
-    if output_dir:
-        step1_out = open(
-            os.path.join(
-                output_dir,
-                f"{genome_id}.assign_mge.step1.txt",
-            ),
-            "wt",
-            encoding="UTF-8",
-        )
-
-        step2_out = open(
-            os.path.join(
-                output_dir,
-                f"{genome_id}.assign_mge.step2.txt",
-            ),
-            "wt",
-            encoding="UTF-8",
-        )
-
-        step3_out = open(
-            os.path.join(
-                output_dir,
-                f"{genome_id}.assign_mge.step3.txt",
-            ),
-            "wt",
-            encoding="UTF-8",
-        )
-
-    else:
-        step1_out, step2_out, step3_out = [contextlib.nullcontext() for _ in range(3)]
-
-    with step1_out:
-        annotated_islands = list(annotate_islands(islands, outstream=step1_out))
-    with step2_out, step3_out:
-        return list(
-            evaluate_islands(
-                annotated_islands,
-                read_mge_rules(mge_rules),
-                outstream=step2_out,
-                outstream2=step3_out
-            )
-        )
+#     with pang_calls_out, islands_out, raw_islands_out:
+#         yield from generate_island_set(
+#             genes,
+#             pang_calls_out=pang_calls_out,
+#             raw_islands_out=raw_islands_out,
+#             islands_out=islands_out,
+#             precomputed_islands=precomputed_islands,
+#         )
 
 
-def denovo_annotation(args, debug_dir=None):
-    """ denovo annotation """
-    out_prefix = os.path.join(args.output_dir, args.genome_id)
+# def identify_recombinase_islands(islands, genome_id, mge_rules, output_dir=None):
+#     """Identify MGE-islands according to a set of rules
+#      using various signals annotated in the corresponding gene set. """
+#     if output_dir:
+#         step1_out = open(
+#             os.path.join(
+#                 output_dir,
+#                 f"{genome_id}.assign_mge.step1.txt",
+#             ),
+#             "wt",
+#             encoding="UTF-8",
+#         )
 
-    annotated_genes = annotate_genes(args,)
+#         step2_out = open(
+#             os.path.join(
+#                 output_dir,
+#                 f"{genome_id}.assign_mge.step2.txt",
+#             ),
+#             "wt",
+#             encoding="UTF-8",
+#         )
 
-    genomic_islands = list(
-        process_islands(
-            annotated_genes,
-            args.genome_id,
-            single_island=args.single_island,
-            island_file=args.precomputed_islands,
-            output_dir=debug_dir,
-        )
-    )
+#         step3_out = open(
+#             os.path.join(
+#                 output_dir,
+#                 f"{genome_id}.assign_mge.step3.txt",
+#             ),
+#             "wt",
+#             encoding="UTF-8",
+#         )
 
-    if args.dump_genomic_islands or args.skip_island_identification:
+#     else:
+#         step1_out, step2_out, step3_out = [contextlib.nullcontext() for _ in range(3)]
 
-        dump_islands(
-            genomic_islands,
-            out_prefix,
-            args.dbformat,
-            write_genes=True,
-            add_functional_annotation=args.add_functional_annotation,
-        )
+#     with step1_out:
+#         annotated_islands = list(annotate_islands(islands, outstream=step1_out))
+#     with step2_out, step3_out:
+#         return list(
+#             evaluate_islands(
+#                 annotated_islands,
+#                 read_mge_rules(mge_rules),
+#                 outstream=step2_out,
+#                 outstream2=step3_out
+#             )
+#         )
 
-    return genomic_islands
+
+# def denovo_annotation(args, debug_dir=None):
+#     """ denovo annotation """
+#     out_prefix = os.path.join(args.output_dir, args.genome_id)
+
+#     annotated_genes = annotate_genes(args,)
+
+#     genomic_islands = list(
+#         process_islands(
+#             annotated_genes,
+#             args.genome_id,
+#             single_island=args.single_island,
+#             island_file=args.precomputed_islands,
+#             output_dir=debug_dir,
+#         )
+#     )
+
+#     if args.dump_genomic_islands or args.skip_island_identification:
+
+#         dump_islands(
+#             genomic_islands,
+#             out_prefix,
+#             args.dbformat,
+#             write_genes=True,
+#             add_functional_annotation=args.add_functional_annotation,
+#         )
+
+#     return genomic_islands
 
 
 def main():
@@ -178,7 +180,74 @@ def main():
 
         if args.command == "denovo":
             skip_island_identification = args.skip_island_identification
-            genomic_islands = denovo_annotation(args, debug_dir=debug_dir)
+            genes = GeneSet.from_file(
+                args.input_genes,
+                genome_id=args.genome_id,
+                speci=args.speci,
+                gene_type=args.input_gene_type,
+                composite_gene_ids=args.dbformat != "PG3",
+            )
+
+            annotated_genes = annotate_genes(genes, args,)
+
+            precomputed_islands = None
+            if args.single_island or args.precomputed_islands:
+                precomputed_islands = read_precomputed_islands(
+                    genome_id=args.genome_id,
+                    single_island=args.single_island,
+                    island_file=args.precomputed_islands,
+                )
+            
+            genomic_islands = prepare_islands(annotated_genes, precomputed_islands=precomputed_islands,)
+            annotated_islands = annotate_islands(genomic_islands,)
+            mge_islands = list(evaluate_islands(annotated_islands, read_mge_rules(args.mge_rules),))
+
+            if mge_islands:
+                write_final_results(mge_islands, args)
+                #     mge_islands,
+                #     args.output_dir,
+                #     args.genome_id,
+                #     args.output_suffix,
+                #     dbformat=args.dbformat,
+                #     write_gff=args.write_gff,
+                #     write_genes_to_gff=args.write_genes_to_gff,
+                #     add_functional_annotation=args.add_functional_annotation,
+                #     genome_seqs=args.extract_islands,
+                # )
+
+            # genomic_islands = denovo_annotation(args, debug_dir=debug_dir)
+        
+        elif args.command == "reannotate":
+            from .islands.annotated_genomic_island import AnnotatedGenomicIsland
+            from .islands.mge_genomic_island import MgeGenomicIsland
+            from .utils.gffio import read_genomic_islands_gff
+            from .utils.writers import extract_mge_seqs
+            genomic_islands = read_genomic_islands_gff(args.input_gff)
+            mge_rules = read_mge_rules(args.mge_rules)
+            out_prefix = os.path.join(
+                args.output_dir,
+                f"{args.genome_id}"
+            )   
+
+            with open(f"{out_prefix}.mge_islands.reannotated.gff3", "wt") as _out:
+                print("##gff-version 3", file=_out)
+                mge_islands = []
+                for island in genomic_islands:
+                    genes = GeneSet.from_island(island)
+                    annotated_genes = annotate_genes(genes, args,)
+                    annotated_island = AnnotatedGenomicIsland.from_genomic_island(island)
+                    mge_island = MgeGenomicIsland.from_annotated_genomic_island(annotated_island)
+                    mge_island.evaluate_recombinases(mge_rules)
+                    mge_island.to_gff(
+                        _out,
+                        source_db=None,
+                        write_genes=True,
+                        add_functional_annotation=True,
+                    )
+                    mge_islands.append(mge_island)
+                if args.genome_fasta:
+                    extract_mge_seqs(args.genome_fasta, mge_islands, out_prefix)
+
 
         elif args.command == "annotate_genes":
             annotate_genes(args, debug_dir=debug_dir,)
@@ -186,27 +255,27 @@ def main():
         elif args.command == "annotate":
             raise NotImplementedError
 
-        if not skip_island_identification:
+        # if not skip_island_identification:
 
-            recombinase_islands = identify_recombinase_islands(
-                genomic_islands,
-                args.genome_id,
-                args.mge_rules,
-                output_dir=debug_dir,
-            )
+        #     recombinase_islands = identify_recombinase_islands(
+        #         genomic_islands,
+        #         args.genome_id,
+        #         args.mge_rules,
+        #         output_dir=debug_dir,
+        #     )
 
-            if recombinase_islands:
-                write_final_results(
-                    recombinase_islands,
-                    args.output_dir,
-                    args.genome_id,
-                    args.output_suffix,
-                    dbformat=args.dbformat,
-                    write_gff=args.write_gff,
-                    write_genes_to_gff=args.write_genes_to_gff,
-                    add_functional_annotation=args.add_functional_annotation,
-                    genome_seqs=args.extract_islands,
-                )
+        #     if recombinase_islands:
+        #         write_final_results(
+        #             recombinase_islands,
+        #             args.output_dir,
+        #             args.genome_id,
+        #             args.output_suffix,
+        #             dbformat=args.dbformat,
+        #             write_gff=args.write_gff,
+        #             write_genes_to_gff=args.write_genes_to_gff,
+        #             add_functional_annotation=args.add_functional_annotation,
+        #             genome_seqs=args.extract_islands,
+        #         )
 
 
 if __name__ == "__main__":

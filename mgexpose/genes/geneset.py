@@ -104,3 +104,7 @@ class GeneSet(dict):
             speci=speci,
             composite_gene_ids=composite_gene_ids,
         )
+
+    @classmethod
+    def from_island(cls, island,):
+        return cls(island.genes, island.genome, island.speci,)

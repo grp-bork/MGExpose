@@ -18,8 +18,8 @@ logger = logging.getLogger(__name__)
 
 
 def add_clusters(
-    genes,
     fn,
+    genes,
     use_y_clusters=False,
     core_threshold=0.95,
     output_dir=None,

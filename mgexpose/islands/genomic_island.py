@@ -141,6 +141,9 @@ class GenomicIsland:
                 self.recombinases[gene.recombinase] += 1
             self.genes.add(gene)
 
+    def has_compatible_genome_type(self, gene):
+        return self.is_core == gene.is_core
+
     def get_position(self):
         """ Return genomic position tuple. """
         return (self.contig, self.start, self.end)

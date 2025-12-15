@@ -125,6 +125,23 @@ def handle_args(args):
 
     identify_mobile_islands_ap.set_defaults(func=None)  # TODO
 
+    reannotate_ap = subparsers.add_parser(
+        "reannotate",
+        help="Reannotate previous MGExpose output",
+        parents=(parent_subparser,),
+    )
+
+    reannotate_ap.add_argument("input_gff", type=str)
+    reannotate_ap.add_argument("genome_id", type=str)
+    reannotate_ap.add_argument("--genome_fasta", type=str)
+    reannotate_ap.add_argument("--mge_rules", type=str)
+    reannotate_ap.add_argument("--txs_macsy_rules", type=str)
+    reannotate_ap.add_argument("--txs_macsy_report", type=str)
+    reannotate_ap.add_argument("--extract_islands", type=str)
+
+    reannotate_ap.set_defaults(func=None)  # TODO 
+
+
     call_genes_ap = subparsers.add_parser(
         "call_genes",
         help="Call genes with Pyrodigal",

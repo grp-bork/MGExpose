@@ -2,7 +2,7 @@
 from ...utils.readers import parse_macsyfinder_report
 
 
-def add_secretion_systems(genes, fn, rules_fn):
+def add_secretion_systems(fn, genes, rules_fn):
     """ Add information from txsscan """
     for gene_id, secretion_data in parse_macsyfinder_report(fn, rules_fn):
         gene = genes.get(gene_id)

@@ -76,7 +76,7 @@ def parse_emapper(f, emapper_version="v2.1.2", phage_annotation=None):
                 yield gene_id, phage_signal, eggnog_gene_ann
 
 
-def add_eggnog_annotation(genes, fn, phage_fn):
+def add_eggnog_annotation(fn, phage_fn, genes):
     """ Add eggnog output and phage signals to each gene """
 
     eggnog_annotations = parse_emapper(

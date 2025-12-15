@@ -31,35 +31,36 @@ def dump_islands(islands, out_prefix, db, write_genes=False, add_functional_anno
             )
 
 
-def write_final_results(
-    recombinase_islands,
-    output_dir,
-    genome_id,
-    output_suffix,
-    dbformat=None,
-    write_tsv=True,
-    write_gff=True,
-    write_genes_to_gff=True,
-    add_functional_annotation=False,
-    genome_seqs=None,
-):
+def write_final_results(recombinase_islands, args):
+#     recombinase_islands,
+#     output_dir,
+#     genome_id,
+#     output_suffix,
+#     dbformat=None,
+#     write_tsv=True,
+#     write_gff=True,
+#     write_genes_to_gff=True,
+#     add_functional_annotation=False,
+#     genome_seqs=None,
+# ):
     """ write final results """
 
     outstream = contextlib.nullcontext()
     gff_outstream = contextlib.nullcontext()
 
     out_prefix = os.path.join(
-        output_dir,
-        f"{genome_id}.{output_suffix}"
+        args.output_dir,
+        f"{args.genome_id}.{args.output_suffix}"
     )
 
+    write_tsv = True
     if write_tsv:
         outstream = open(
             f"{out_prefix}.txt",
             "wt",
             encoding="UTF-8",
         )
-    if write_gff:
+    if args.write_gff:
         gff_outstream = open(
             f"{out_prefix}.gff3",
             "wt",
@@ -75,7 +76,7 @@ def write_final_results(
         if write_tsv:
             print(*MGE_TABLE_HEADERS, sep="\t", file=outstream)
         # GFF3 header
-        if write_gff:
+        if args.write_gff:
             print("##gff-version 3", file=gff_outstream)
 
         # Start recording the outputs
@@ -89,36 +90,41 @@ def write_final_results(
             # GFF3: add individual genes annotation;
             # parent lines are recombinase islands, children lines are genes
             # GFF3 parent term: recombinase island
-            if write_gff:
+            if args.write_gff:
                 island.to_gff(
                     gff_outstream,
-                    source_db=dbformat,
-                    write_genes=write_genes_to_gff,
-                    add_functional_annotation=add_functional_annotation,
+                    source_db=args.dbformat,
+                    write_genes=args.write_genes_to_gff,
+                    add_functional_annotation=args.add_functional_annotation,
                 )
 
+        genome_seqs = args.extract_islands
         if genome_seqs is not None:
-            with gzip.open(
-                f"{out_prefix}.ffn.gz",
-                "wt",
-            ) as _out:
-                for header, seq in read_fasta(genome_seqs):
-                    seqid, *_ = header.split(" ")
-                    for island in islands_by_contig.get(seqid, []):
-                        attribs = island.get_attribs()
-                        try:
-                            del attribs["ID"]
-                        except KeyError:
-                            pass
-                        try:
-                            del attribs["name"]
-                        except KeyError:
-                            pass
-                        attrib_str = ";".join(
-                            f"{item[0]}={item[1]}" for item in attribs.items() if item[1]
-                        )
-                        print(
-                            f">{island.get_id()} {attrib_str}",
-                            seq[island.start - 1: island.end],
-                            sep="\n", file=_out,
-                        )
+            extract_mge_seqs(genome_seqs, islands_by_contig, args.out_prefix)
+
+
+def extract_mge_seqs(genome_seqs, islands, out_prefix):
+    with gzip.open(
+        f"{out_prefix}.ffn.gz",
+        "wt",
+    ) as _out:
+        for header, seq in read_fasta(genome_seqs):
+            seqid, *_ = header.split(" ")
+            for island in islands.get(seqid, []):
+                attribs = island.get_attribs()
+                try:
+                    del attribs["ID"]
+                except KeyError:
+                    pass
+                try:
+                    del attribs["name"]
+                except KeyError:
+                    pass
+                attrib_str = ";".join(
+                    f"{item[0]}={item[1]}" for item in attribs.items() if item[1]
+                )
+                print(
+                    f">{island.get_id()} {attrib_str}",
+                    seq[island.start - 1: island.end],
+                    sep="\n", file=_out,
+                )
