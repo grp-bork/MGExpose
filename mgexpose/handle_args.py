@@ -139,7 +139,7 @@ def handle_args(args):
     reannotate_ap.add_argument("--txs_macsy_report", type=str)
     reannotate_ap.add_argument("--extract_islands", type=str)
 
-    reannotate_ap.set_defaults(func=None)  # TODO 
+    reannotate_ap.set_defaults(func=None)  # TODO
 
 
     call_genes_ap = subparsers.add_parser(

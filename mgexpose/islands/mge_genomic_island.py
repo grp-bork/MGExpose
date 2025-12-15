@@ -357,7 +357,7 @@ class MgeGenomicIsland(AnnotatedGenomicIsland):
         # print(mges)
         for mge_type, mge_type_ in [
             ("is_tn", "c_tn"), ("mi", "c_mi"), ("phage_like", "c_pli"),
-            ("ce", "c_ce"), ("nmi", "c_nmi"), 
+            ("ce", "c_ce"), ("nmi", "c_nmi"),
         ]:
             if mges.get(mge_type):
                 mges[mge_type_] = mges[mge_type]

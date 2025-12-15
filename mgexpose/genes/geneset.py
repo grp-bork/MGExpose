@@ -107,4 +107,5 @@ class GeneSet(dict):
 
     @classmethod
     def from_island(cls, island,):
+        """ Generate a GeneSet from a GenomicIsland or subclasses. """
         return cls(island.genes, island.genome, island.speci,)

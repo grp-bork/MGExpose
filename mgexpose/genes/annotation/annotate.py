@@ -9,10 +9,9 @@ from .eggnog import add_eggnog_annotation
 from .recombinases import add_recombinases
 from .secretion import add_secretion_systems
 
-from ..geneset import GeneSet
-
 
 def compile_annotations(args):
+    """ Compile annotation functions according to input parameters. """
     annotations = []
     try:
         if args.recombinase_hits:
@@ -83,7 +82,7 @@ def annotate_genes(genes, args,):
     #     gene_type=args.input_gene_type,
     #     composite_gene_ids=args.dbformat != "PG3",
     # )
-    
+
 
     # recombinase_hits = kwargs.get("recombinase_hits")
     # if recombinase_hits is not None:

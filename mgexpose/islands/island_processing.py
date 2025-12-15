@@ -1,3 +1,6 @@
+# pylint: disable=R1704
+""" Module for genomic island processing. """
+
 import logging
 
 from .annotated_genomic_island import AnnotatedGenomicIsland
@@ -9,6 +12,7 @@ logger = logging.getLogger(__name__)
 
 
 def compute_genomic_islands(genes):
+    """ Compute genomic islands from a set of genes. """
     contigs = {}
     for gene in genes:
         if gene.has_basic_annotation():
@@ -19,7 +23,7 @@ def compute_genomic_islands(genes):
 
         for gene in sorted(genes, key=lambda g: (g.start, g.end, g.strand)):
             boundary_found = (
-                current_island is None or 
+                current_island is None or
                 not current_island.has_compatible_genome_type(gene)
             )
             if boundary_found:
@@ -38,6 +42,7 @@ def compute_genomic_islands(genes):
 
 
 def add_genes_to_precomputed_islands(genes, islands):
+    """ Add gene information to a set of precomputed islands. """
     logger.info("Precomputed islands: %s", len(islands))
     for gene in genes:
         is_annotated = gene.has_basic_annotation(skip_core_gene_computation=True)
@@ -61,16 +66,16 @@ def add_genes_to_precomputed_islands(genes, islands):
                     island.add_gene(gene)
 
                 logger.info("%s %s", log_str, str(add_gene))
-    
+
     for _, islands in islands.items():
         for island in islands:
             if island.recombinases:
                 logger.info("GenomicIsland %s created.", str(island))
                 yield island
-        
+
 
 def prepare_islands(genes, precomputed_islands=None,):
-
+    """ Selector function depending on whether genomic islands are precomputed or not. """
     if precomputed_islands is None:
         islands = compute_genomic_islands(genes)
     else:
