@@ -17,7 +17,7 @@ def read_island_gff(fn, island_cls):
                 if cols[2] in ("region", "mobile_genetic_element"):
                     if island is not None:
                         yield island
-                    print("NEW ISLAND", cols)
+                    # print("NEW ISLAND", cols)
                     island = island_cls.from_gff(*cols)
                 elif cols[2] == "gene":
                     gene = Gene.from_gff(*cols)
