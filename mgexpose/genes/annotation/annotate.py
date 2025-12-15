@@ -67,49 +67,8 @@ def compile_annotations(args):
     return annotations
 
 
-
-
-
-
-
 def annotate_genes(genes, args,):
     """ Annotate genes with MGE-relevant data. """
-
-    # genes = GeneSet.from_file(
-    #     args.input_genes,
-    #     genome_id=args.genome_id,
-    #     speci=args.speci,
-    #     gene_type=args.input_gene_type,
-    #     composite_gene_ids=args.dbformat != "PG3",
-    # )
-
-
-    # recombinase_hits = kwargs.get("recombinase_hits")
-    # if recombinase_hits is not None:
-    #     add_recombinases(
-    #         genes, recombinase_hits,
-    #         pyhmmer=kwargs.get("pyhmmer_input") is not None,
-    #     )
-
-    # txs_macsy_report = kwargs.get("txs_macsy_report")
-    # txs_macsy_rules = kwargs.get("txs_macsy_rules")
-    # if txs_macsy_report is not None and txs_macsy_rules is not None:
-    #     add_secretion_systems(genes, txs_macsy_report, txs_macsy_rules,)
-
-    # phage_eggnog_data = kwargs.get("phage_eggnog_data")
-    # phage_filter_terms = kwargs.get("phage_filter_terms")
-    # if phage_eggnog_data is not None and phage_filter_terms is not None:
-    #     add_eggnog_annotation(genes, phage_eggnog_data, phage_filter_terms,)
-
-    # cluster_data = kwargs.get("cluster_data")
-    # if cluster_data is not None:
-    #     add_clusters(
-    #         genes,
-    #         cluster_data,
-    #         use_y_clusters=kwargs.get("use_y_clusters", False),
-    #         core_threshold=kwargs.get("core_threshold", 0.95),
-    #         output_dir=kwargs.get("output_dir"),
-    #     )
 
     for f_ann in compile_annotations(args):
         f_ann(genes)

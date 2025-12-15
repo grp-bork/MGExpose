@@ -32,17 +32,6 @@ def dump_islands(islands, out_prefix, db, write_genes=False, add_functional_anno
 
 
 def write_final_results(recombinase_islands, args):
-#     recombinase_islands,
-#     output_dir,
-#     genome_id,
-#     output_suffix,
-#     dbformat=None,
-#     write_tsv=True,
-#     write_gff=True,
-#     write_genes_to_gff=True,
-#     add_functional_annotation=False,
-#     genome_seqs=None,
-# ):
     """ write final results """
 
     outstream = contextlib.nullcontext()

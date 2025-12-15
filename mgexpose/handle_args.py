@@ -141,7 +141,6 @@ def handle_args(args):
 
     reannotate_ap.set_defaults(func=None)  # TODO
 
-
     call_genes_ap = subparsers.add_parser(
         "call_genes",
         help="Call genes with Pyrodigal",

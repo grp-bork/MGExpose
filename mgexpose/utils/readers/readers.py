@@ -142,7 +142,6 @@ def read_mge_rules(f, recombinase_scan=False):
     return rules
 
 
-
 def read_precomputed_islands(genome_id=None, single_island=None, island_file=None,):
     """ Helper function to deal with precomputed regions/islands. """
     precomputed_islands = None
