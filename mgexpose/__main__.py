@@ -220,9 +220,9 @@ def main():
         elif args.command == "reannotate":
             from .islands.annotated_genomic_island import AnnotatedGenomicIsland
             from .islands.mge_genomic_island import MgeGenomicIsland
-            from .utils.gffio import read_genomic_islands_gff
+            from .utils.gffio import read_mge_genomic_islands_gff
             from .utils.writers import extract_mge_seqs
-            genomic_islands = read_genomic_islands_gff(args.input_gff)
+            genomic_islands = read_mge_genomic_islands_gff(args.input_gff)
             mge_rules = read_mge_rules(args.mge_rules)
             out_prefix = os.path.join(
                 args.output_dir,
