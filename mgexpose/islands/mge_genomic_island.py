@@ -354,7 +354,7 @@ class MgeGenomicIsland(AnnotatedGenomicIsland):
         except Exception as exc:
             raise ValueError(f"mge string weird? {attribs['mge'].split(',')}") from exc
 
-        print(mges)
+        # print(mges)
         for mge_type, mge_type_ in [
             ("is_tn", "c_tn"), ("mi", "c_mi"), ("phage_like", "c_pli"),
             ("ce", "c_ce"), ("nmi", "c_nmi"), 
