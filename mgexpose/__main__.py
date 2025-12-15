@@ -235,8 +235,9 @@ def main():
                 for island in genomic_islands:
                     genes = GeneSet.from_island(island)
                     annotated_genes = annotate_genes(genes, args,)
-                    annotated_island = AnnotatedGenomicIsland.from_genomic_island(island)
-                    mge_island = MgeGenomicIsland.from_annotated_genomic_island(annotated_island)
+                    # annotated_island = AnnotatedGenomicIsland.from_genomic_island(island)
+                    # mge_island = MgeGenomicIsland.from_annotated_genomic_island(annotated_island)
+                    mge_island = island
                     mge_island.evaluate_recombinases(mge_rules)
                     mge_island.to_gff(
                         _out,
