@@ -21,6 +21,8 @@ def read_island_gff(fn, island_cls):
                 elif cols[2] == "gene":
                     gene = Gene.from_gff(*cols)
                     if island is not None:
+                        if not island.genes:
+                            island.genes = set()
                         island.genes.add(gene)
                     else:
                         raise ValueError("Found gene but no island.")
