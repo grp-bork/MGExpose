@@ -400,3 +400,16 @@ class MgeGenomicIsland(AnnotatedGenomicIsland):
             sep="\t",
             file=outstream,
         )
+
+    def to_genomic_island(self):
+        return GenomicIsland(
+            self.speci,
+            self.genome,
+            self.is_core,
+            self.contig,
+            self.start,
+            self.end,
+            self.name,
+            self.genes,
+            self.recombinases,
+        )

@@ -223,8 +223,8 @@ def main():
             from .islands.mge_genomic_island import MgeGenomicIsland
             from .utils.gffio import read_mge_genomic_islands_gff, read_island_gff
             from .utils.writers import extract_mge_seqs
-            # genomic_islands = read_mge_genomic_islands_gff(args.input_gff)
-            genomic_islands = read_island_gff(args.input_gff, GenomicIsland)
+            genomic_islands = read_mge_genomic_islands_gff(args.input_gff)
+            # genomic_islands = read_island_gff(args.input_gff, GenomicIsland)
             mge_rules = read_mge_rules(args.mge_rules)
             out_prefix = os.path.join(
                 args.output_dir,
@@ -235,6 +235,7 @@ def main():
                 print("##gff-version 3", file=_out)
                 mge_islands = []
                 for island in genomic_islands:
+                    island = island.to_genomic_island()
                     genes = GeneSet.from_island(island)
                     annotated_genes = annotate_genes(genes, args,)
                     annotated_island = AnnotatedGenomicIsland.from_genomic_island(island)
