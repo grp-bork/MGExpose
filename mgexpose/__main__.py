@@ -91,7 +91,7 @@ def main():
                 f"{out_prefix}.mge_islands.reannotated.gff3", "wt", encoding="UTF-8",
             ) as _out:
                 print("##gff-version 3", file=_out)
-                mge_islands = []
+                mge_islands = {}
                 for island in genomic_islands:
                     island = island.to_genomic_island()
                     genes = GeneSet.from_island(island)
@@ -106,7 +106,8 @@ def main():
                         write_genes=True,
                         add_functional_annotation=True,
                     )
-                    mge_islands.append(mge_island)
+                    # mge_islands.append(mge_island)
+                    mge_islands.setdefault(mge_island.contig, []).append(mge_island)
                 if args.genome_fasta:
                     extract_mge_seqs(args.genome_fasta, mge_islands, out_prefix)
 
