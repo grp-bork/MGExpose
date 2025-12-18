@@ -363,7 +363,7 @@ class MgeGenomicIsland(AnnotatedGenomicIsland):
                 mges[mge_type_] = mges[mge_type]
                 del mges[mge_type]
 
-        genome_id, *_ = GenomicIsland.parse_id(attribs["ID"])
+        genome_id, *_ = GenomicIsland.parse_id(attribs["ID"], cols[0])
         # TODO: check coordinates and ID overlap
         return cls(
             "",  # TODO: where to get/ how to handle specI

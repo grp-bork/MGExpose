@@ -61,9 +61,16 @@ class GenomicIsland:
     recombinases: Counter = field(default_factory=Counter)
 
     @staticmethod
-    def parse_id(id_string):
+    def parse_id(id_string, contig_id):
         """ Parse genome id, contig id, start and end coordinates from id string.
          Reverses get_id(). """
+
+        # MGE_SAMEA3665099.psa_megahit.psb_metabat2.00029_k99_11966:481-283361
+        prefix, coords = id_string.split(":")
+        prefix = prefix.replace(f"_{contig_id}", "")
+        coords = coords.split("-")
+        return prefix[prefix.find("_") + 1:], contig_id, int(coords[0]), int(coords[1])
+
         cols = id_string.split("_")
         contig, coords = cols[3].split(':')
         coords = coords.split("-")
