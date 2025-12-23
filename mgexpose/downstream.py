@@ -50,15 +50,15 @@ def stat_core(islands):
         if island.is_core:
             core += 1
         total += 1
-    core_percentage = (core / total * 100) if total > 0 else 0
-    accessory_percentage = ((total - core) / total * 100) if total > 0 else 0
+    core_prop = (core / total * 100) if total > 0 else 0
+    acc_prop = ((total - core) / total * 100) if total > 0 else 0
 
     return {
         "total": total,
         "core_count": core,
         "accessory_count": total - core,
-        "core_percentage": core_percentage,
-        "accessory_percentage": accessory_percentage,
+        "core_prop": core_prop,
+        "acc_prop": acc_prop,
     }
 
 
@@ -444,5 +444,45 @@ def get_cargo_genes_cazy(islands):
 # Output: for each mge_type output a dictionary mge_id: list(cargo_ids)
 def get_cargo_genes(islands):
     return get_per_mge_cargo(islands, func=get_genes)
+
+
+def get_mge_basic_info(islands):
+    """
+    Extract basic information for each MGE island.
+    
+    Parameters:
+    - islands: List of MGE objects.
+    
+    Returns:
+    - List of dictionaries with mge_id, mge, mge_type, n_genes, and size for each island.
+    """
+    mge_info_list = []
+    
+    for island in islands:
+        try:
+            mge_id = island.get_id()
+            mge = ",".join(
+                f"{k}:{v}"
+                for k, v in sorted(island.mge.items())
+            ) if island.mge else ""
+            mge_type = island.mge_type if island.mge_type else ""
+            n_genes = island.n_genes
+            size = island.size
+            
+            mge_info = {
+                "mge_id": mge_id,
+                "mge": mge,
+                "mge_type": mge_type,
+                "n_genes": n_genes,
+                "size": size,
+                "is_core": int(island.is_core)  # 1 = core, 0 = accessory
+            }
+            mge_info_list.append(mge_info)
+            
+        except Exception as e:
+            logger.error(f"Error processing island {island}: {e}")
+            continue
+    
+    return mge_info_list
     
     
