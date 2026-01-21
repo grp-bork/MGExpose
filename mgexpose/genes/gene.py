@@ -75,6 +75,10 @@ class Gene:
         if self.start is None or self.end is None:
             return 0
         return abs(self.end - self.start) + 1
+    
+    def is_cargo(self):
+        """ Checks if gene can be classified as cargo. """
+        return self.phage is None and self.recombinase is None and not self.secretion_systems
 
     def __str__(self):
         """ String representation. """
@@ -237,9 +241,12 @@ class Gene:
                 secretion_rules = []
 
         def parse_is_core(s: str):
+            if s is None:
+                return None
             if not isinstance(s, str):
                 raise TypeError(f"{s=} is {type(s)} but has to be string.")
-            if s is None or s.lower().capitalize() not in ("False", "True", "None"):
+            s = s.capitalize()
+            if s not in ("False", "True", "None"):
                 return None
             return literal_eval(s)
 
