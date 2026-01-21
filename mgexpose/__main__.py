@@ -14,6 +14,7 @@ from .genes.gene_calling import run_pyrodigal
 from .genes.geneset import GeneSet
 from .handle_args import handle_args
 from .islands.annotated_genomic_island import AnnotatedGenomicIsland
+from .islands.genomic_island import GenomicIsland
 from .islands.island_processing import annotate_islands, evaluate_islands, prepare_islands
 from .islands.mge_genomic_island import MgeGenomicIsland
 from .recombinases.recombinase_scan import run_pyhmmer
@@ -93,11 +94,14 @@ def main():
                 print("##gff-version 3", file=_out)
                 mge_islands = {}
                 for island in genomic_islands:
-                    island = island.to_genomic_island()
+                    # strip 
+                    island = GenomicIsland.from_island(island)
                     genes = GeneSet.from_island(island)
                     annotated_genes = annotate_genes(genes, args,)
-                    annotated_island = AnnotatedGenomicIsland.from_genomic_island(island)
-                    mge_island = MgeGenomicIsland.from_annotated_genomic_island(annotated_island)
+                    # annotated_island = AnnotatedGenomicIsland.from_genomic_island(island)
+                    annotated_island = AnnotatedGenomicIsland.from_island(island)
+                    # mge_island = MgeGenomicIsland.from_annotated_genomic_island(annotated_island)
+                    mge_island = MgeGenomicIsland.from_island(annotated_island)
                     # mge_island = island
                     mge_island.evaluate_recombinases(mge_rules)
                     mge_island.to_gff(
