@@ -17,12 +17,15 @@ The MGE type of each MGE Genomic Island is defined by applying MGE Rule.
 """
 
 import logging
+import re
 import sys
 
 from collections import Counter
 from dataclasses import dataclass, field
 
 from ..genes.gene import Gene
+from ..recombinases import parse_recombinase_string
+from ..utils.gffio import get_attrib_str, get_source_column, parse_gff_attribs
 
 
 logger = logging.getLogger(__name__)
@@ -47,6 +50,8 @@ class GenomicIsland:
         "gene_list",
     )
     GFFTYPE = "region"
+    ID_PREFIX = "GIL"
+
 
     speci: str = None
     genome: str = None
@@ -57,25 +62,28 @@ class GenomicIsland:
     name: str = "ISLAND"
 
     genes: set = field(default_factory=set)
-    # recombinases: list = field(default_factory=list)
     recombinases: Counter = field(default_factory=Counter)
 
     @staticmethod
-    def parse_id(id_string, contig_id):
+    def parse_id(id_string, contig_id=None,):
         """ Parse genome id, contig id, start and end coordinates from id string.
          Reverses get_id(). """
+        
+        island_id_match = re.match(r'(GIL|MGE|SPIRE)_(.+)_(.+):(\d+)-(\d+)', id_string)
+        if not island_id_match:
+            raise ValueError(f"{id_string} does not seem to be a valid island identifier.")
+        
+        groups = island_id_match.groups()[1:]
 
-        # MGE_SAMEA3665099.psa_megahit.psb_metabat2.00029_k99_11966:481-283361
-        prefix, coords = id_string.split(":")
-        prefix = prefix.replace(f"_{contig_id}", "")
-        coords = coords.split("-")
-        return prefix[prefix.find("_") + 1:], contig_id, int(coords[0]), int(coords[1])
+        start, end = map(int, groups[-2:])
 
-        cols = id_string.split("_")
-        contig, coords = cols[3].split(':')
-        coords = coords.split("-")
+        if contig_id:
+            genome_id = "_".join(groups[:2]).replace(f"_{contig_id}", "")
+        else:
+            genome_id, contig_id = groups[:2]
 
-        return "_".join(cols[1:3]), contig, int(coords[0]), int(coords[1])
+        return genome_id, contig_id, start, end    
+
 
     @staticmethod
     def get_fieldnames():
@@ -143,9 +151,6 @@ class GenomicIsland:
         if gene not in self.genes:
             self.end = max(self.end, gene.end)
             if gene.recombinase:
-                # self.recombinases.append(
-                #     (f"{gene.id}.{gene.cluster}", gene.recombinase)
-                # )
                 self.recombinases[gene.recombinase] += 1
             self.genes.add(gene)
 
@@ -179,18 +184,35 @@ class GenomicIsland:
                 )
 
     def get_id(self):
-        return f"GIL_{self.genome}_{self.contig}:{self.start}-{self.end}"
+        return f"{self.ID_PREFIX}_{self.genome}_{self.contig}:{self.start}-{self.end}"
+    
+    def get_attribs(self):
+        attribs = {
+            "ID": self.get_id(),
+            "genome": self.genome,
+            "genome_type": Gene.rtype(self.is_core),
+            "size": len(self),
+            "n_genes": len(self.genes),
+            "recombinases": (
+                ",".join(
+                    f"{k}:{v}"
+                    for k, v in sorted(self.recombinases.items())
+                )
+                if self.recombinases else ""
+            ),
+            "specI": self.speci,
+        }
+        if self.name:
+            attribs["name"] = self.name
+
+        return attribs
+
 
     @classmethod
     def from_gff(cls, *cols):
-        attribs = dict(item.split("=") for item in cols[-1].split(";"))
-        recombinases = Counter(
-            {
-                item.split(":")[0]: int(item.split(":")[1])
-                for item in attribs["recombinases"].split(",")
-            }
-        )
-
+        attribs = parse_gff_attribs(cols[-1])
+        recombinases = parse_recombinase_string(attribs.get("recombinases", ""))
+        
         return cls(
             attribs["specI"],
             attribs["genome"],
@@ -213,54 +235,41 @@ class GenomicIsland:
     ):
 
         if add_header:
-            print("##gff-version 3", file=gff_outstream)
+            print("##gff-version 3", file=gff_outstream)        
 
-        island_id = self.get_id()
-        attribs = {
-            "ID": island_id,
-            "genome": self.genome,
-            "genome_type": Gene.rtype(self.is_core),
-            "size": len(self),
-            "n_genes": len(self.genes),
-            # "mgeR": ",".join(sorted(r for _, r in self.recombinases)),
-            # "mgeR": ",".join(sorted(self.recombinases)),
-            "recombinases": (
-                ",".join(
-                    f"{k}:{v}"
-                    for k, v in sorted(self.recombinases.items())
-                )
-                if self.recombinases else ""
-            ),
-            "specI": self.speci,
-        }
-        if self.name:
-            attribs["name"] = self.name
-        attrib_str = ";".join(f"{item[0]}={item[1]}" for item in attribs.items() if item[1])
-        # Format the source column
-        if source_db:
-            source = f"proMGE_{source_db}"
-        else:
-            source = "proMGE"
         print(
             self.contig,
-            source,
+            get_source_column(source_db=source_db,),
             GenomicIsland.GFFTYPE,
             self.start,
             self.end,
             len(self),  # Score field
             ".",  # Strand
             ".",  # Phase
-            attrib_str,
+            get_attrib_str(self.get_attribs()),
             sep="\t",
-            file=gff_outstream
+            file=gff_outstream,
         )
 
         if write_genes:
-            # GFF3 child term: genes
             for gene in sorted(self.genes, key=lambda g: (g.start, g.end,)):
                 gene.to_gff(
                     gff_outstream,
-                    # genomic_island_id=island_id,
                     add_functional_annotation=add_functional_annotation,
                     intermediate_dump=intermediate_dump,
                 )
+
+
+    @classmethod
+    def from_island(cls, other, set_parent=True,):
+        island = cls(
+            **{
+                k: other.__dict__.get(k)
+                for k in cls.__dataclass_fields__
+            }
+        )
+        if set_parent:
+            for gene in island.genes:
+                gene.parent = island.get_id()
+
+        return island

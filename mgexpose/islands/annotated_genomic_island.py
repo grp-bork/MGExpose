@@ -108,7 +108,6 @@ class AnnotatedGenomicIsland(GenomicIsland):
                     self.end,
                     len(self),
                     len(self.genes),
-                    # len(self.recombinases),
                     sum(self.recombinases.values()),
                     0,  # is still necessary?
                     self.phage_count,
@@ -119,11 +118,4 @@ class AnnotatedGenomicIsland(GenomicIsland):
                     ",".join(self.recombinases),
                 )
             )
-        )
-
-    @classmethod
-    def from_genomic_island(cls, g_island):
-        """ Construct annotated island from genomic island. """
-        return cls(
-            **g_island.__dict__,
         )
