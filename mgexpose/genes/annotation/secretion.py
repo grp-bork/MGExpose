@@ -1,10 +1,9 @@
 """ Module to add secretion system annotations. """
-from ...utils.readers import parse_macsyfinder_report
 
 
-def add_secretion_systems(fn, rules_fn, genes,):
+def add_secretion_systems(secretion_systems, genes,):
     """ Add information from txsscan """
-    for gene_id, secretion_data in parse_macsyfinder_report(fn, rules_fn):
+    for gene_id, secretion_data in secretion_systems:
         gene = genes.get(gene_id)
         if gene is not None:
             for sgene, system, rule, *_ in secretion_data:

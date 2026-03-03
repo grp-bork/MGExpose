@@ -5,11 +5,15 @@ import os
 from functools import partial
 
 from .cluster import add_clusters
-from .eggnog import add_eggnog_annotation
+from .eggnog import add_eggnog_annotation, parse_emapper
+from .phage import PhageDetection
 from .recombinases import add_recombinases
 from .secretion import add_secretion_systems
 
-from ...utils.readers import read_recombinase_hits
+from ...utils.readers import (
+    parse_macsyfinder_report,
+	read_recombinase_hits,
+)
 
 
 def compile_annotations(args, multi_run=False,):
@@ -36,11 +40,17 @@ def compile_annotations(args, multi_run=False,):
 
     try:
         if args.txs_macsy_report and args.txs_macsy_rules:
+
+            secretion_systems = parse_macsyfinder_report(
+                args.txs_macsy_report, args.txs_macsy_rules,
+            )
+            if multi_run:
+                secretion_systems = list(secretion_systems)
+
             annotations.append(
                 partial(
                     add_secretion_systems,
-                    args.txs_macsy_report,
-                    args.txs_macsy_rules,
+                    secretion_systems=secretion_systems,
                 )
             )
     except AttributeError as err:
@@ -49,11 +59,18 @@ def compile_annotations(args, multi_run=False,):
 
     try:
         if args.phage_eggnog_data and args.phage_filter_terms:
+
+            eggnog_annotations = parse_emapper(
+                args.phage_eggnog_data,
+                phage_annotation=PhageDetection(args.phage_filter_terms),
+            )
+            if multi_run:
+                eggnog_annotations = list(eggnog_annotations)
+
             annotations.append(
                 partial(
                     add_eggnog_annotation,
-                    args.phage_eggnog_data,
-                    args.phage_filter_terms,
+                    eggnog_annotations,
                 )
             )
     except AttributeError as err:
