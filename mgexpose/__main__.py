@@ -18,7 +18,7 @@ from .islands.genomic_island import GenomicIsland
 from .islands.island_processing import annotate_islands, evaluate_islands, prepare_islands
 from .islands.mge_genomic_island import MgeGenomicIsland
 from .recombinases.recombinase_scan import run_pyhmmer
-from .utils.gffio import read_mge_genomic_islands_gff
+from .utils.gffio import read_genomic_islands_gff, read_mge_genomic_islands_gff
 from .utils.readers import read_precomputed_islands, read_mge_rules
 from .utils.writers import extract_mge_seqs, write_final_results
 
@@ -80,7 +80,11 @@ def main():
                 write_final_results(mge_islands, args)
 
         elif args.command == "reannotate":
-            genomic_islands = read_mge_genomic_islands_gff(args.input_gff)
+
+            if args.annotation_mode == "mges":
+                genomic_islands = read_mge_genomic_islands_gff(args.input_gff)
+            elif args.annotation_mode == "raw_islands":
+                genomic_islands = read_genomic_islands_gff(args.input_gff)
             # genomic_islands = read_island_gff(args.input_gff, GenomicIsland)
             mge_rules = read_mge_rules(args.mge_rules)
             out_prefix = os.path.join(
