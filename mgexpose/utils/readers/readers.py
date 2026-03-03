@@ -115,14 +115,15 @@ def parse_macsyfinder_report(f, f_rules):
                 cols = re.split(r"\s+", line.strip())
                 _, hit_id, gene_name, _, model_fqn, _, _, hit_status, *_ = cols
                 system = model_fqn.replace("CONJ/", "")
-                rule = rules.get(system)
-                if rule is None:
-                    print(
-                        "WARNING: cannot find txsscan-rule for system:",
-                        f"`{system}`",
-                        file=sys.stderr,
-                    )
-                d.setdefault(hit_id, []).append((gene_name, system, rule, hit_status))
+                if system:
+                    rule = rules.get(system)
+                    if rule is None:
+                        print(
+                            "WARNING: cannot find txsscan-rule for system:",
+                            f"`{system}`",
+                            file=sys.stderr,
+                        )
+                    d.setdefault(hit_id, []).append((gene_name, system, rule, hit_status))
 
         yield from d.items()
 
