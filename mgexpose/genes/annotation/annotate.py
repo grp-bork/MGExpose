@@ -19,10 +19,11 @@ def compile_annotations(args):
                 partial(
                     add_recombinases,
                     fn=args.recombinase_hits,
-                    pyhmmer=not args.pyhmmer,
+                    pyhmmer=args.pyhmmer_input,
                 )
             )
-    except AttributeError:
+    except AttributeError as err:
+        print(f"ERR: {err}")
         pass
 
     try:
@@ -34,7 +35,8 @@ def compile_annotations(args):
                     args.txs_macsy_rules,
                 )
             )
-    except AttributeError:
+    except AttributeError as err:
+        print(f"ERR: {err}")
         pass
 
     try:
@@ -46,7 +48,8 @@ def compile_annotations(args):
                     args.phage_filter_terms,
                 )
             )
-    except AttributeError:
+    except AttributeError as err:
+        print(f"ERR: {err}")
         pass
 
     try:
@@ -61,7 +64,8 @@ def compile_annotations(args):
                     genome_id=args.genome_id,
                 )
             )
-    except AttributeError:
+    except AttributeError as err:
+        print(f"ERR: {err}")
         pass
 
     return annotations
@@ -70,10 +74,8 @@ def compile_annotations(args):
 def annotate_genes(genes, args,):
     """ Annotate genes with MGE-relevant data. """
 
-    print("ARGS", args)
-
     for f_ann in compile_annotations(args):
-        f_ann(genes)
+        f_ann(genes=genes)
 
     with open(
         os.path.join(
