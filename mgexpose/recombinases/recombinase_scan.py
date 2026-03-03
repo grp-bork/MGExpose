@@ -72,7 +72,7 @@ def run_pyhmmer(args):
             write_header = i == 0
             hits.write(raw_table_out, header=write_header)
             for hit in hits:
-                hit_name = hit.name.decode()
+                hit_name = hit.name
                 for domain in hit.domains:
                     best_score = seen.setdefault(hit_name, (0.0, None, None))[0]
                     print(hit.score, best_score)
@@ -89,7 +89,7 @@ def run_pyhmmer(args):
             print(*RECOMBINASE_SCAN_HEADER, sep="\t", file=rscan_out)
 
             for protein_id, (score, domain, hit) in sorted(seen.items()):
-                hmm_name = domain.alignment.hmm_name.decode()
+                hmm_name = domain.alignment.hmm_name
                 print(protein_id, score, hmm_name)
 
                 recombinase = hmm_name.lower()
@@ -106,7 +106,7 @@ def run_pyhmmer(args):
                 print(
                     protein_id,
                     recombinase,
-                    domain.alignment.hmm_accession.decode(),
+                    domain.alignment.hmm_accession,
                     ";".join(mges),
                     hit.evalue,
                     hit.score,
