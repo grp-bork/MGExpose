@@ -70,6 +70,8 @@ def compile_annotations(args):
 def annotate_genes(genes, args,):
     """ Annotate genes with MGE-relevant data. """
 
+    print("ARGS", args)
+
     for f_ann in compile_annotations(args):
         f_ann(genes)
 
