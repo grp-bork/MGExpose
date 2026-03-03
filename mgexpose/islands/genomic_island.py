@@ -25,7 +25,7 @@ from dataclasses import dataclass, field
 
 from ..genes.gene import Gene
 from ..recombinases import parse_recombinase_string
-from ..utils.gffio import get_attrib_str, get_source_column, parse_gff_attribs
+from ..utils.gffutils import get_attrib_str, get_source_column, parse_gff_attribs
 
 
 logger = logging.getLogger(__name__)

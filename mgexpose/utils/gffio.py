@@ -6,23 +6,6 @@ from ..islands.genomic_island import GenomicIsland
 from ..islands.mge_genomic_island import MgeGenomicIsland
 
 
-def get_source_column(source_db=None,):
-    return ("proMGE", f"proMGE_{source_db}")[bool(source_db)]
-
-
-def get_attrib_str(attribs):
-    return ";".join(f"{item[0]}={item[1]}" for item in attribs.items() if item[1])
-
-
-def parse_gff_attribs(attrib_str):
-    try:
-        attribs = dict(item.split("=") for item in attrib_str.split(";"))
-    except Exception as exc:
-        raise ValueError(f"problem parsing gff attribute string: {attrib_str}") from exc
-    return attribs
-
-
-
 def read_island_gff(fn, island_cls):
     """ Read island gff """
     island = None
