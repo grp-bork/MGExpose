@@ -88,7 +88,8 @@ class MgeGenomicIsland(AnnotatedGenomicIsland):
 
         # self.recombinases = recombinases.split(",") if recombinases else []
         self.recombinases.clear()
-        self.recombinases.update(recombinases.split(","))
+        if recombinases:
+            self.recombinases.update(recombinases.split(","))
         # self.recombinases = Counter(recombinases.split(","))
 
         # tag recombinase island with more than 3 recombinases
@@ -387,3 +388,4 @@ class MgeGenomicIsland(AnnotatedGenomicIsland):
     
     def get_phage_genes(self):
         return [gene for gene in self.genes if gene.phage]
+
