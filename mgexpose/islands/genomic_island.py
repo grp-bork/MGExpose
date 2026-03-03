@@ -211,12 +211,13 @@ class GenomicIsland:
     @classmethod
     def from_gff(cls, *cols):
         attribs = parse_gff_attribs(cols[-1])
-        recombinases = parse_recombinase_string(attribs.get("recombinases", ""))
+        recombinases = attribs.get("recombinases", "")
+        recombinases = parse_recombinase_string(recombinases) if recombinases else {}
         
         return cls(
-            attribs["specI"],
-            attribs["genome"],
-            attribs["genome_type"] == "COR",
+            attribs.get("specI"),
+            attribs.get("genome"),
+            attribs.get("genome_type") == "COR",
             cols[0],  # contig
             int(cols[3]),  # start
             int(cols[4]),  # end
@@ -265,7 +266,7 @@ class GenomicIsland:
         island = cls(
             **{
                 k: other.__dict__.get(k)
-                for k in cls.__dataclass_fields__
+                for k in set(other.__dataclass_fields__).intersection(cls.__dataclass_fields__)
             }
         )
         if set_parent:
