@@ -9,17 +9,25 @@ from .eggnog import add_eggnog_annotation
 from .recombinases import add_recombinases
 from .secretion import add_secretion_systems
 
+from ...utils.readers import read_recombinase_hits
 
-def compile_annotations(args):
+
+def compile_annotations(args, multi_run=False,):
     """ Compile annotation functions according to input parameters. """
     annotations = []
     try:
         if args.recombinase_hits:
+
+            recombinases = read_recombinase_hits(
+                args.recombinase_hits, pyhmmer=args.pyhmmer_input,
+            )
+            if multi_run:
+                recombinases = list(recombinases)
+
             annotations.append(
                 partial(
                     add_recombinases,
-                    fn=args.recombinase_hits,
-                    pyhmmer=args.pyhmmer_input,
+                    recombinases=recombinases,
                 )
             )
     except AttributeError as err:
@@ -71,10 +79,10 @@ def compile_annotations(args):
     return annotations
 
 
-def annotate_genes(genes, args,):
+def annotate_genes(genes, args, annotations,):
     """ Annotate genes with MGE-relevant data. """
 
-    for f_ann in compile_annotations(args):
+    for f_ann in annotations:
         f_ann(genes=genes)
 
     with open(

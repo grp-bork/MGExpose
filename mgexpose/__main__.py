@@ -9,7 +9,7 @@ import os
 import pathlib
 import sys
 
-from .genes.annotation.annotate import annotate_genes
+from .genes.annotation.annotate import annotate_genes, compile_annotations
 from .genes.gene_calling import run_pyrodigal
 from .genes.geneset import GeneSet
 from .handle_args import handle_args
@@ -60,7 +60,8 @@ def main():
                 composite_gene_ids=args.dbformat != "PG3",
             )
 
-            annotated_genes = annotate_genes(genes, args,)
+            annotations = compile_annotations(args, multi_run=False,)
+            annotated_genes = annotate_genes(genes, args, annotations)
 
             precomputed_islands = None
             if args.single_island or args.precomputed_islands:
@@ -73,6 +74,7 @@ def main():
             genomic_islands = prepare_islands(
                 annotated_genes, precomputed_islands=precomputed_islands,
             )
+            
             annotated_islands = annotate_islands(genomic_islands,)
             mge_islands = list(evaluate_islands(annotated_islands, read_mge_rules(args.mge_rules),))
 
@@ -97,11 +99,14 @@ def main():
             ) as _out:
                 print("##gff-version 3", file=_out)
                 mge_islands = {}
+
+                annotations = compile_annotations(args, multi_run=True,)
+
                 for island in genomic_islands:
                     # strip 
                     island = GenomicIsland.from_island(island)
                     genes = GeneSet.from_island(island, composite_gene_ids=args.annotation_mode == "raw_islands")
-                    annotated_genes = annotate_genes(genes, args,)
+                    annotated_genes = annotate_genes(genes, args, annotations,)
                     # annotated_island = AnnotatedGenomicIsland.from_genomic_island(island)
                     annotated_island = AnnotatedGenomicIsland.from_island(island)
                     # mge_island = MgeGenomicIsland.from_annotated_genomic_island(annotated_island)
