@@ -100,7 +100,7 @@ def main():
                 for island in genomic_islands:
                     # strip 
                     island = GenomicIsland.from_island(island)
-                    genes = GeneSet.from_island(island)
+                    genes = GeneSet.from_island(island, composite_gene_ids=args.annotation_mode == "raw_islands")
                     annotated_genes = annotate_genes(genes, args,)
                     # annotated_island = AnnotatedGenomicIsland.from_genomic_island(island)
                     annotated_island = AnnotatedGenomicIsland.from_island(island)
