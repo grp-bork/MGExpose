@@ -122,8 +122,8 @@ def handle_args(args):
         parents=(parent_subparser,),
     )
 
-    reannotate_ap.add_argument("input_gff", type=str)
     reannotate_ap.add_argument("genome_id", type=str)
+    reannotate_ap.add_argument("input_gff", type=str)
     reannotate_ap.add_argument("--mge_rules", type=str)
     reannotate_ap.add_argument("--txs_macsy_rules", type=str)
     reannotate_ap.add_argument("--txs_macsy_report", type=str)
