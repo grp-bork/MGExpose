@@ -272,5 +272,8 @@ class GenomicIsland:
         if set_parent:
             for gene in island.genes:
                 gene.parent = island.get_id()
+        for gene in island.genes:
+            if gene.recombinase:
+                island.recombinases[gene.recombinase] += 1
 
         return island
