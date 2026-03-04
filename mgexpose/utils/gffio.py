@@ -21,7 +21,8 @@ def read_island_gff(fn, island_cls):
                 if island is not None:
                     if not island.genes:
                         island.genes = set()
-                    island.genes.add(gene)
+                    # island.genes.add(gene)
+                    island.add_gene(gene, update_coords=False,)
                     if island.speci is None:
                         island.speci = gene.speci
                 else:

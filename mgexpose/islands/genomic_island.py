@@ -146,10 +146,11 @@ class GenomicIsland:
             ] + [",".join(genes)]
         )
 
-    def add_gene(self, gene):
+    def add_gene(self, gene, update_coords=True,):
         """ Adds a gene to the island. """
         if gene not in self.genes:
-            self.end = max(self.end, gene.end)
+            if update_coords:
+                self.end = max(self.end, gene.end)
             if gene.recombinase:
                 self.recombinases[gene.recombinase] += 1
             self.genes.add(gene)
