@@ -142,7 +142,6 @@ class Gene:
     def to_gff(
         self,
         gff_outstream,
-        add_functional_annotation=False,
         intermediate_dump=False,
         add_header=False,
     ):
@@ -174,7 +173,7 @@ class Gene:
 
         attrib_str = ";".join(f"{item[0]}={item[1]}" for item in attribs.items() if item[1])
 
-        if add_functional_annotation and self.eggnog:
+        if self.eggnog:
             attrib_str += f";{self.stringify_eggnog()}"
 
         print(

@@ -285,8 +285,6 @@ class MgeGenomicIsland(AnnotatedGenomicIsland):
         self,
         gff_outstream,
         source_db,
-        write_genes=False,
-        add_functional_annotation=False,
         add_header=False,
     ):
         if add_header:
@@ -306,13 +304,12 @@ class MgeGenomicIsland(AnnotatedGenomicIsland):
             file=gff_outstream
         )
 
-        if write_genes:
-            # GFF3 child term: genes
-            for gene in sorted(self.genes, key=lambda g: (g.start, g.end,)):
-                gene.to_gff(
-                    gff_outstream,
-                    add_functional_annotation=add_functional_annotation,
-                )
+        # GFF3 child term: genes
+        for gene in sorted(self.genes, key=lambda g: (g.start, g.end,)):
+            gene.to_gff(
+                gff_outstream,
+                add_functional_annotation=add_functional_annotation,
+            )
 
     @classmethod
     def from_gff(cls, *cols):

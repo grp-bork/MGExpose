@@ -37,11 +37,9 @@ def handle_args(args):
     parent_subparser = argparse.ArgumentParser(add_help=False)
     parent_subparser.add_argument("--output_dir", "-o", type=str, default=".")
     parent_subparser.add_argument("--dbformat", type=str, choices=("PG3", "SPIRE"))
-    parent_subparser.add_argument("--write_gff", action="store_true")
-    parent_subparser.add_argument("--write_genes_to_gff", action="store_true")
     parent_subparser.add_argument("--dump_intermediate_steps", action="store_true")
     parent_subparser.add_argument(
-        "--output_suffix", type=str, default="full_length_MGE_assignments",
+        "--output_suffix", type=str, default="mge_islands",
     )
     parent_subparser.add_argument("--debug", action="store_true")
 
@@ -103,12 +101,6 @@ def handle_args(args):
         help="Core/accessory gene sets were precomputed."
     )
 
-    denovo_ap.add_argument(
-        "--add_functional_annotation",
-        action="store_true",
-        help="If specified, per gene emapper annotations are stored in the gff."
-    )
-    # ensure newest eggnog version
     denovo_ap.add_argument("--extract_islands", type=str)
 
     denovo_ap.add_argument("--pyhmmer_input", action="store_true")

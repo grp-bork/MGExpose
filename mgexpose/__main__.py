@@ -117,8 +117,6 @@ def main():
                     mge_island.to_gff(
                         _out,
                         source_db=None,
-                        write_genes=True,
-                        add_functional_annotation=True,
                     )
                     # mge_islands.append(mge_island)
                     mge_islands.setdefault(mge_island.contig, []).append(mge_island)

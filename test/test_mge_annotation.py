@@ -14,7 +14,6 @@ mge_rules_ms.txt
 --cluster_data GCA_000012825.1.genomes_mmseqcluster.tsv.gz
 --output_dir specI_v4_00061/GCA_000012825.1.genomes/
 --dump_intermediate_steps
---write_gff
 '''
 import os
 import subprocess
@@ -46,10 +45,7 @@ INPUT_ARGS = [
     ("--phage_eggnog_data", os.path.join(TEST_DATADIR, "GCA_000012825.1.genomes.emapper.annotations")),
     ("--cluster_data", os.path.join(TEST_DATADIR, "GCA_000012825.1.genomes_mmseqcluster.tsv.gz")),
     ("--output_dir", OUTPUT_DIR),
-    ("--write_gff", ""),
     ("--dump_intermediate_steps", ""),
-    ("--write_genes_to_gff", ""),
-    ("--add_functional_annotation", ""),
 ]
 
 

@@ -16,7 +16,7 @@ MGE_TABLE_HEADERS = \
     ("mgeR", "name", "genes",)
 
 
-def dump_islands(islands, out_prefix, db, write_genes=False, add_functional_annotation=False):
+def dump_islands(islands, out_prefix, db,):
     """ dump genomic islands to intermediate gff """
     with open(
         f"{out_prefix}.unannotated_islands.gff3",
@@ -25,8 +25,7 @@ def dump_islands(islands, out_prefix, db, write_genes=False, add_functional_anno
         print("##gff-version 3", file=_out)
         for island in sorted(islands, key=lambda isl: isl.contig):
             island.to_gff(
-                _out, db, write_genes=write_genes,
-                add_functional_annotation=add_functional_annotation,
+                _out, db,
                 intermediate_dump=True,
             )
 
@@ -35,7 +34,7 @@ def write_final_results(recombinase_islands, args):
     """ write final results """
 
     outstream = contextlib.nullcontext()
-    gff_outstream = contextlib.nullcontext()
+    
 
     out_prefix = os.path.join(
         args.output_dir,
@@ -49,12 +48,11 @@ def write_final_results(recombinase_islands, args):
             "wt",
             encoding="UTF-8",
         )
-    if args.write_gff:
-        gff_outstream = open(
-            f"{out_prefix}.gff3",
-            "wt",
-            encoding="UTF-8",
-        )
+    gff_outstream = open(
+        f"{out_prefix}.gff3",
+        "wt",
+        encoding="UTF-8",
+    )
 
     # Sort the list of MGEGenomicIslands based on contig names
     sorted_islands = sorted(recombinase_islands, key=lambda isl: isl.contig)
@@ -65,8 +63,7 @@ def write_final_results(recombinase_islands, args):
         if write_tsv:
             print(*MGE_TABLE_HEADERS, sep="\t", file=outstream)
         # GFF3 header
-        if args.write_gff:
-            print("##gff-version 3", file=gff_outstream)
+        print("##gff-version 3", file=gff_outstream)
 
         # Start recording the outputs
         for island in sorted_islands:
@@ -79,13 +76,10 @@ def write_final_results(recombinase_islands, args):
             # GFF3: add individual genes annotation;
             # parent lines are recombinase islands, children lines are genes
             # GFF3 parent term: recombinase island
-            if args.write_gff:
-                island.to_gff(
-                    gff_outstream,
-                    source_db=args.dbformat,
-                    write_genes=args.write_genes_to_gff,
-                    add_functional_annotation=args.add_functional_annotation,
-                )
+            island.to_gff(
+                gff_outstream,
+                source_db=args.dbformat,
+            )
 
         genome_seqs = args.extract_islands
         if genome_seqs is not None:
