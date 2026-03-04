@@ -266,16 +266,19 @@ class GenomicIsland:
 
 
     @classmethod
-    def from_island(cls, other, set_parent=True,):
+    def from_island(cls, other, genome_id=None, set_parent=True,):
         island = cls(
             **{
                 k: other.__dict__.get(k)
                 for k in set(other.__dataclass_fields__).intersection(cls.__dataclass_fields__)
             }
         )
+        if genome_id:
+            island.genome = genome_id
         if set_parent:
             for gene in island.genes:
                 gene.parent = island.get_id()
+                gene.genome = island.genome
         # for gene in island.genes:
         #     if gene.recombinase:
         #         island.recombinases[gene.recombinase] += 1
