@@ -212,7 +212,7 @@ class GenomicIsland:
     def from_gff(cls, *cols):
         attribs = parse_gff_attribs(cols[-1])
         recombinases = attribs.get("recombinases", "")
-        recombinases = parse_recombinase_string(recombinases) if recombinases else {}
+        recombinases = parse_recombinase_string(recombinases) if recombinases else Counter()
         
         return cls(
             attribs.get("specI"),
