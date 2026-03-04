@@ -47,18 +47,19 @@ class GeneSet(dict):
 
             self[gene.id] = gene
 
-    def dump(self, outstream):
+    def dump(self, outstream, with_header=True,):
         """ Write gene info to stream. """
 
-        headers = list(Gene().__dict__.keys())
-        headers.remove("eggnog")
-        headers.remove("secretion_systems")
-        headers.remove("secretion_rules")
-        headers += ("secretion_systems", "secretion_rules",)
-        headers += EMAPPER_FIELDS["v2.1.2"]
-        headers.remove("description")
-
-        print(*headers, sep="\t", file=outstream)
+        if with_header:
+            headers = list(Gene().__dict__.keys())
+            headers.remove("eggnog")
+            headers.remove("secretion_systems")
+            headers.remove("secretion_rules")
+            headers += ("secretion_systems", "secretion_rules",)
+            headers += EMAPPER_FIELDS["v2.1.2"]
+            headers.remove("description")
+            print(*headers, sep="\t", file=outstream)
+        
         for gene in self.values():
             eggnog_data = {}
             if gene.eggnog:

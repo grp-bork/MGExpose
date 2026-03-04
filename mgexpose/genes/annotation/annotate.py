@@ -1,6 +1,7 @@
 """ Module to annotate gene sets. """
 
 import os
+import sys
 
 from functools import partial
 
@@ -96,20 +97,22 @@ def compile_annotations(args, multi_run=False,):
     return annotations
 
 
-def annotate_genes(genes, args, annotations,):
+def annotate_genes(genes, annotations, stream=sys.stdout, with_header=True,):
     """ Annotate genes with MGE-relevant data. """
 
     for f_ann in annotations:
         f_ann(genes=genes)
 
-    with open(
-        os.path.join(
-            args.output_dir,
-            f"{args.genome_id}.gene_info.txt",
-        ),
-        "wt",
-        encoding="UTF-8",
-    ) as gene_info_out:
-        genes.dump(gene_info_out)
+    genes.dump(stream, with_header=with_header,)
+
+    # with open(
+    #     os.path.join(
+    #         args.output_dir,
+    #         f"{args.genome_id}.gene_info.txt",
+    #     ),
+    #     "wt",
+    #     encoding="UTF-8",
+    # ) as gene_info_out:
+    #     genes.dump(gene_info_out)
 
     return list(genes.values())

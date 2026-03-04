@@ -61,25 +61,35 @@ def main():
             )
 
             annotations = compile_annotations(args, multi_run=False,)
-            annotated_genes = annotate_genes(genes, args, annotations)
 
-            precomputed_islands = None
-            if args.single_island or args.precomputed_islands:
-                precomputed_islands = read_precomputed_islands(
-                    genome_id=args.genome_id,
-                    single_island=args.single_island,
-                    island_file=args.precomputed_islands,
+            with open(
+                os.path.join(
+                    args.output_dir,
+                    f"{args.genome_id}.gene_info.txt",
+                ),
+                "wt",
+                encoding="UTF-8",
+            ) as gene_info_out:
+                
+                annotated_genes = annotate_genes(genes, annotations, stream=gene_info_out,)
+
+                precomputed_islands = None
+                if args.single_island or args.precomputed_islands:
+                    precomputed_islands = read_precomputed_islands(
+                        genome_id=args.genome_id,
+                        single_island=args.single_island,
+                        island_file=args.precomputed_islands,
+                    )
+
+                genomic_islands = prepare_islands(
+                    annotated_genes, precomputed_islands=precomputed_islands,
                 )
+                
+                annotated_islands = annotate_islands(genomic_islands,)
+                mge_islands = list(evaluate_islands(annotated_islands, read_mge_rules(args.mge_rules),))
 
-            genomic_islands = prepare_islands(
-                annotated_genes, precomputed_islands=precomputed_islands,
-            )
-            
-            annotated_islands = annotate_islands(genomic_islands,)
-            mge_islands = list(evaluate_islands(annotated_islands, read_mge_rules(args.mge_rules),))
-
-            if mge_islands:
-                write_final_results(mge_islands, args)
+                if mge_islands:
+                    write_final_results(mge_islands, args)
 
         elif args.command == "reannotate":
 
@@ -94,10 +104,17 @@ def main():
                 f"{args.genome_id}.mge_islands"
             )
 
-            with open(
-                f"{out_prefix}.gff3", "wt", encoding="UTF-8",
-            ) as _out:
-                print("##gff-version 3", file=_out)
+            gene_info_out = open(
+                os.path.join(args.output_dir, f"{args.genome_id}.gene_info.txt",),
+                "wt", encoding="UTF-8",
+            )
+            gene_info_header = True
+
+            gff_out = open(f"{out_prefix}.gff3", "wt", encoding="UTF-8",) 
+
+
+            with gene_info_out, gff_out:
+                print("##gff-version 3", file=gff_out)
                 mge_islands = {}
 
                 annotations = compile_annotations(args, multi_run=True,)
@@ -106,7 +123,8 @@ def main():
                     # strip 
                     island = GenomicIsland.from_island(island, genome_id=args.genome_id,)
                     genes = GeneSet.from_island(island, composite_gene_ids=args.annotation_mode == "raw_islands")
-                    annotated_genes = annotate_genes(genes, args, annotations,)
+                    annotated_genes = annotate_genes(genes, annotations, gene_info_out, gene_info_header,)
+                    gene_info_header = False
                     island.update_recombinases()
                     # annotated_island = AnnotatedGenomicIsland.from_genomic_island(island)
                     annotated_island = AnnotatedGenomicIsland.from_island(island)
@@ -115,7 +133,7 @@ def main():
                     # mge_island = island
                     mge_island.evaluate_recombinases(mge_rules)
                     mge_island.to_gff(
-                        _out,
+                        gff_out,
                         source_db=None,
                     )
                     # mge_islands.append(mge_island)
