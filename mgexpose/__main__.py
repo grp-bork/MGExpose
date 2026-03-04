@@ -95,7 +95,7 @@ def main():
             )
 
             with open(
-                f"{out_prefix}.mge_islands.reannotated.gff3", "wt", encoding="UTF-8",
+                f"{out_prefix}.mge_islands.gff3", "wt", encoding="UTF-8",
             ) as _out:
                 print("##gff-version 3", file=_out)
                 mge_islands = {}
