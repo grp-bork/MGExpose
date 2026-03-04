@@ -308,7 +308,6 @@ class MgeGenomicIsland(AnnotatedGenomicIsland):
         for gene in sorted(self.genes, key=lambda g: (g.start, g.end,)):
             gene.to_gff(
                 gff_outstream,
-                add_functional_annotation=add_functional_annotation,
             )
 
     @classmethod

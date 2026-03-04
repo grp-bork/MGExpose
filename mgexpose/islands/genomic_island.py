@@ -237,8 +237,6 @@ class GenomicIsland:
         self,
         gff_outstream,
         source_db,
-        write_genes=False,
-        add_functional_annotation=False,
         intermediate_dump=False,
         add_header=False,
     ):
@@ -260,13 +258,11 @@ class GenomicIsland:
             file=gff_outstream,
         )
 
-        if write_genes:
-            for gene in sorted(self.genes, key=lambda g: (g.start, g.end,)):
-                gene.to_gff(
-                    gff_outstream,
-                    add_functional_annotation=add_functional_annotation,
-                    intermediate_dump=intermediate_dump,
-                )
+        for gene in sorted(self.genes, key=lambda g: (g.start, g.end,)):
+            gene.to_gff(
+                gff_outstream,
+                intermediate_dump=intermediate_dump,
+            )
 
 
     @classmethod

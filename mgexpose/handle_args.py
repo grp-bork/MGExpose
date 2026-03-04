@@ -58,7 +58,6 @@ def handle_args(args):
     denovo_ap.add_argument("--phage_eggnog_data", type=str)
     denovo_ap.add_argument("--cluster_data", type=str)
     denovo_ap.add_argument("--skip_island_identification", action="store_true")
-    denovo_ap.add_argument("--dump_genomic_islands", action="store_true")
     denovo_ap.add_argument("--phage_filter_terms", type=str)
     denovo_ap.add_argument(
         "--input_gene_type",
