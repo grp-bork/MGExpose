@@ -91,11 +91,11 @@ def main():
             mge_rules = read_mge_rules(args.mge_rules)
             out_prefix = os.path.join(
                 args.output_dir,
-                f"{args.genome_id}"
+                f"{args.genome_id}.mge_islands"
             )
 
             with open(
-                f"{out_prefix}.mge_islands.gff3", "wt", encoding="UTF-8",
+                f"{out_prefix}.gff3", "wt", encoding="UTF-8",
             ) as _out:
                 print("##gff-version 3", file=_out)
                 mge_islands = {}
