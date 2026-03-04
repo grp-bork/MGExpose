@@ -104,7 +104,7 @@ def main():
 
                 for island in genomic_islands:
                     # strip 
-                    island = GenomicIsland.from_island(island)
+                    island = GenomicIsland.from_island(island, genome_id=args.genome_id,)
                     genes = GeneSet.from_island(island, composite_gene_ids=args.annotation_mode == "raw_islands")
                     annotated_genes = annotate_genes(genes, args, annotations,)
                     island.update_recombinases()
