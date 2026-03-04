@@ -107,6 +107,7 @@ def main():
                     island = GenomicIsland.from_island(island)
                     genes = GeneSet.from_island(island, composite_gene_ids=args.annotation_mode == "raw_islands")
                     annotated_genes = annotate_genes(genes, args, annotations,)
+                    island.update_recombinases()
                     # annotated_island = AnnotatedGenomicIsland.from_genomic_island(island)
                     annotated_island = AnnotatedGenomicIsland.from_island(island)
                     # mge_island = MgeGenomicIsland.from_annotated_genomic_island(annotated_island)

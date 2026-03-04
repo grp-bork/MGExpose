@@ -155,6 +155,13 @@ class GenomicIsland:
                 self.recombinases[gene.recombinase] += 1
             self.genes.add(gene)
 
+    def update_recombinases(self):
+        self.recombinases.update(
+            gene.recombinase
+            for gene in self.genes
+            if gene.recombinase
+        )
+
     def has_compatible_genome_type(self, gene):
         return self.is_core == gene.is_core
 
@@ -273,8 +280,8 @@ class GenomicIsland:
         if set_parent:
             for gene in island.genes:
                 gene.parent = island.get_id()
-        for gene in island.genes:
-            if gene.recombinase:
-                island.recombinases[gene.recombinase] += 1
+        # for gene in island.genes:
+        #     if gene.recombinase:
+        #         island.recombinases[gene.recombinase] += 1
 
         return island
