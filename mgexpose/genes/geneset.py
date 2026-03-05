@@ -2,6 +2,7 @@
 """ Module to manage gene sets. """
 
 import logging
+import sys
 
 from .gene import Gene
 from .annotation.eggnog import EMAPPER_FIELDS
@@ -111,3 +112,12 @@ class GeneSet(dict):
     def from_island(cls, island, composite_gene_ids=False,):
         """ Generate a GeneSet from a GenomicIsland or subclasses. """
         return cls(island.genes, island.genome, island.speci, composite_gene_ids=composite_gene_ids,)
+    
+    def annotate(self, annotations, stream=sys.stdout, with_header=True,):
+        """ Annotate genes with MGE-relevant data. """
+        for f_ann in annotations:
+            f_ann(genes=self)
+
+        self.dump(stream, with_header=with_header,)
+
+        return list(self.values())

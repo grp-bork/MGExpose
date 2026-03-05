@@ -71,7 +71,7 @@ def main():
                 encoding="UTF-8",
             ) as gene_info_out:
                 
-                annotated_genes = annotate_genes(genes, annotations, stream=gene_info_out,)
+                annotated_genes = genes.annotate(annotations, stream=gene_info_out,)
 
                 precomputed_islands = None
                 if args.single_island or args.precomputed_islands:
@@ -108,7 +108,6 @@ def main():
                 os.path.join(args.output_dir, f"{args.genome_id}.gene_info.txt",),
                 "wt", encoding="UTF-8",
             )
-            gene_info_header = True
 
             gff_out = open(f"{out_prefix}.gff3", "wt", encoding="UTF-8",) 
 
@@ -119,12 +118,12 @@ def main():
 
                 annotations = compile_annotations(args, multi_run=True,)
 
-                for island in genomic_islands:
+                for ct, island in enumerate(genomic_islands):
                     # strip 
                     island = GenomicIsland.from_island(island, genome_id=args.genome_id,)
                     genes = GeneSet.from_island(island, composite_gene_ids=args.annotation_mode == "raw_islands")
-                    annotated_genes = annotate_genes(genes, annotations, gene_info_out, gene_info_header,)
-                    gene_info_header = False
+                    # annotated_genes = annotate_genes(genes, annotations, gene_info_out, gene_info_header,)
+                    annotated_genes = genes.annotate(annotations, gene_info_out, with_header=ct==0,)
                     island.update_recombinases()
                     # annotated_island = AnnotatedGenomicIsland.from_genomic_island(island)
                     annotated_island = AnnotatedGenomicIsland.from_island(island)
