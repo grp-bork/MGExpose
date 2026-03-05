@@ -9,7 +9,7 @@ import os
 import pathlib
 import sys
 
-from .genes.annotation.annotate import annotate_genes, compile_annotations
+from .genes.annotation.annotate import compile_annotations
 from .genes.gene_calling import run_pyrodigal
 from .genes.geneset import GeneSet
 from .handle_args import handle_args
