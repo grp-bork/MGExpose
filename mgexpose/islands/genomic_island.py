@@ -68,11 +68,11 @@ class GenomicIsland:
     def parse_id(id_string, contig_id=None,):
         """ Parse genome id, contig id, start and end coordinates from id string.
          Reverses get_id(). """
-        
+
         island_id_match = re.match(r'(GIL|MGE|SPIRE)_(.+)_(.+):(\d+)-(\d+)', id_string)
         if not island_id_match:
             raise ValueError(f"{id_string} does not seem to be a valid island identifier.")
-        
+
         groups = island_id_match.groups()[1:]
 
         start, end = map(int, groups[-2:])
@@ -82,8 +82,7 @@ class GenomicIsland:
         else:
             genome_id, contig_id = groups[:2]
 
-        return genome_id, contig_id, start, end    
-
+        return genome_id, contig_id, start, end
 
     @staticmethod
     def get_fieldnames():
@@ -193,7 +192,7 @@ class GenomicIsland:
 
     def get_id(self):
         return f"{self.ID_PREFIX}_{self.genome}_{self.contig}:{self.start}-{self.end}"
-    
+
     def get_attribs(self):
         attribs = {
             "ID": self.get_id(),
@@ -221,7 +220,7 @@ class GenomicIsland:
         attribs = parse_gff_attribs(cols[-1])
         recombinases = attribs.get("recombinases", "")
         recombinases = parse_recombinase_string(recombinases) if recombinases else Counter()
-        
+
         return cls(
             attribs.get("specI"),
             attribs.get("genome"),
@@ -242,7 +241,7 @@ class GenomicIsland:
     ):
 
         if add_header:
-            print("##gff-version 3", file=gff_outstream)        
+            print("##gff-version 3", file=gff_outstream)
 
         print(
             self.contig,
@@ -270,7 +269,7 @@ class GenomicIsland:
         island = cls(
             **{
                 k: other.__dict__.get(k)
-                for k in set(other.__dataclass_fields__).intersection(cls.__dataclass_fields__)
+                for k in set(other.__class__.__dataclass_fields__).intersection(cls.__class__.__dataclass_fields__)
             }
         )
         if genome_id:

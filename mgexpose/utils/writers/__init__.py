@@ -34,7 +34,6 @@ def write_final_results(recombinase_islands, args):
     """ write final results """
 
     outstream = contextlib.nullcontext()
-    
 
     out_prefix = os.path.join(
         args.output_dir,

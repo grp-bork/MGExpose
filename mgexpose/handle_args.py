@@ -133,7 +133,6 @@ def handle_args(args):
     reannotate_ap.add_argument("--pyhmmer_input", action="store_true")
     reannotate_ap.add_argument("--phage_eggnog_data", type=str)
     reannotate_ap.add_argument("--phage_filter_terms", type=str)
-    
 
     reannotate_ap.set_defaults(func=None)  # TODO
 

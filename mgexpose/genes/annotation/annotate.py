@@ -1,8 +1,5 @@
 """ Module to annotate gene sets. """
 
-import os
-import sys
-
 from functools import partial
 
 from .cluster import add_clusters
@@ -37,7 +34,6 @@ def compile_annotations(args, multi_run=False,):
             )
     except AttributeError as err:
         print(f"ERR: {err}")
-        pass
 
     try:
         if args.txs_macsy_report and args.txs_macsy_rules:
@@ -56,7 +52,6 @@ def compile_annotations(args, multi_run=False,):
             )
     except AttributeError as err:
         print(f"ERR: {err}")
-        pass
 
     try:
         if args.phage_eggnog_data and args.phage_filter_terms:
@@ -76,7 +71,6 @@ def compile_annotations(args, multi_run=False,):
             )
     except AttributeError as err:
         print(f"ERR: {err}")
-        pass
 
     try:
         if args.cluster_data:
@@ -92,6 +86,5 @@ def compile_annotations(args, multi_run=False,):
             )
     except AttributeError as err:
         print(f"ERR: {err}")
-        pass
 
     return annotations

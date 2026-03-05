@@ -70,7 +70,7 @@ def main():
                 "wt",
                 encoding="UTF-8",
             ) as gene_info_out:
-                
+
                 annotated_genes = genes.annotate(annotations, stream=gene_info_out,)
 
                 precomputed_islands = None
@@ -84,9 +84,11 @@ def main():
                 genomic_islands = prepare_islands(
                     annotated_genes, precomputed_islands=precomputed_islands,
                 )
-                
+
                 annotated_islands = annotate_islands(genomic_islands,)
-                mge_islands = list(evaluate_islands(annotated_islands, read_mge_rules(args.mge_rules),))
+                mge_islands = list(
+                    evaluate_islands(annotated_islands, read_mge_rules(args.mge_rules),)
+                )
 
                 if mge_islands:
                     write_final_results(mge_islands, args)
@@ -109,7 +111,7 @@ def main():
                 "wt", encoding="UTF-8",
             )
 
-            gff_out = open(f"{out_prefix}.gff3", "wt", encoding="UTF-8",) 
+            gff_out = open(f"{out_prefix}.gff3", "wt", encoding="UTF-8",)
 
 
             with gene_info_out, gff_out:
@@ -119,10 +121,13 @@ def main():
                 annotations = compile_annotations(args, multi_run=True,)
 
                 for ct, island in enumerate(genomic_islands):
-                    # strip 
+                    # strip
                     island = GenomicIsland.from_island(island, genome_id=args.genome_id,)
-                    genes = GeneSet.from_island(island, composite_gene_ids=args.annotation_mode == "raw_islands")
-                    # annotated_genes = annotate_genes(genes, annotations, gene_info_out, gene_info_header,)
+                    genes = GeneSet.from_island(
+                        island, composite_gene_ids=args.annotation_mode == "raw_islands",
+                    )
+                    # annotated_genes = annotate_genes(
+                    # genes, annotations, gene_info_out, gene_info_header,)
                     annotated_genes = genes.annotate(annotations, gene_info_out, with_header=ct==0,)
                     island.update_recombinases()
                     # annotated_island = AnnotatedGenomicIsland.from_genomic_island(island)

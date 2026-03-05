@@ -87,13 +87,15 @@ def prepare_islands(genes, precomputed_islands=None,):
 def annotate_islands(islands,):
     """ Adds annotation to previously computed islands. """
     for island in sorted(islands, key=lambda x: (x.contig, x.start, x.end)):
-        annotated_island = AnnotatedGenomicIsland.from_genomic_island(island)
+        # annotated_island = AnnotatedGenomicIsland.from_genomic_island(island)
+        annotated_island = AnnotatedGenomicIsland.from_island(island, genome_id=island.genome,)
         yield annotated_island
 
 
 def evaluate_islands(islands, rules,):
     """ Classify/annotate mge islands according to present signals. """
     for island in islands:
-        mge_island = MgeGenomicIsland.from_annotated_genomic_island(island)
+        # mge_island = MgeGenomicIsland.from_annotated_genomic_island(island)
+        mge_island = MgeGenomicIsland.from_island(island, genome_id=island.genome,)
         mge_island.evaluate_recombinases(rules)
         yield mge_island

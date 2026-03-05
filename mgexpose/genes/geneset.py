@@ -60,7 +60,7 @@ class GeneSet(dict):
             headers += EMAPPER_FIELDS["v2.1.2"]
             headers.remove("description")
             print(*headers, sep="\t", file=outstream)
-        
+
         for gene in self.values():
             eggnog_data = {}
             if gene.eggnog:
@@ -111,8 +111,11 @@ class GeneSet(dict):
     @classmethod
     def from_island(cls, island, composite_gene_ids=False,):
         """ Generate a GeneSet from a GenomicIsland or subclasses. """
-        return cls(island.genes, island.genome, island.speci, composite_gene_ids=composite_gene_ids,)
-    
+        return cls(
+            island.genes, island.genome, island.speci,
+            composite_gene_ids=composite_gene_ids,
+        )
+
     def annotate(self, annotations, stream=sys.stdout, with_header=True,):
         """ Annotate genes with MGE-relevant data. """
         for f_ann in annotations:

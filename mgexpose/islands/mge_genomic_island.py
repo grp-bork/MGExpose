@@ -1,4 +1,4 @@
-# pylint: disable=C0116,C0301,R0902,R0916,R0913,R0917,W0613
+# pylint: disable=C0116,C0301,R0902,R0916,R0913,R0917,W0613,R0912
 """
 Data Structures Module
 
@@ -195,7 +195,7 @@ class MgeGenomicIsland(AnnotatedGenomicIsland):
                     self.c_pli, self.c_mi = rule.phage_like_check(
                         self,
                         "brujita" in rec
-                    )    
+                    )
                 else:  # if self.phage_count >= 2
                     self.phage, self.c_mi, self.nov = rule.phage_check(self)
             else:  # if self.conj_man_count >= 1
@@ -285,6 +285,7 @@ class MgeGenomicIsland(AnnotatedGenomicIsland):
         self,
         gff_outstream,
         source_db,
+        intermediate_dump=False,
         add_header=False,
     ):
         if add_header:
@@ -375,13 +376,12 @@ class MgeGenomicIsland(AnnotatedGenomicIsland):
 
     def get_cargo(self):
         return [gene for gene in self.genes if gene.is_cargo()]
-    
+
     def get_recombinase_genes(self):
         return [gene for gene in self.genes if gene.recombinase]
-    
+
     def get_secretion_system_genes(self):
         return [gene for gene in self.genes if gene.secretion_systems]
-    
+
     def get_phage_genes(self):
         return [gene for gene in self.genes if gene.phage]
-

@@ -7,8 +7,6 @@ import csv
 import gzip
 import re
 
-from .phage import PhageDetection
-
 
 EMAPPER_FIELDS = {
     "v1": {"cog_fcat": 11, "description": 12},
