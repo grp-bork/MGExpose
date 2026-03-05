@@ -10,7 +10,7 @@ from .secretion import add_secretion_systems
 
 from ...utils.readers import (
     parse_macsyfinder_report,
-	read_recombinase_hits,
+    read_recombinase_hits,
 )
 
 

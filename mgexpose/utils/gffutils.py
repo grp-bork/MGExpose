@@ -1,4 +1,6 @@
 """ Module docstring """
+
+
 def get_source_column(source_db=None,):
     """ docstring """
     return ("proMGE", f"proMGE_{source_db}")[bool(source_db)]

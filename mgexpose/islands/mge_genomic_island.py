@@ -196,12 +196,12 @@ class MgeGenomicIsland(AnnotatedGenomicIsland):
                         self,
                         "brujita" in rec
                     )
-                else:  # if self.phage_count >= 2
+                else:  # if self.phage_count >= 2
                     self.phage, self.c_mi, self.nov = rule.phage_check(self)
             else:  # if self.conj_man_count >= 1
                 if self.phage_count < 2:
                     self.c_ce, self.nov = rule.conjug_element_check(self)
-                else:  # if self.phage_count >= 2
+                else:  # if self.phage_count >= 2
                     self.phage, self.c_mi, self.nov = rule.mobility_island_check(self)
 
             # if self.phage_count >= 2 and self.conj_man_count < 1:

@@ -113,7 +113,6 @@ def main():
 
             gff_out = open(f"{out_prefix}.gff3", "wt", encoding="UTF-8",)
 
-
             with gene_info_out, gff_out:
                 print("##gff-version 3", file=gff_out)
                 mge_islands = {}
@@ -121,14 +120,14 @@ def main():
                 annotations = compile_annotations(args, multi_run=True,)
 
                 for ct, island in enumerate(genomic_islands):
-                    # strip
+                    # strip
                     island = GenomicIsland.from_island(island, genome_id=args.genome_id,)
                     genes = GeneSet.from_island(
                         island, composite_gene_ids=args.annotation_mode == "raw_islands",
                     )
                     # annotated_genes = annotate_genes(
                     # genes, annotations, gene_info_out, gene_info_header,)
-                    annotated_genes = genes.annotate(annotations, gene_info_out, with_header=ct==0,)
+                    annotated_genes = genes.annotate(annotations, gene_info_out, with_header=ct == 0,)
                     island.update_recombinases()
                     # annotated_island = AnnotatedGenomicIsland.from_genomic_island(island)
                     annotated_island = AnnotatedGenomicIsland.from_island(island)

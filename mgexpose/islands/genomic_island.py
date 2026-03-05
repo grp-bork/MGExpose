@@ -52,7 +52,6 @@ class GenomicIsland:
     GFFTYPE = "region"
     ID_PREFIX = "GIL"
 
-
     speci: str = None
     genome: str = None
     is_core: bool = None
@@ -214,7 +213,6 @@ class GenomicIsland:
 
         return attribs
 
-
     @classmethod
     def from_gff(cls, *cols):
         attribs = parse_gff_attribs(cols[-1])
@@ -262,7 +260,6 @@ class GenomicIsland:
                 gff_outstream,
                 intermediate_dump=intermediate_dump,
             )
-
 
     @classmethod
     def from_island(cls, other, genome_id=None, set_parent=True,):
