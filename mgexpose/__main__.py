@@ -10,17 +10,17 @@ import pathlib
 import sys
 
 from .genes.annotation.annotate import compile_annotations
-from .genes.gene_calling import run_pyrodigal
 from .genes.geneset import GeneSet
 from .handle_args import handle_args
 from .islands.annotated_genomic_island import AnnotatedGenomicIsland
 from .islands.genomic_island import GenomicIsland
 from .islands.island_processing import annotate_islands, evaluate_islands, prepare_islands
 from .islands.mge_genomic_island import MgeGenomicIsland
-from .recombinases.recombinase_scan import run_pyhmmer
 from .utils.gffio import read_genomic_islands_gff, read_mge_genomic_islands_gff
 from .utils.readers import read_precomputed_islands, read_mge_rules
 from .utils.writers import extract_mge_seqs, write_final_results
+from .utils.upstream.gene_calling import run_pyrodigal
+from .utils.upstream.recombinase_scan import run_pyhmmer
 
 
 logger = logging.getLogger(__name__)

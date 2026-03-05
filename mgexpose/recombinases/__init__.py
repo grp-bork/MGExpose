@@ -2,8 +2,6 @@
 
 from collections import Counter
 
-from .recombinases import MGE_ALIASES, MgeRule
-
 
 def parse_recombinase_string(recombinase_str):
 	try:
