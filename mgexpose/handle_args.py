@@ -128,7 +128,10 @@ def handle_args(args):
     reannotate_ap.add_argument("--txs_macsy_rules", type=str)
     reannotate_ap.add_argument("--txs_macsy_report", type=str)
     reannotate_ap.add_argument("--extract_islands", type=str)
-    reannotate_ap.add_argument("--annotation_mode", type=str, choices=("mges", "raw_islands"), default="mges",)
+    reannotate_ap.add_argument(
+        "--annotation_mode",
+        type=str, choices=("mges", "raw_islands"), default="mges",
+    )
     reannotate_ap.add_argument("--recombinase_hits", type=str)
     reannotate_ap.add_argument("--pyhmmer_input", action="store_true")
     reannotate_ap.add_argument("--phage_eggnog_data", type=str)

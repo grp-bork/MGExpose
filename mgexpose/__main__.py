@@ -127,7 +127,9 @@ def main():
                     )
                     # annotated_genes = annotate_genes(
                     # genes, annotations, gene_info_out, gene_info_header,)
-                    annotated_genes = genes.annotate(annotations, gene_info_out, with_header=ct == 0,)
+                    annotated_genes = genes.annotate(
+                        annotations, gene_info_out, with_header=ct == 0,
+                    )
                     island.update_recombinases()
                     # annotated_island = AnnotatedGenomicIsland.from_genomic_island(island)
                     annotated_island = AnnotatedGenomicIsland.from_island(island)
