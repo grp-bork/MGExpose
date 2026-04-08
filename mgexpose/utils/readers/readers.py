@@ -4,13 +4,13 @@
 
 import csv
 import json
-import os
 import re
 import sys
 
-from ..gene import Gene
-from ..utils.chunk_reader import get_lines_from_chunks
-from ..recombinases import MgeRule
+from ..chunk_reader import get_lines_from_chunks
+from ...genes.gene import Gene
+from ...islands.genomic_island import GenomicIsland
+from ...recombinases import MgeRule
 
 
 def read_preannotated_genes(f):
@@ -23,12 +23,12 @@ def read_preannotated_genes(f):
         if header is None:
             header = line
         else:
-            line = [(item, None)[item == "None"] for item in line]            
+            line = [(item, None)[item == "None"] for item in line]
             yield Gene.from_geneinfo(**dict(zip(header, line)))
 
 
-
 def read_fasta(f):
+    """ Read a fasta file. """
     header, seq = None, []
     for line in get_lines_from_chunks(f):
         if line[0] == ">":
@@ -93,13 +93,15 @@ def read_recombinase_hits(f, pyhmmer=True):
 #             if row_index and row and not row[0].startswith("#")
 #         }
 def parse_macsyfinder_rules(f):
+    """ Read macsyfinder rules. """
     with open(f, "rb") as _in:
         return json.load(_in)
 
-def parse_macsyfinder_report(f, f_rules):
-    """ Read macsyfinder/txsscan results.
 
-    Returns (gene_id, txsscan_results) tuples via generator.
+def parse_macsyfinder_report(f, f_rules):
+    """ Read macsyfinder/conjscan results.
+
+    Returns (gene_id, conjscan_results) tuples via generator.
     """
 
     rules = parse_macsyfinder_rules(f_rules)
@@ -108,18 +110,21 @@ def parse_macsyfinder_report(f, f_rules):
         d = {}
         for line in _in:
             line = line.strip()
-            if line and line[0] != "#" and line[:8] != "replicon":  # replicon is the start of header line                
-                _, hit_id, gene_name, _, model_fqn, _, _, hit_status, *_ = re.split(r"\s+", line.strip())
+            if line and line[0] != "#" and line[:8] != "replicon":
+                # replicon is the start of header line
+                cols = re.split(r"\s+", line.strip())
+                _, hit_id, gene_name, _, model_fqn, _, _, hit_status, *_ = cols
                 system = model_fqn.replace("CONJ/", "")
-                rule = rules.get(system)
-                if rule is None:
-                    print(
-                        "WARNING: cannot find txsscan-rule for system:",
-                        f"`{system}`",
-                        file=sys.stderr,
-                    )
-                d.setdefault(hit_id, []).append((gene_name, system, rule, hit_status))   
-        
+                if system:
+                    rule = rules.get(system)
+                    if rule is None:
+                        print(
+                            "WARNING: cannot find txsscan-rule for system:",
+                            f"`{system}`",
+                            file=sys.stderr,
+                        )
+                    d.setdefault(hit_id, []).append((gene_name, system, rule, hit_status))
+
         yield from d.items()
 
 
@@ -136,3 +141,27 @@ def read_mge_rules(f, recombinase_scan=False):
         }
 
     return rules
+
+
+def read_precomputed_islands(genome_id=None, single_island=None, island_file=None,):
+    """ Helper function to deal with precomputed regions/islands. """
+    precomputed_islands = None
+    if single_island and island_file:
+        raise ValueError("Both --single_island and --precomputed_islands set.")
+    if single_island and not island_file:
+        precomputed_islands = [
+            GenomicIsland.from_region_string(single_island, genome_id=genome_id,)
+        ]
+    elif not single_island and island_file:
+        with open(island_file, "rt", encoding="UTF-8",) as _in:
+            precomputed_islands = [
+                GenomicIsland.from_region_string(line, genome_id=genome_id,) for line in _in
+            ]
+
+    if precomputed_islands is not None:
+        precomputed_islands_by_contig = {}
+        for island in precomputed_islands:
+            precomputed_islands_by_contig.setdefault(island.contig, []).append(island)
+        precomputed_islands = precomputed_islands_by_contig
+
+    return precomputed_islands

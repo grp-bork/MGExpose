@@ -1,9 +1,8 @@
+# pylint: disable=R0915
 """ Module for argument handling """
 
 import argparse
 import logging
-
-from .eggnog import EggnogReader
 
 from . import __version__
 
@@ -38,11 +37,9 @@ def handle_args(args):
     parent_subparser = argparse.ArgumentParser(add_help=False)
     parent_subparser.add_argument("--output_dir", "-o", type=str, default=".")
     parent_subparser.add_argument("--dbformat", type=str, choices=("PG3", "SPIRE"))
-    parent_subparser.add_argument("--write_gff", action="store_true")
-    parent_subparser.add_argument("--write_genes_to_gff", action="store_true")
     parent_subparser.add_argument("--dump_intermediate_steps", action="store_true")
     parent_subparser.add_argument(
-        "--output_suffix", type=str, default="full_length_MGE_assignments",
+        "--output_suffix", type=str, default="mge_islands",
     )
     parent_subparser.add_argument("--debug", action="store_true")
 
@@ -52,19 +49,22 @@ def handle_args(args):
         parents=(parent_subparser,),
     )
     denovo_ap.add_argument("genome_id", type=str)
-    # denovo_ap.add_argument("prodigal_gff", type=str)
     denovo_ap.add_argument("input_genes", type=str)
-    denovo_ap.add_argument("recombinase_hits", type=str)
-    denovo_ap.add_argument("mge_rules", type=str)
+    denovo_ap.add_argument("--recombinase_hits", type=str)
+    denovo_ap.add_argument("--mge_rules", type=str)
     denovo_ap.add_argument("--speci", type=str, default="no_speci")
     denovo_ap.add_argument("--txs_macsy_rules", type=str)
     denovo_ap.add_argument("--txs_macsy_report", type=str)
     denovo_ap.add_argument("--phage_eggnog_data", type=str)
     denovo_ap.add_argument("--cluster_data", type=str)
     denovo_ap.add_argument("--skip_island_identification", action="store_true")
-    denovo_ap.add_argument("--dump_genomic_islands", action="store_true")
     denovo_ap.add_argument("--phage_filter_terms", type=str)
-    denovo_ap.add_argument("--input_gene_type", type=str, choices=("prodigal", "preannotated",), default="prodigal",)
+    denovo_ap.add_argument(
+        "--input_gene_type",
+        type=str,
+        choices=("prodigal", "preannotated",),
+        default="prodigal",
+    )
 
     denovo_ap.add_argument("--include_genome_id", action="store_true")
     denovo_ap.add_argument("--core_threshold", type=float, default=0.95)
@@ -100,12 +100,6 @@ def handle_args(args):
         help="Core/accessory gene sets were precomputed."
     )
 
-    denovo_ap.add_argument(
-        "--add_functional_annotation",
-        action="store_true",
-        help="If specified, per gene emapper annotations are stored in the gff."
-    )
-    # ensure newest eggnog version
     denovo_ap.add_argument("--extract_islands", type=str)
 
     denovo_ap.add_argument("--pyhmmer_input", action="store_true")
@@ -122,6 +116,28 @@ def handle_args(args):
 
     identify_mobile_islands_ap.set_defaults(func=None)  # TODO
 
+    reannotate_ap = subparsers.add_parser(
+        "reannotate",
+        help="Reannotate previous MGExpose output",
+        parents=(parent_subparser,),
+    )
+
+    reannotate_ap.add_argument("genome_id", type=str)
+    reannotate_ap.add_argument("input_gff", type=str)
+    reannotate_ap.add_argument("--mge_rules", type=str)
+    reannotate_ap.add_argument("--txs_macsy_rules", type=str)
+    reannotate_ap.add_argument("--txs_macsy_report", type=str)
+    reannotate_ap.add_argument("--extract_islands", type=str)
+    reannotate_ap.add_argument(
+        "--annotation_mode",
+        type=str, choices=("mges", "raw_islands"), default="mges",
+    )
+    reannotate_ap.add_argument("--recombinase_hits", type=str)
+    reannotate_ap.add_argument("--pyhmmer_input", action="store_true")
+    reannotate_ap.add_argument("--phage_eggnog_data", type=str)
+    reannotate_ap.add_argument("--phage_filter_terms", type=str)
+
+    reannotate_ap.set_defaults(func=None)  # TODO
 
     call_genes_ap = subparsers.add_parser(
         "call_genes",
@@ -133,7 +149,6 @@ def handle_args(args):
     call_genes_ap.add_argument("genome_id", type=str)
     call_genes_ap.add_argument("--threads", "-t", type=int, default=1)
     call_genes_ap.set_defaults(func=None)  # TODO
-
 
     annotate_recombinases_ap = subparsers.add_parser(
         "recombinase_scan",

@@ -49,7 +49,8 @@ class GeneAnnotator:
                 # suffix of col9's ID record:
                 # CALOLV020000065.1	[...]	ID=65_14;... -> CALOLV020000065.1_14
                 # gene_id = f'{annotation[0]}_{gene_id.split("_")[-1]}'
-                gene.id = f'{gene.contig}_{gene.id.split("_")[-1]}'
+                # gene.id = f'{gene.contig}_{gene.id.split("_")[-1]}'
+                gene.set_composite_id()
 
             logger.info("Adding gene %s", gene.id)
 
@@ -211,7 +212,6 @@ class GeneAnnotator:
                 core_threshold=core_threshold,
                 output_dir=output_dir,
             )
-        # yield from self.genes.values()
         return self.genes.values()
 
     def dump_genes(self, outstream):
@@ -227,7 +227,6 @@ class GeneAnnotator:
 
         print(*headers, sep="\t", file=outstream)
         for gene in self.genes.values():
-            gene.stringify_speci()
             eggnog_data = {}
             if gene.eggnog:
                 eggnog_data = dict(gene.eggnog)

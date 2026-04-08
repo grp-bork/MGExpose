@@ -197,8 +197,6 @@ class GenomicIsland:
         self,
         gff_outstream,
         source_db,
-        write_genes=False,
-        add_functional_annotation=False,
         intermediate_dump=False,
         add_header=False,
     ):
@@ -246,15 +244,13 @@ class GenomicIsland:
             file=gff_outstream
         )
 
-        if write_genes:
-            # GFF3 child term: genes
-            for gene in sorted(self.genes, key=lambda g: (g.start, g.end,)):
-                gene.to_gff(
-                    gff_outstream,
-                    # genomic_island_id=island_id,
-                    add_functional_annotation=add_functional_annotation,
-                    intermediate_dump=intermediate_dump,
-                )
+        # GFF3 child term: genes
+        for gene in sorted(self.genes, key=lambda g: (g.start, g.end,)):
+            gene.to_gff(
+                gff_outstream,
+                # genomic_island_id=island_id,
+                intermediate_dump=intermediate_dump,
+            )
 
 
 @dataclass
@@ -595,8 +591,6 @@ class MgeGenomicIsland(AnnotatedGenomicIsland):
         self,
         gff_outstream,
         source_db,
-        write_genes=False,
-        add_functional_annotation=False,
         intermediate_dump=False,
         add_header=False,
     ):
@@ -645,14 +639,12 @@ class MgeGenomicIsland(AnnotatedGenomicIsland):
             file=gff_outstream
         )
 
-        if write_genes:
-            # GFF3 child term: genes
-            for gene in sorted(self.genes, key=lambda g: (g.start, g.end,)):
-                gene.to_gff(
-                    gff_outstream,
-                    # genomic_island_id=attribs["ID"],
-                    add_functional_annotation=add_functional_annotation,
-                )
+        # GFF3 child term: genes
+        for gene in sorted(self.genes, key=lambda g: (g.start, g.end,)):
+            gene.to_gff(
+                gff_outstream,
+                # genomic_island_id=attribs["ID"],
+            )
 
     @classmethod
     def from_gff(cls, *cols):
