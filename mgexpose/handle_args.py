@@ -3,6 +3,7 @@
 
 import argparse
 import logging
+import os
 
 from . import __version__
 
@@ -52,10 +53,14 @@ def handle_args(args):
     denovo_ap.add_argument("input_genes", type=str)
     denovo_ap.add_argument("--recombinase_hits", type=str)
     denovo_ap.add_argument("--mge_rules", type=str)
-    denovo_ap.add_argument("--speci", type=str, default="no_speci")
-    denovo_ap.add_argument("--txs_macsy_rules", type=str)
-    denovo_ap.add_argument("--txs_macsy_report", type=str)
-    denovo_ap.add_argument("--phage_eggnog_data", type=str)
+    denovo_ap.add_argument("--speci", type=str, default="no_speci")  # deprecated
+    denovo_ap.add_argument("--species", type=str, default="unknown_species")
+    denovo_ap.add_argument("--txs_macsy_rules", type=str)  # deprecated
+    denovo_ap.add_argument("--txs_macsy_report", type=str)  # deprecated
+    denovo_ap.add_argument("--secretion_rules", type=str)
+    denovo_ap.add_argument("--secretion_data", type=str)
+    denovo_ap.add_argument("--phage_eggnog_data", type=str)  # deprecated
+    denovo_ap.add_argument("--phage_and_cargo_data", type=str) 
     denovo_ap.add_argument("--cluster_data", type=str)
     denovo_ap.add_argument("--skip_island_identification", action="store_true")
     denovo_ap.add_argument("--phage_filter_terms", type=str)
@@ -159,9 +164,21 @@ def handle_args(args):
     annotate_recombinases_ap.add_argument("proteins_fasta", type=str)
     annotate_recombinases_ap.add_argument("gff", type=str)
     annotate_recombinases_ap.add_argument("recombinase_hmms", type=str)
-    annotate_recombinases_ap.add_argument("mge_rules", type=str)
     annotate_recombinases_ap.add_argument("genome_id", type=str)
+    annotate_recombinases_ap.add_argument("--mge_rules", type=str)
     annotate_recombinases_ap.add_argument("--threads", "-t", type=int, default=1)
     annotate_recombinases_ap.set_defaults(func=None)  # TODO
 
+
+    functional_annotation_ap = subparsers.add_parser(
+        "functional_annotation",
+        help="Orthology-based functional protein annotation with eggnog-mapper",
+        parents=(parent_subparser,),
+    )
+
+    functional_annotation_ap.add_argument("proteins_fasta", type=str)
+    functional_annotation_ap.add_argument("genome_id", type=str)
+    functional_annotation_ap.add_argument("--threads", "-t", type=int, default=1)
+    functional_annotation_ap.add_argument("--eggnog_db", type=str,)
+    
     return ap.parse_args()

@@ -44,14 +44,19 @@ class MgeRule:
         since it can carry conjugative system
         - ignored if the rule is used during recombinase-scans
         """
-        if all(
-                (
-                    self.subfamily is not None,
-                    "tn3" in self.subfamily.lower(),
-                    not self.recombinase_scan,
-                )
-        ):
-            self.ce = 1
+        self._tn3_ce_modify()
+        # if all(
+        #         (
+        #             self.subfamily is not None,
+        #             "tn3" in self.subfamily.lower(),
+        #             not self.recombinase_scan,
+        #         )
+        # ):
+        #     self.ce = 1
+
+    def _tn3_ce_modify(self):
+        do_modify = self.recombinase_scan and self.subfamily is not None and "tn3" in self.subfamily.lower()
+        self.ce = int(do_modify) or self.ce
 
     def get_signals(self):
         """ Returns MGE signals of rule. """

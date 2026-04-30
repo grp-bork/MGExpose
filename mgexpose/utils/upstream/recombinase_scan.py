@@ -6,6 +6,7 @@ import pathlib
 import pyhmmer
 
 from .recombinases import MGE_ALIASES
+from ...rules import get_recombinase_rules
 from ..utils.gffio import read_prodigal_gff
 from ..utils.readers import read_mge_rules
 
@@ -36,11 +37,8 @@ def run_pyhmmer(args):
 
     proteins = get_protein_coords(args.gff)
 
-    if args.mge_rules and pathlib.Path(args.mge_rules).is_file():
-        mge_rules = read_mge_rules(args.mge_rules, recombinase_scan=True)
-    else:
-        raise ValueError("Cannot read mge_rules.")
-
+    mge_rules = get_recombinase_rules(args.mge_rules, for_recombinase_scan=True,)
+    
     with pyhmmer.easel.SequenceFile(
         args.proteins_fasta,
         digital=True,

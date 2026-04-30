@@ -36,7 +36,7 @@ def compile_annotations(args, multi_run=False,):
         print(f"ERR: {err}")
 
     try:
-        if args.txs_macsy_report and args.txs_macsy_rules:
+        if args.txs_macsy_report:
 
             secretion_systems = parse_macsyfinder_report(
                 args.txs_macsy_report, args.txs_macsy_rules,
@@ -54,7 +54,7 @@ def compile_annotations(args, multi_run=False,):
         print(f"ERR: {err}")
 
     try:
-        if args.phage_eggnog_data and args.phage_filter_terms:
+        if args.phage_eggnog_data:
 
             eggnog_annotations = parse_emapper(
                 args.phage_eggnog_data,

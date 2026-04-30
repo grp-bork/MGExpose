@@ -16,11 +16,15 @@ from .islands.annotated_genomic_island import AnnotatedGenomicIsland
 from .islands.genomic_island import GenomicIsland
 from .islands.island_processing import annotate_islands, evaluate_islands, prepare_islands
 from .islands.mge_genomic_island import MgeGenomicIsland
+from .rules import get_recombinase_rules
 from .utils.gffio import read_genomic_islands_gff, read_mge_genomic_islands_gff
-from .utils.readers import read_precomputed_islands, read_mge_rules
+from .utils.readers import read_precomputed_islands
+# from .utils.upstream.functional_annotation import run_emapper
+# from .utils.upstream.gene_calling import run_pyrodigal
+# from .utils.upstream.recombinase_scan import run_pyhmmer
+from .utils.upstream import functional_annotation, gene_calling, recombinase_scan
 from .utils.writers import extract_mge_seqs, write_final_results
-from .utils.upstream.gene_calling import run_pyrodigal
-from .utils.upstream.recombinase_scan import run_pyhmmer
+
 
 
 logger = logging.getLogger(__name__)
@@ -37,13 +41,16 @@ def main():
         cdir = os.path.join(args.output_dir, "debug")
     pathlib.Path(cdir).mkdir(exist_ok=True, parents=True)
 
-    if args.command in ("call_genes", "recombinase_scan",):
+    if args.command in ("call_genes", "recombinase_scan", "functional_annotation",):
 
         if args.command == "call_genes":
             run_pyrodigal(args)
 
         elif args.command == "recombinase_scan":
             run_pyhmmer(args)
+
+        elif args.command == "functional_annotation":
+            run_emapper(args)
 
     else:
 
@@ -55,7 +62,7 @@ def main():
             genes = GeneSet.from_file(
                 args.input_genes,
                 genome_id=args.genome_id,
-                speci=args.speci,
+                species=args.species,
                 gene_type=args.input_gene_type,
                 composite_gene_ids=args.dbformat != "PG3",
             )
@@ -86,8 +93,9 @@ def main():
                 )
 
                 annotated_islands = annotate_islands(genomic_islands,)
+
                 mge_islands = list(
-                    evaluate_islands(annotated_islands, read_mge_rules(args.mge_rules),)
+                    evaluate_islands(annotated_islands, get_recombinase_rules(args.mge_rules),)
                 )
 
                 if mge_islands:
@@ -100,7 +108,6 @@ def main():
             elif args.annotation_mode == "raw_islands":
                 genomic_islands = read_genomic_islands_gff(args.input_gff)
             # genomic_islands = read_island_gff(args.input_gff, GenomicIsland)
-            mge_rules = read_mge_rules(args.mge_rules)
             out_prefix = os.path.join(
                 args.output_dir,
                 f"{args.genome_id}.mge_islands"
@@ -136,7 +143,7 @@ def main():
                     # mge_island = MgeGenomicIsland.from_annotated_genomic_island(annotated_island)
                     mge_island = MgeGenomicIsland.from_island(annotated_island)
                     # mge_island = island
-                    mge_island.evaluate_recombinases(mge_rules)
+                    mge_island.evaluate_recombinases(get_recombinase_rules(args.mge_rules))
                     mge_island.to_gff(
                         gff_out,
                         source_db=None,

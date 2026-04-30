@@ -19,14 +19,14 @@ class GeneSet(dict):
         self,
         genes,
         genome_id=None,
-        speci=None,
+        species=None,
         composite_gene_ids=False,
     ):
         super().__init__()
 
         logger.info(
-            "Creating new %s for genome=%s specI=%s",
-            self.__class__, genome_id, speci,
+            "Creating new %s for genome=%s species=%s",
+            self.__class__, genome_id, species,
         )
 
         for gene in genes:
@@ -43,8 +43,8 @@ class GeneSet(dict):
 
             if genome_id is not None and gene.genome is None:
                 gene.genome = genome_id
-            if speci is not None and gene.speci is None:
-                gene.speci = speci
+            if species is not None and gene.species is None:
+                gene.species = species
 
             self[gene.id] = gene
 
@@ -91,7 +91,7 @@ class GeneSet(dict):
         cls,
         fn,
         genome_id=None,
-        speci=None,
+        species=None,
         gene_type="prodigal",
         composite_gene_ids=False,
     ):
@@ -104,7 +104,7 @@ class GeneSet(dict):
         return cls(
             read_f(fn),
             genome_id=genome_id,
-            speci=speci,
+            species=species,
             composite_gene_ids=composite_gene_ids,
         )
 
@@ -112,7 +112,7 @@ class GeneSet(dict):
     def from_island(cls, island, composite_gene_ids=False,):
         """ Generate a GeneSet from a GenomicIsland or subclasses. """
         return cls(
-            island.genes, island.genome, island.speci,
+            island.genes, island.genome, island.species,
             composite_gene_ids=composite_gene_ids,
         )
 

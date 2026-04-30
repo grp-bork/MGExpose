@@ -11,6 +11,7 @@ from ..chunk_reader import get_lines_from_chunks
 from ...genes.gene import Gene
 from ...islands.genomic_island import GenomicIsland
 from ...recombinases import MgeRule
+from ...rules.secretion import CONJSCAN_RULES
 
 
 def read_preannotated_genes(f):
@@ -104,7 +105,10 @@ def parse_macsyfinder_report(f, f_rules):
     Returns (gene_id, conjscan_results) tuples via generator.
     """
 
-    rules = parse_macsyfinder_rules(f_rules)
+    if f_rules:
+        rules = parse_macsyfinder_rules(f_rules)
+    else:        
+        rules = CONJSCAN_RULES
 
     with open(f, "rt", encoding="UTF-8") as _in:
         d = {}
@@ -128,14 +132,14 @@ def parse_macsyfinder_report(f, f_rules):
         yield from d.items()
 
 
-def read_mge_rules(f, recombinase_scan=False):
+def read_mge_rules(f, for_recombinase_scan=False,):
     """ Read MGE rules.
 
     Returns dictionary {mge: MgeRule}.
     """
     with open(f, "rt", encoding="UTF-8") as _in:
         rules = {
-            row[0].lower(): MgeRule(row[0], *(tuple(map(int, row[1:]))), recombinase_scan)
+            row[0].lower(): MgeRule(row[0], *(tuple(map(int, row[1:]))), for_recombinase_scan)
             for i, row in enumerate(csv.reader(_in, delimiter="\t"))
             if i != 0
         }

@@ -20,7 +20,7 @@ class Gene:
     associated with it and can be extended. '''
     id: str = None
     genome: str = None
-    speci: str = None
+    species: str = None
     contig: str = None
     start: int = None
     end: int = None
@@ -83,13 +83,13 @@ class Gene:
     def __str__(self):
         """ String representation. """
 
-        speci = self.speci
-        if not isinstance(speci, str):
+        species = self.species
+        if not isinstance(species, str):
             # converts non-string speci annotation (coreg mode) to string.
-            speci = ":".join(sorted(speci))
+            species = ":".join(sorted(species))
 
         return "\t".join(
-            f"{v if k != 'speci' else speci}" for k, v in self.__dict__.items()
+            f"{v if k != 'species' else species}" for k, v in self.__dict__.items()
             if k not in ("eggnog", "secretion_systems", "secretion_rules",)
         )
 
@@ -120,7 +120,7 @@ class Gene:
         return cls(
             id=attribs["ID"],
             genome=attribs.get("genome"),
-            speci=attribs.get("speci", "no_speci"),
+            species=attribs.get("species", "unknown_species"),
             contig=cols[0],
             start=int(cols[3]),
             end=int(cols[4]),
@@ -167,7 +167,7 @@ class Gene:
         }
         if intermediate_dump:
             attribs["genome"] = self.genome
-            attribs["speci"] = self.speci
+            attribs["species"] = self.species
             attribs["cluster"] = self.cluster
             attribs["is_core"] = self.is_core
 
@@ -195,7 +195,7 @@ class Gene:
         """ Parse a gene from a gene_info line:
         - id
         - genome
-        - speci
+        - species
         - contig
         - start
         - end
@@ -258,7 +258,7 @@ class Gene:
         return cls(
             id=gene_id,
             genome=genome_id,
-            speci=kwargs.get("speci"),
+            species=kwargs.get("species"),
             contig=kwargs.get("contig"),
             start=int(kwargs.get("start")),
             end=int(kwargs.get("end")),
