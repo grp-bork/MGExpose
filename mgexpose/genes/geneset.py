@@ -116,11 +116,18 @@ class GeneSet(dict):
             composite_gene_ids=composite_gene_ids,
         )
 
-    def annotate(self, annotations, stream=sys.stdout, with_header=True,):
+    def annotate(self, annotations, stream=sys.stdout, with_header=True, gffstream=None,):
         """ Annotate genes with MGE-relevant data. """
         for f_ann in annotations:
             f_ann(genes=self)
 
         self.dump(stream, with_header=with_header,)
+
+        if gffstream is not None:
+            add_header = True
+            for gene_id, gene in self.items():
+
+                gene.to_gff(gffstream, add_header=add_header,)
+                add_header=False
 
         return list(self.values())

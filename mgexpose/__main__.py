@@ -70,16 +70,28 @@ def main():
 
             annotations, has_clusters = compile_annotations(args, multi_run=False,)
 
-            with open(
+            gene_info_out = open(
                 os.path.join(
                     args.output_dir,
                     f"{args.genome_id}.gene_info.txt",
                 ),
                 "wt",
                 encoding="UTF-8",
-            ) as gene_info_out:
+            )
 
-                annotated_genes = genes.annotate(annotations, stream=gene_info_out,)
+            gene_info_gff = open(
+                os.path.join(
+                    args.output_dir,
+                    f"{args.genome_id}.gene_info.gff3",
+                ),
+                "wt",
+                encoding="UTF-8",
+            )
+
+
+            with gene_info_out, gene_info_gff:
+
+                annotated_genes = genes.annotate(annotations, stream=gene_info_out, gffstream=gene_info_gff,)
 
                 precomputed_islands = None
                 if args.single_island or args.precomputed_islands:
