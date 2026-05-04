@@ -5,7 +5,7 @@ import pathlib
 
 import pyrodigal
 
-from ..utils.readers import read_fasta
+from ..readers import read_fasta
 
 
 def run_pyrodigal(args):
