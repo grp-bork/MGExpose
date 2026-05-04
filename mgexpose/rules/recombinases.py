@@ -1,4 +1,6 @@
-from .recombinases import MgeRule
+""" Recombinase rules. """
+
+from ..recombinases import MgeRule
 
 
 MGE_RULES = {

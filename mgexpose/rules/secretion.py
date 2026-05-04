@@ -1,3 +1,5 @@
+""" CONJScan rules. """
+
 CONJSCAN_RULES = {
 	"Chromosome/dCONJ_typeF": {"mandatory": 1, "accessory": 15},
 	"Chromosome/dCONJ_typeI": {"mandatory": 1, "accessory": 17},

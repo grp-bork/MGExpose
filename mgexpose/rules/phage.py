@@ -1,3 +1,5 @@
+""" Phage signal exclusion rules. """
+
 PHAGE_RULES = {
 	'1KCUM': 'Type_VI_secretion_protein,_EvpB/VC_A0108,_tail_sheath',
 	'1MT2Y': 'Type_VI_secretion_protein,_EvpB/VC_A0108,_tail_sheath',
