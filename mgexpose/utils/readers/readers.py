@@ -66,7 +66,7 @@ def read_recombinase_hits(f):
 
         for line in lines:
             line = line.strip()
-            if line and line != "#":
+            if line and line[0] != "#":
                 if fmt == "gff3":
                     attribs = dict(item.split("=") for item in line.split("\t")[8].split(";"))
                     gene_id, mge = attribs.get("ID"), attribs.get("recombinase")
