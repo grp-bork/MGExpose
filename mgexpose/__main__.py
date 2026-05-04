@@ -20,9 +20,9 @@ from .rules import get_recombinase_rules
 from .utils.gffio import read_genomic_islands_gff, read_mge_genomic_islands_gff
 from .utils.readers import read_precomputed_islands
 # from .utils.upstream.functional_annotation import run_emapper
-# from .utils.upstream.gene_calling import run_pyrodigal
-# from .utils.upstream.recombinase_scan import run_pyhmmer
-from .utils.upstream import functional_annotation, gene_calling, recombinase_scan
+from .utils.upstream.gene_calling import run_pyrodigal
+from .utils.upstream.recombinase_scan import run_pyhmmer
+# from .utils.upstream import functional_annotation, gene_calling, recombinase_scan
 from .utils.writers import extract_mge_seqs, write_final_results
 
 
