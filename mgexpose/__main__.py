@@ -68,7 +68,7 @@ def main():
                 composite_gene_ids=args.dbformat != "PG3",
             )
 
-            annotations = compile_annotations(args, multi_run=False,)
+            annotations, has_clusters = compile_annotations(args, multi_run=False,)
 
             with open(
                 os.path.join(
@@ -89,18 +89,19 @@ def main():
                         island_file=args.precomputed_islands,
                     )
 
-                genomic_islands = prepare_islands(
-                    annotated_genes, precomputed_islands=precomputed_islands,
-                )
+                if has_clusters or precomputed_islands:
+                    genomic_islands = prepare_islands(
+                        annotated_genes, precomputed_islands=precomputed_islands,
+                    )
 
-                annotated_islands = annotate_islands(genomic_islands,)
+                    annotated_islands = annotate_islands(genomic_islands,)
 
-                mge_islands = list(
-                    evaluate_islands(annotated_islands, get_recombinase_rules(args.mge_rules),)
-                )
+                    mge_islands = list(
+                        evaluate_islands(annotated_islands, get_recombinase_rules(args.mge_rules),)
+                    )
 
-                if mge_islands:
-                    write_final_results(mge_islands, args)
+                    if mge_islands:
+                        write_final_results(mge_islands, args)
 
         elif args.command == "reannotate":
 

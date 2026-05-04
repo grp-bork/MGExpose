@@ -17,6 +17,7 @@ from ...utils.readers import (
 def compile_annotations(args, multi_run=False,):
     """ Compile annotation functions according to input parameters. """
     annotations = []
+    has_clusters = False
     try:
         if args.recombinase_hits:
 
@@ -82,7 +83,8 @@ def compile_annotations(args, multi_run=False,):
                     genome_id=args.genome_id,
                 )
             )
+        has_clusters = True
     except AttributeError as err:
         print(f"ERR: {err}")
 
-    return annotations
+    return annotations, has_clusters

@@ -126,7 +126,7 @@ def run_pyhmmer(args):
                     recombinases.append(
                         (
                             protein_id[:protein_id.rfind("_")],
-                            "proMGE_recombinase_scan",
+                            "mgexpose",
                             "gene",
                             protein.start,
                             protein.end,
