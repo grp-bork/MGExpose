@@ -340,10 +340,13 @@ class MgeGenomicIsland(AnnotatedGenomicIsland):
 
         genome_id, *_ = GenomicIsland.parse_id(attribs["ID"], cols[0])
         # TODO: check coordinates and ID overlap
+        genome_type = attribs.get("genome_type")
+
         return cls(
             "",  # TODO: where to get/ how to handle species
             genome_id,
-            attribs["genome_type"] == "COR",
+            # attribs["genome_type"] == "COR",
+            (genome_type == "COR" if genome_type is not None else genome_type),
             cols[0],  # contig
             int(cols[3]),  # start
             int(cols[4]),  # end
