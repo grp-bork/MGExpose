@@ -219,10 +219,13 @@ class GenomicIsland:
         recombinases = attribs.get("recombinases", "")
         recombinases = parse_recombinase_string(recombinases) if recombinases else Counter()
 
+        genome_type = attribs.get("genome_type")
+
         return cls(
             attribs.get("species"),
             attribs.get("genome"),
-            attribs.get("genome_type") == "COR",
+            # attribs.get("genome_type") == "COR",
+            (genome_type == "COR" if genome_type is not None else genome_type),
             cols[0],  # contig
             int(cols[3]),  # start
             int(cols[4]),  # end
