@@ -56,10 +56,10 @@ def main():
     else:
 
         genomic_islands = None
-        skip_island_identification = True
+        # skip_island_identification = True
 
         if args.command == "denovo":
-            skip_island_identification = args.skip_island_identification
+            # skip_island_identification = args.skip_island_identification
             genes = GeneSet.from_file(
                 args.input_genes,
                 genome_id=args.genome_id,
