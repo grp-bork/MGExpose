@@ -127,7 +127,7 @@ class Gene:
             strand=cols[6],
             recombinase=attribs.get("recombinase"),
             cluster=attribs.get("cluster") or attribs.get("Cluster"),
-            is_core=attribs.get("genome_type") == "COR",
+            is_core=(attribs.get("genome_type") == "COR" if attribs.get("genome_type") else None),
             phage=attribs.get("phage"),
             secretion_systems=attribs.get("secretion_systems", "").split(","),
             secretion_rules=literal_eval(f"[{secretion_rules}]") if secretion_rules else [],
