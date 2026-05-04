@@ -18,62 +18,50 @@ def compile_annotations(args, multi_run=False,):
     """ Compile annotation functions according to input parameters. """
     annotations = []
     has_clusters = False
-    try:
-        if args.recombinase_hits:
 
-            recombinases = read_recombinase_hits(args.recombinase_hits,)
-            if multi_run:
-                recombinases = list(recombinases)
+    if hasattr(args, "recombinases"):
+        recombinases = read_recombinase_hits(args.recombinases,)
+        if multi_run:
+            recombinases = list(recombinases)
 
-            annotations.append(
-                partial(
-                    add_recombinases,
-                    recombinases=recombinases,
-                )
+        annotations.append(
+            partial(
+                add_recombinases,
+                recombinases=recombinases,
             )
-    except AttributeError as err:
-        print(f"ERR: {err}")
+        )
 
-    try:
-        if args.secretion_data:
+    if hasattr(args, "secretion_data"):
+        secretion_systems = parse_macsyfinder_report(
+            args.secretion_data, args.secretion_rules,
+        )
+        if multi_run:
+            secretion_systems = list(secretion_systems)
 
-            secretion_systems = parse_macsyfinder_report(
-                args.secretion_data, args.secretion_rules,
+        annotations.append(
+            partial(
+                add_secretion_systems,
+                secretion_systems=secretion_systems,
             )
-            if multi_run:
-                secretion_systems = list(secretion_systems)
+        )
 
-            annotations.append(
-                partial(
-                    add_secretion_systems,
-                    secretion_systems=secretion_systems,
-                )
+    if hasattr(args, "phage_cargo_data"):
+        eggnog_annotations = parse_emapper(
+            args.phage_cargo_data,
+            phage_annotation=PhageDetection(args.phage_filter_terms),
+        )
+        if multi_run:
+            eggnog_annotations = list(eggnog_annotations)
+
+        annotations.append(
+            partial(
+                add_eggnog_annotation,
+                eggnog_annotations,
             )
-    except AttributeError as err:
-        print(f"ERR: {err}")
+        )
 
-    try:
-        if args.phage_eggnog_data:
-
-            eggnog_annotations = parse_emapper(
-                args.phage_eggnog_data,
-                phage_annotation=PhageDetection(args.phage_filter_terms),
-            )
-            if multi_run:
-                eggnog_annotations = list(eggnog_annotations)
-
-            annotations.append(
-                partial(
-                    add_eggnog_annotation,
-                    eggnog_annotations,
-                )
-            )
-    except AttributeError as err:
-        print(f"ERR: {err}")
-
-    try:
-        if args.cluster_data:
-            annotations.append(
+    if hasattr(args, "cluster_data"):
+        annotations.append(
                 partial(
                     add_clusters,
                     args.cluster_data,
@@ -84,7 +72,75 @@ def compile_annotations(args, multi_run=False,):
                 )
             )
         has_clusters = True
-    except AttributeError as err:
-        print(f"ERR: {err}")
+
+
+    # try:
+    #     if args.recombinase_hits:
+
+    #         recombinases = read_recombinase_hits(args.recombinases,)
+    #         if multi_run:
+    #             recombinases = list(recombinases)
+
+    #         annotations.append(
+    #             partial(
+    #                 add_recombinases,
+    #                 recombinases=recombinases,
+    #             )
+    #         )
+    # except AttributeError as err:
+    #     print(f"ERR: {err}")
+
+    # try:
+    #     if args.secretion_data:
+
+    #         secretion_systems = parse_macsyfinder_report(
+    #             args.secretion_data, args.secretion_rules,
+    #         )
+    #         if multi_run:
+    #             secretion_systems = list(secretion_systems)
+
+    #         annotations.append(
+    #             partial(
+    #                 add_secretion_systems,
+    #                 secretion_systems=secretion_systems,
+    #             )
+    #         )
+    # except AttributeError as err:
+    #     print(f"ERR: {err}")
+
+    # try:
+    #     if args.phage_eggnog_data:
+
+    #         eggnog_annotations = parse_emapper(
+    #             args.phage_eggnog_data,
+    #             phage_annotation=PhageDetection(args.phage_filter_terms),
+    #         )
+    #         if multi_run:
+    #             eggnog_annotations = list(eggnog_annotations)
+
+    #         annotations.append(
+    #             partial(
+    #                 add_eggnog_annotation,
+    #                 eggnog_annotations,
+    #             )
+    #         )
+    # except AttributeError as err:
+    #     print(f"ERR: {err}")
+
+    # try:
+    #     if args.cluster_data:
+    #         annotations.append(
+    #             partial(
+    #                 add_clusters,
+    #                 args.cluster_data,
+    #                 use_y_clusters=('use_y_clusters' in args and args.use_y_clusters),
+    #                 core_threshold=('core_threshold' in args and args.core_threshold) or 0.95,
+    #                 output_dir=args.output_dir,
+    #                 genome_id=args.genome_id,
+    #             )
+    #         )
+    #     has_clusters = True
+    # except AttributeError as err:
+    #     print(f"ERR: {err}")
 
     return annotations, has_clusters
