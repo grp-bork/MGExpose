@@ -8,6 +8,38 @@ import os
 from . import __version__
 
 
+def add_data_args(ap):
+    ap.add_argument("--genome_id", type=str)
+    ap.add_argument("--input_genes", type=str)
+    ap.add_argument("--recombinases", "--recombinase_hits", dest="recombinases", type=str)
+    ap.add_argument("--mge_rules", type=str)
+    ap.add_argument("--speci", "--species", dest="species", type=str, default="unknown_species")
+    ap.add_argument("--secretion_data", "--txs_macsy_report", dest="secretion_data", type=str)
+    ap.add_argument("--secretion_rules", "--txs_macsy_rules", dest="secretion_rules", type=str)
+    ap.add_argument("--phage_eggnog_data", "--phage_and_cargo_data", dest="phage_and_cargo_data", type=str)
+    ap.add_argument("--phage_filter_terms", type=str)
+    ap.add_argument("--cluster_data", type=str)
+
+    ap.add_argument(
+        "--input_gene_type",
+        type=str,
+        choices=("prodigal", "preannotated",),
+        default="prodigal",
+    )
+
+    ap.add_argument(
+        "--allow_batch_data",
+        action="store_true",
+        help=(
+            "SPIRE annotation may have data that does not relate to the current bin."
+            " Ignore those data."
+        ),
+    )  # deprecated
+
+    ap.add_argument("--pyhmmer_input", action="store_true")  # deprecated
+
+
+
 def handle_args(args):
     """ Argument handling """
 
@@ -38,49 +70,22 @@ def handle_args(args):
     parent_subparser = argparse.ArgumentParser(add_help=False)
     parent_subparser.add_argument("--output_dir", "-o", type=str, default=".")
     parent_subparser.add_argument("--dbformat", type=str, choices=("PG3", "SPIRE"))
-    parent_subparser.add_argument("--dump_intermediate_steps", action="store_true")
+    parent_subparser.add_argument("--dump_intermediate_steps", action="store_true")  # deprecated
     parent_subparser.add_argument(
         "--output_suffix", type=str, default="mge_islands",
-    )
-    parent_subparser.add_argument("--debug", action="store_true")
+    )  # deprecated
+    parent_subparser.add_argument("--debug", action="store_true")  # deprecated
 
     denovo_ap = subparsers.add_parser(
         "denovo",
         help="Classify and annotate mobile genomic regions from annotated genes.",
         parents=(parent_subparser,),
     )
-    denovo_ap.add_argument("genome_id", type=str)
-    denovo_ap.add_argument("input_genes", type=str)
-    denovo_ap.add_argument("--recombinase_hits", type=str)
-    denovo_ap.add_argument("--mge_rules", type=str)
-    denovo_ap.add_argument("--speci", type=str, default="no_speci")  # deprecated
-    denovo_ap.add_argument("--species", type=str, default="unknown_species")
-    denovo_ap.add_argument("--txs_macsy_rules", type=str)  # deprecated
-    denovo_ap.add_argument("--txs_macsy_report", type=str)  # deprecated
-    denovo_ap.add_argument("--secretion_rules", type=str)
-    denovo_ap.add_argument("--secretion_data", type=str)
-    denovo_ap.add_argument("--phage_eggnog_data", type=str)  # deprecated
-    denovo_ap.add_argument("--phage_and_cargo_data", type=str) 
-    denovo_ap.add_argument("--cluster_data", type=str)
-    denovo_ap.add_argument("--skip_island_identification", action="store_true")
-    denovo_ap.add_argument("--phage_filter_terms", type=str)
-    denovo_ap.add_argument(
-        "--input_gene_type",
-        type=str,
-        choices=("prodigal", "preannotated",),
-        default="prodigal",
-    )
 
-    denovo_ap.add_argument("--include_genome_id", action="store_true")
+    add_data_args(denovo_ap)
+        
     denovo_ap.add_argument("--core_threshold", type=float, default=0.95)
-    denovo_ap.add_argument(
-        "--allow_batch_data",
-        action="store_true",
-        help=(
-            "SPIRE annotation may have data that does not relate to the current bin."
-            " Ignore those data."
-        ),
-    )
+    
     denovo_ap.add_argument(
         "--use_y_clusters",
         action="store_true",
@@ -91,7 +96,7 @@ def handle_args(args):
     )
     denovo_ap.add_argument(
         "--single_island",
-        action="store_true",
+        type=str,
         help="Input is genomic region, skips island computation."
     )
     denovo_ap.add_argument(
@@ -107,19 +112,18 @@ def handle_args(args):
 
     denovo_ap.add_argument("--extract_islands", type=str)
 
-    denovo_ap.add_argument("--pyhmmer_input", action="store_true")
-
+    
     denovo_ap.set_defaults(func=None)  # TODO
 
-    identify_mobile_islands_ap = subparsers.add_parser(
-        "identify_mobile_islands",
-        help="Identify and classify genomic islands as mobile.",
-        parents=(parent_subparser,),
-    )
+    # identify_mobile_islands_ap = subparsers.add_parser(
+    #     "identify_mobile_islands",
+    #     help="Identify and classify genomic islands as mobile.",
+    #     parents=(parent_subparser,),
+    # )
 
-    identify_mobile_islands_ap.add_argument("island_gff", type=str)
+    # identify_mobile_islands_ap.add_argument("island_gff", type=str)
 
-    identify_mobile_islands_ap.set_defaults(func=None)  # TODO
+    # identify_mobile_islands_ap.set_defaults(func=None)  # TODO
 
     reannotate_ap = subparsers.add_parser(
         "reannotate",
@@ -127,21 +131,14 @@ def handle_args(args):
         parents=(parent_subparser,),
     )
 
-    reannotate_ap.add_argument("genome_id", type=str)
-    reannotate_ap.add_argument("input_gff", type=str)
-    reannotate_ap.add_argument("--mge_rules", type=str)
-    reannotate_ap.add_argument("--txs_macsy_rules", type=str)
-    reannotate_ap.add_argument("--txs_macsy_report", type=str)
+    add_data_args(reannotate_ap)
+
     reannotate_ap.add_argument("--extract_islands", type=str)
     reannotate_ap.add_argument(
         "--annotation_mode",
         type=str, choices=("mges", "raw_islands"), default="mges",
     )
-    reannotate_ap.add_argument("--recombinase_hits", type=str)
-    reannotate_ap.add_argument("--pyhmmer_input", action="store_true")
-    reannotate_ap.add_argument("--phage_eggnog_data", type=str)
-    reannotate_ap.add_argument("--phage_filter_terms", type=str)
-
+    
     reannotate_ap.set_defaults(func=None)  # TODO
 
     call_genes_ap = subparsers.add_parser(
@@ -152,6 +149,7 @@ def handle_args(args):
 
     call_genes_ap.add_argument("genome_fasta", type=str)
     call_genes_ap.add_argument("genome_id", type=str)
+    call_genes_ap.add_argument("--meta", action="store_true")
     call_genes_ap.add_argument("--threads", "-t", type=int, default=1)
     call_genes_ap.set_defaults(func=None)  # TODO
 

@@ -118,8 +118,8 @@ def run_pyhmmer(args):
                     mge_attribs = ";".join(
                         f"{k}={str(v).replace(';', ',')}"
                         for k, v in zip(
-                            ("recombinase", "PFAM", "predicted_mge", "evalue", "score", "confidence",),
-                            (recombinase, hmm_name, ",".join(mges), hit.evalue, hit.score, confidence,)
+                            ("ID", "recombinase", "PFAM", "predicted_mge", "evalue", "score", "confidence",),
+                            (protein_id, recombinase, hmm_name, ",".join(mges), hit.evalue, hit.score, confidence,)
                         )
                     )
                     # attrib_str = ";".join(f"{item[0]}={item[1]}" for item in protein.attribs.items() if item[1])

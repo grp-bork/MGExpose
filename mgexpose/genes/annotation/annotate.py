@@ -20,9 +20,7 @@ def compile_annotations(args, multi_run=False,):
     try:
         if args.recombinase_hits:
 
-            recombinases = read_recombinase_hits(
-                args.recombinase_hits, pyhmmer=args.pyhmmer_input,
-            )
+            recombinases = read_recombinase_hits(args.recombinase_hits,)
             if multi_run:
                 recombinases = list(recombinases)
 
@@ -36,10 +34,10 @@ def compile_annotations(args, multi_run=False,):
         print(f"ERR: {err}")
 
     try:
-        if args.txs_macsy_report:
+        if args.secretion_data:
 
             secretion_systems = parse_macsyfinder_report(
-                args.txs_macsy_report, args.txs_macsy_rules,
+                args.secretion_data, args.secretion_rules,
             )
             if multi_run:
                 secretion_systems = list(secretion_systems)

@@ -10,7 +10,7 @@ from ..readers import read_fasta
 
 def run_pyrodigal(args):
     """ Call genes with pyrodigal. """
-    gf = pyrodigal.GeneFinder(mask=True)
+    gf = pyrodigal.GeneFinder(mask=True, meta=args.meta,)
 
     ids, seqs = zip(*read_fasta(args.genome_fasta))
     _ = gf.train(*seqs)

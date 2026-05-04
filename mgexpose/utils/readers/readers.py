@@ -43,20 +43,59 @@ def read_fasta(f):
         yield header, "".join(seq)
 
 
-def read_recombinase_hits(f, pyhmmer=True):
+def read_recombinase_hits(f):
     """ Read hmmer output from recombinase scan.
 
     Returns (gene_id, mge_name) tuples via generator.
     """
+    
+    best_hits = {}
+
     with open(f, "rt", encoding="UTF-8") as _in:
-        for line in _in:
+        lines = _in.readlines()
+
+        fmt = None
+        if lines[0].startswith("##gff-version 3"):
+            fmt = "gff3"
+        elif lines[0].startswith("#unigene"):
+            fmt = "mge_pred"
+        elif lines[0][0] == "#" and line[0].endswith("domain number estimation ----"):
+            fmt = "raw"
+        elif lines[0][0] != "#":
+            fmt = "best"
+
+        for line in lines:
             line = line.strip()
-            if line and line[0] != "#":
-                if pyhmmer:
+            if line and line != "#":
+                if fmt == "gff3":
+                    attribs = dict(item.split("=") for item in line.split("\t")[8].split(";"))
+                    gene_id, mge = attribs.get("ID"), attribs.get("recombinase")
+                    best_hits[gene_id] = (0.0, mge)
+                elif fmt == "mge_pred":
                     gene_id, mge = line.split("\t")[:2]
+                    best_hits[gene_id] = (0.0, mge)
+                elif fmt == "raw":
+                    gene_id, _, mge, _, _, score, *_ = re.split(r"\s+", line)
+                    score = float(score)
+                    seen_score = best_hits.setdefault(gene_id, [0.0, ""])[0]
+                    if score > seen_score:
+                        best_hits[gene_id] = (score, mge)
                 else:
-                    gene_id, _, mge, *_ = re.split(r"\s+", line)
-                yield gene_id, mge
+                    gene_id, mge = line.split("\t")[:2]
+                    best_hits[gene_id] = (0.0, mge)
+        
+        for gene_id, (_, mge) in best_hits.items():
+            yield gene_id, mge
+
+
+        # for line in _in:
+        #     line = line.strip()
+        #     if line and line[0] != "#":
+        #         if pyhmmer:
+        #             gene_id, mge = line.split("\t")[:2]
+        #         else:
+        #             gene_id, _, mge, *_ = re.split(r"\s+", line)
+        #         yield gene_id, mge
 
 
 # would love to add raw scan parsing to annotator,

@@ -79,7 +79,7 @@ class GenomicIsland:
             "first_recombinase",
             "island_size",
             "genome",
-            "specI",
+            "species",
             "core_acc",
             "contig",
             "first_gene_start",
@@ -183,7 +183,7 @@ class GenomicIsland:
         )
 
         return cls(
-            attribs["specI"],
+            attribs["species"],
             attribs["genome"],
             attribs["genome_type"] == "COR",
             cols[0],  # contig
@@ -220,7 +220,7 @@ class GenomicIsland:
                 )
                 if self.recombinases else ""
             ),
-            "specI": self.speci,
+            "species": self.species,
         }
         if self.name:
             attribs["name"] = self.name

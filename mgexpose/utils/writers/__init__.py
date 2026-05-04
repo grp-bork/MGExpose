@@ -37,7 +37,7 @@ def write_final_results(recombinase_islands, args):
 
     out_prefix = os.path.join(
         args.output_dir,
-        f"{args.genome_id}.{args.output_suffix}"
+        f"{args.genome_id}.mge_islands"
     )
 
     write_tsv = True
