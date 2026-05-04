@@ -19,7 +19,7 @@ def compile_annotations(args, multi_run=False,):
     annotations = []
     has_clusters = False
 
-    if hasattr(args, "recombinases"):
+    if hasattr(args, "recombinases") and args.recombinases:
         recombinases = read_recombinase_hits(args.recombinases,)
         if multi_run:
             recombinases = list(recombinases)
@@ -31,7 +31,7 @@ def compile_annotations(args, multi_run=False,):
             )
         )
 
-    if hasattr(args, "secretion_data"):
+    if hasattr(args, "secretion_data") and args.secretion_data:
         secretion_systems = parse_macsyfinder_report(
             args.secretion_data, args.secretion_rules,
         )
@@ -45,7 +45,7 @@ def compile_annotations(args, multi_run=False,):
             )
         )
 
-    if hasattr(args, "phage_and_cargo_data"):
+    if hasattr(args, "phage_and_cargo_data") and args.phage_and_cargo_data:
         eggnog_annotations = parse_emapper(
             args.phage_and_cargo_data,
             phage_annotation=PhageDetection(args.phage_filter_terms),
@@ -60,7 +60,7 @@ def compile_annotations(args, multi_run=False,):
             )
         )
 
-    if hasattr(args, "cluster_data"):
+    if hasattr(args, "cluster_data") and args.cluster_data:
         annotations.append(
                 partial(
                     add_clusters,
