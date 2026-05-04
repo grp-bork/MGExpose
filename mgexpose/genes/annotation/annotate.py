@@ -45,9 +45,9 @@ def compile_annotations(args, multi_run=False,):
             )
         )
 
-    if hasattr(args, "phage_cargo_data"):
+    if hasattr(args, "phage_and_cargo_data"):
         eggnog_annotations = parse_emapper(
-            args.phage_cargo_data,
+            args.phage_and_cargo_data,
             phage_annotation=PhageDetection(args.phage_filter_terms),
         )
         if multi_run:
