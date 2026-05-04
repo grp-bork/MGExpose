@@ -9,7 +9,7 @@ from . import __version__
 
 
 def add_data_args(ap):
-    ap.add_argument("--genome_id", type=str)
+    ap.add_argument("genome_id", type=str)
     ap.add_argument("--input_genes", type=str)
     ap.add_argument("--recombinases", "--recombinase_hits", dest="recombinases", type=str)
     ap.add_argument("--mge_rules", type=str)
