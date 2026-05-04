@@ -168,15 +168,15 @@ def handle_args(args):
     annotate_recombinases_ap.set_defaults(func=None)  # TODO
 
 
-    functional_annotation_ap = subparsers.add_parser(
-        "functional_annotation",
-        help="Orthology-based functional protein annotation with eggnog-mapper",
-        parents=(parent_subparser,),
-    )
+        # functional_annotation_ap = subparsers.add_parser(
+        #     "functional_annotation",
+        #     help="Orthology-based functional protein annotation with eggnog-mapper",
+        #     parents=(parent_subparser,),
+        # )
 
-    functional_annotation_ap.add_argument("proteins_fasta", type=str)
-    functional_annotation_ap.add_argument("genome_id", type=str)
-    functional_annotation_ap.add_argument("--threads", "-t", type=int, default=1)
-    functional_annotation_ap.add_argument("--eggnog_db", type=str,)
+        # functional_annotation_ap.add_argument("proteins_fasta", type=str)
+        # functional_annotation_ap.add_argument("genome_id", type=str)
+        # functional_annotation_ap.add_argument("--threads", "-t", type=int, default=1)
+        # functional_annotation_ap.add_argument("--eggnog_db", type=str,)
     
     return ap.parse_args()
