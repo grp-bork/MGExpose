@@ -50,7 +50,8 @@ def main():
             run_pyhmmer(args)
 
         elif args.command == "functional_annotation":
-            run_emapper(args)
+            # run_emapper(args)
+            raise NotImplementedError(f"{args.command} module not implemented.")
 
     else:
 
