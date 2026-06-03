@@ -5,9 +5,9 @@ import pathlib
 
 import pyhmmer
 
-from .recombinases import MGE_ALIASES
-from ..utils.gffio import read_prodigal_gff
-from ..utils.readers import read_mge_rules
+from ...recombinases import MGE_ALIASES
+from ..gffio import read_prodigal_gff
+from ..readers import read_mge_rules
 
 
 RECOMBINASE_SCAN_HEADER = (

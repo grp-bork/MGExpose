@@ -82,7 +82,7 @@ def write_final_results(recombinase_islands, args):
 
         genome_seqs = args.extract_islands
         if genome_seqs is not None:
-            extract_mge_seqs(genome_seqs, islands_by_contig, args.out_prefix)
+            extract_mge_seqs(genome_seqs, islands_by_contig, out_prefix)
 
 
 def extract_mge_seqs(genome_seqs, islands, out_prefix):
