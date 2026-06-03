@@ -48,7 +48,7 @@ def add_genes_to_precomputed_islands(genes, islands):
         is_annotated = gene.has_basic_annotation(skip_core_gene_computation=True)
         add_gene = False
         if is_annotated:
-            gene.contig = gene.contig.split(".")[-1]
+            gene.contig = gene.contig.split(".")[-1]  # why?
             for island in islands.get(gene.contig, []):
                 log_str = (
                     f"Checking gene={gene.contig}:"
@@ -67,19 +67,35 @@ def add_genes_to_precomputed_islands(genes, islands):
 
                 logger.info("%s %s", log_str, str(add_gene))
 
-    for _, islands in islands.items():
-        for island in islands:
+    for _, _islands in islands.items():
+        for island in _islands:
             if island.recombinases:
                 logger.info("GenomicIsland %s created.", str(island))
                 yield island
 
+def generate_contig_islands(genes):
+    islands = {}
 
-def prepare_islands(genes, precomputed_islands=None,):
+    for gene in genes:
+        island = islands.setdefault(gene.contig, GenomicIsland.from_gene(gene))
+        island.add_gene(gene)
+
+    for _, _islands in islands.items():
+        for island in _islands:
+            if island.recombinases:
+                logger.info("GenomicIsland %s created from contig.", str(island))
+                yield island
+
+
+def prepare_islands(genes, precomputed_islands=None, contigs_are_islands=False,):
     """ Selector function depending on whether genomic islands are precomputed or not. """
-    if precomputed_islands is None:
-        islands = compute_genomic_islands(genes)
-    else:
+
+    if precomputed_islands:
         islands = add_genes_to_precomputed_islands(genes, precomputed_islands)
+    elif contigs_are_islands:
+        islands = generate_contig_islands(genes)
+    else:
+        islands = compute_genomic_islands(genes)
 
     yield from islands
 
