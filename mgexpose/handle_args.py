@@ -96,7 +96,7 @@ def handle_args(args):
     )
     denovo_ap.add_argument(
         "--contigs_are_islands",
-        type=str,
+        action="store_true",
         help="Island boundaries are determined by contig boundaries."
     )
 
