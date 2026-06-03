@@ -80,11 +80,10 @@ def generate_contig_islands(genes):
         island = islands.setdefault(gene.contig, GenomicIsland.from_gene(gene))
         island.add_gene(gene)
 
-    for _, _islands in islands.items():
-        for island in _islands:
-            if island.recombinases:
-                logger.info("GenomicIsland %s created from contig.", str(island))
-                yield island
+    for island in islands.values():
+        if island.recombinases:
+            logger.info("GenomicIsland %s created from contig.", str(island))
+            yield island
 
 
 def prepare_islands(genes, precomputed_islands=None, contigs_are_islands=False,):
