@@ -83,6 +83,8 @@ def generate_contig_islands(genes):
     for island in islands.values():
         if island.recombinases:
             logger.info("GenomicIsland %s created from contig.", str(island))
+            for gene in island.genes:
+                gene.parent = island.get_id()
             yield island
 
 
