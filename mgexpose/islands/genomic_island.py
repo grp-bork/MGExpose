@@ -269,7 +269,7 @@ class GenomicIsland:
         island = cls(
             **{
                 k: other.__dict__.get(k)
-                for k in set(other.__class__.__dataclass_fields__).intersection(cls.__class__.__dataclass_fields__)
+                for k in set(other.__class__.__dataclass_fields__).intersection(cls.__dataclass_fields__)
             }
         )
         if genome_id:

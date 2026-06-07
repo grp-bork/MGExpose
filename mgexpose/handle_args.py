@@ -105,6 +105,12 @@ def handle_args(args):
         help="Input is set of genomic regions, skips island computation."
     )
     denovo_ap.add_argument(
+        "--contigs_are_islands",
+        action="store_true",
+        help="Island boundaries are determined by contig boundaries."
+    )
+
+    denovo_ap.add_argument(
         "--precomputed_core_genes",
         action="store_true",
         help="Core/accessory gene sets were precomputed."
