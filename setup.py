@@ -53,4 +53,8 @@ with open(path.join(here, "DESCRIPTION.md"), encoding="utf-8") as description:
 		package_data={},
 		include_package_data=True,
 		data_files=[],
+		install_requires=[
+			"pyhmmer ~=0.12.0",
+			"pyrodigal ~=3.0",
+		],
 	)

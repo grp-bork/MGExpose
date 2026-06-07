@@ -1,4 +1,4 @@
-# pylint: disable=R0916
+# pylint: disable=C0301,R0916
 
 """ Recombinase rules and aliases """
 
@@ -46,9 +46,9 @@ class MgeRule:
         """
         if all(
                 (
-                        self.subfamily is not None,
-                        "tn3" in self.subfamily.lower(),
-                        not self.recombinase_scan,
+                    self.subfamily is not None,
+                    "tn3" in self.subfamily.lower(),
+                    not self.recombinase_scan,
                 )
         ):
             self.ce = 1
@@ -65,24 +65,43 @@ class MgeRule:
         """ Tn check. """
         # c_tn, n_recombinases = island.c_tn, len(island.recombinases)
         c_tn, n_recombinases = island.c_tn, sum(island.recombinases.values())
-        if self.is_tn and not self.cellular and not self.ce and not self.phage:
-            # IS_Tn
-            c_tn += 1
-        elif (
-                self.is_tn and self.ce and island.conj_man_count < 1 and
-                n_recombinases == 2 and not island.tn3_found and not island.ser_found
-        ):
-            # c2_n1ser(considers solo c2_n1ser and Tn3)
-            c_tn = 1
-        elif self.is_tn and self.ce and island.conj_man_count < 1 and n_recombinases == 1:
-            # c2_n1ser(considers c2_n1ser and Tn3 as one tn when not together)
-            c_tn += 1
 
-        # disentangles recombinase shared by tn and ph
-        if (self.is_tn and self.phage and island.phage_count < 2):
-            c_tn += 1
+        if self.is_tn:
+            if not self.cellular and not self.ce and not self.phage:
+                # IS_Tn
+                c_tn += 1
+            elif self.ce and island.conj_man_count < 1 and n_recombinases <= 2:
+                if n_recombinases == 1:
+                    # c2_n1ser(considers c2_n1ser and Tn3 as one tn when not together)
+                    c_tn += 1
+                elif n_recombinases == 2 and not island.tn3_found and not island.ser_found:
+                    # c2_n1ser(considers solo c2_n1ser and Tn3)
+                    c_tn = 1
+
+            # disentangles recombinase shared by tn and ph
+            if self.phage and island.phage_count < 2:
+                c_tn += 1
 
         return c_tn
+        
+        # if self.is_tn and not self.cellular and not self.ce and not self.phage:
+        #     # IS_Tn
+        #     c_tn += 1
+        # elif (
+        #         self.is_tn and self.ce and island.conj_man_count < 1 and
+        #         n_recombinases == 2 and not island.tn3_found and not island.ser_found
+        # ):
+        #     # c2_n1ser(considers solo c2_n1ser and Tn3)
+        #     c_tn = 1
+        # elif self.is_tn and self.ce and island.conj_man_count < 1 and n_recombinases == 1:
+        #     # c2_n1ser(considers c2_n1ser and Tn3 as one tn when not together)
+        #     c_tn += 1
+
+        # # disentangles recombinase shared by tn and ph
+        # if (self.is_tn and self.phage and island.phage_count < 2):
+        #     c_tn += 1
+
+        # return c_tn
 
     def patch_c_tn_check(self, island):
         """Deals with special case when 2 recombinases.
@@ -162,11 +181,11 @@ class MgeRule:
             c_ce = nov = 1
         elif all(
                 (
-                        bool(self.is_tn),
-                        bool(self.ce),
-                        # len(island.recombinases) >= 3,
-                        sum(island.recombinases.values()) >= 3,
-                        (island.tn3_found or island.ser_found)
+                    bool(self.is_tn),
+                    bool(self.ce),
+                    # len(island.recombinases) >= 3,
+                    sum(island.recombinases.values()) >= 3,
+                    (island.tn3_found or island.ser_found)
                 )
         ):
             c_ce = 1
