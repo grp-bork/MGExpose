@@ -137,6 +137,7 @@ def run_pyhmmer(args):
                             mge_attribs,
                         )
                     )
+        print(*recombinases, sep="\n")
 
         with open(
             outpath / f"{args.genome_id}.recombinase_scan.gff3",
