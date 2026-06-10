@@ -164,8 +164,8 @@ def main():
                     )
                     # mge_islands.append(mge_island)
                     mge_islands.setdefault(mge_island.contig, []).append(mge_island)
-                if args.extract_islands:
-                    extract_mge_seqs(args.extract_islands, mge_islands, out_prefix)
+                if args.genome_fasta:
+                    extract_mge_seqs(args.genome_fasta, mge_islands, out_prefix)
 
         elif args.command == "annotate_genes":
             raise NotImplementedError

@@ -16,9 +16,10 @@ def add_data_args(ap):
     ap.add_argument("--speci", "--species", dest="species", type=str, default="unknown_species")
     ap.add_argument("--conjugation_data", "--secretion_data", "--txs_macsy_report", dest="conjugation_data", type=str)
     ap.add_argument("--conjugation_rules", "--secretion_rules", "--txs_macsy_rules", dest="conjugation_rules", type=str)
-    ap.add_argument("--phage_eggnog_data", "--phage_and_cargo_data", dest="phage_and_cargo_data", type=str)
+    ap.add_argument("--phage_and_cargo_data", "--phage_eggnog_data", dest="phage_and_cargo_data", type=str)
     ap.add_argument("--phage_filter_terms", type=str)
     ap.add_argument("--cluster_data", type=str)
+    ap.add_argument("--genome_fasta", type=str)
 
     ap.add_argument(
         "--input_gene_type",
@@ -116,7 +117,7 @@ def handle_args(args):
         help="Core/accessory gene sets were precomputed."
     )
 
-    denovo_ap.add_argument("--extract_islands", type=str)
+    # denovo_ap.add_argument("--extract_islands", type=str)
 
     
     denovo_ap.set_defaults(func=None)  # TODO
@@ -139,7 +140,7 @@ def handle_args(args):
 
     add_data_args(reannotate_ap)
 
-    reannotate_ap.add_argument("--extract_islands", type=str)
+    # reannotate_ap.add_argument("--extract_islands", type=str)
     reannotate_ap.add_argument(
         "--annotation_mode",
         type=str, choices=("mges", "raw_islands"), default="mges",
