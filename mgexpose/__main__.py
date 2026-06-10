@@ -101,7 +101,7 @@ def main():
                         island_file=args.precomputed_islands,
                     )
 
-                if has_clusters or precomputed_islands:
+                if has_clusters or precomputed_islands or args.contigs_are_islands:
                     genomic_islands = prepare_islands(
                         annotated_genes, precomputed_islands=precomputed_islands, contigs_are_islands=args.contigs_are_islands,
                     )
