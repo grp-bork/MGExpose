@@ -1,11 +1,11 @@
-""" Module to add secretion system annotations. """
+""" Module to add conjugation system annotations. """
 
 
-def add_secretion_systems(secretion_systems, genes,):
+def add_conjugation_systems(conjugation_systems, genes,):
     """ Add information from txsscan """
-    for gene_id, secretion_data in secretion_systems:
+    for gene_id, conjugation_data in conjugation_systems:
         gene = genes.get(gene_id)
         if gene is not None:
-            for sgene, system, rule, *_ in secretion_data:
-                gene.secretion_systems.append(f"{sgene}:{system}")
-                gene.secretion_rules.append(rule)
+            for sgene, system, rule, *_ in conjugation_data:
+                gene.conjugation_systems.append(f"{sgene}:{system}")
+                gene.conjugation_rules.append(rule)
