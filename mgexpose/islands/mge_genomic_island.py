@@ -383,8 +383,8 @@ class MgeGenomicIsland(AnnotatedGenomicIsland):
     def get_recombinase_genes(self):
         return [gene for gene in self.genes if gene.recombinase]
 
-    def get_secretion_system_genes(self):
-        return [gene for gene in self.genes if gene.secretion_systems]
+    def get_conjugation_system_genes(self):
+        return [gene for gene in self.genes if gene.conjugation_systems]
 
     def get_phage_genes(self):
         return [gene for gene in self.genes if gene.phage]

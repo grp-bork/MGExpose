@@ -6,7 +6,7 @@ from .cluster import add_clusters
 from .eggnog import add_eggnog_annotation, parse_emapper
 from .phage import PhageDetection
 from .recombinases import add_recombinases
-from .secretion import add_secretion_systems
+from .conjugation import add_conjugation_systems
 
 from ...utils.readers import (
     parse_macsyfinder_report,
@@ -31,17 +31,17 @@ def compile_annotations(args, multi_run=False,):
             )
         )
 
-    if hasattr(args, "secretion_data") and args.secretion_data:
-        secretion_systems = parse_macsyfinder_report(
-            args.secretion_data, args.secretion_rules,
+    if hasattr(args, "conjugation_data") and args.conjugation_data:
+        conjugation_systems = parse_macsyfinder_report(
+            args.conjugation_data, args.conjugation_rules,
         )
         if multi_run:
-            secretion_systems = list(secretion_systems)
+            conjugation_systems = list(conjugation_systems)
 
         annotations.append(
             partial(
-                add_secretion_systems,
-                secretion_systems=secretion_systems,
+                add_conjugation_systems,
+                conjugation_systems=conjugation_systems,
             )
         )
 
@@ -91,18 +91,18 @@ def compile_annotations(args, multi_run=False,):
     #     print(f"ERR: {err}")
 
     # try:
-    #     if args.secretion_data:
+    #     if args.conjugation_data:
 
-    #         secretion_systems = parse_macsyfinder_report(
-    #             args.secretion_data, args.secretion_rules,
+    #         conjugation_systems = parse_macsyfinder_report(
+    #             args.conjugation_data, args.conjugation_rules,
     #         )
     #         if multi_run:
-    #             secretion_systems = list(secretion_systems)
+    #             conjugation_systems = list(conjugation_systems)
 
     #         annotations.append(
     #             partial(
-    #                 add_secretion_systems,
-    #                 secretion_systems=secretion_systems,
+    #                 add_conjugation_systems,
+    #                 conjugation_systems=conjugation_systems,
     #             )
     #         )
     # except AttributeError as err:

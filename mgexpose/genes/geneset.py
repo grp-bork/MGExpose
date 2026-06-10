@@ -54,9 +54,9 @@ class GeneSet(dict):
         if with_header:
             headers = list(Gene().__dict__.keys())
             headers.remove("eggnog")
-            headers.remove("secretion_systems")
-            headers.remove("secretion_rules")
-            headers += ("secretion_systems", "secretion_rules",)
+            headers.remove("conjugation_systems")
+            headers.remove("conjugation_rules")
+            headers += ("conjugation_systems", "conjugation_rules",)
             headers += EMAPPER_FIELDS["v2.1.2"]
             headers.remove("description")
             print(*headers, sep="\t", file=outstream)
@@ -71,16 +71,16 @@ class GeneSet(dict):
                 if k != "description"
             )
 
-            secretion_systems, secretion_rules = None, None
-            if gene.secretion_systems:
-                secretion_systems = ",".join(gene.secretion_systems)
-            if gene.secretion_rules:
-                secretion_rules = ",".join(str(s) for s in gene.secretion_rules)
+            conjugation_systems, conjugation_rules = None, None
+            if gene.conjugation_systems:
+                conjugation_systems = ",".join(gene.conjugation_systems)
+            if gene.conjugation_rules:
+                conjugation_rules = ",".join(str(s) for s in gene.conjugation_rules)
 
             print(
                 gene,
-                secretion_systems,
-                secretion_rules,
+                conjugation_systems,
+                conjugation_rules,
                 *eggnog_cols,
                 sep="\t",
                 file=outstream

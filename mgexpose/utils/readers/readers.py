@@ -11,7 +11,7 @@ from ..chunk_reader import get_lines_from_chunks
 from ...genes.gene import Gene
 from ...islands.genomic_island import GenomicIsland
 from ...recombinases import MgeRule
-from ...rules.secretion import CONJSCAN_RULES
+from ...rules.conjugation import CONJSCAN_RULES
 
 
 def read_preannotated_genes(f):
@@ -119,7 +119,7 @@ def read_recombinase_hits(f):
 # def parse_macsyfinder_rules(f, macsy_version=2):
 #     """ Read macsyfinder rules.
 
-#     Returns dictionary {secretion_system: {mandatory: count, accessory: count}}.
+#     Returns dictionary {conjugation_system: {mandatory: count, accessory: count}}.
 #     """
 #     key_col, mandatory_col, accessory_col = (0, 1, 2) if macsy_version == 2 else (1, 5, 6)
 
