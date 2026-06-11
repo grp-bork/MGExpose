@@ -51,7 +51,6 @@ def add_data_args(ap):
     ap.add_argument("--pyhmmer_input", action="store_true")  # deprecated
 
 
-
 def handle_args(args):
     """ Argument handling """
 
@@ -82,10 +81,10 @@ def handle_args(args):
     parent_subparser = argparse.ArgumentParser(add_help=False)
     parent_subparser.add_argument("--output_dir", "-o", type=str, default=".")
     parent_subparser.add_argument("--dbformat", type=str, choices=("PG3", "SPIRE"))
-    parent_subparser.add_argument("--dump_intermediate_steps", action="store_true")  # deprecated
+    parent_subparser.add_argument("--dump_intermediate_steps", action="store_true")  # deprecated
     parent_subparser.add_argument(
         "--output_suffix", type=str, default="mge_islands",
-    )  # deprecated
+    )  # deprecated
     parent_subparser.add_argument("--debug", action="store_true")  # deprecated
 
     denovo_ap = subparsers.add_parser(
@@ -182,7 +181,6 @@ def handle_args(args):
     annotate_recombinases_ap.add_argument("--mge_rules", type=str)
     annotate_recombinases_ap.add_argument("--threads", "-t", type=int, default=1)
     annotate_recombinases_ap.set_defaults(func=None)  # TODO
-
 
     # functional_annotation_ap = subparsers.add_parser(
     #     "functional_annotation",

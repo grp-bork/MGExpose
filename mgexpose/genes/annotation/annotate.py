@@ -62,17 +62,16 @@ def compile_annotations(args, multi_run=False,):
 
     if hasattr(args, "cluster_data") and args.cluster_data:
         annotations.append(
-                partial(
-                    add_clusters,
-                    args.cluster_data,
-                    use_y_clusters=('use_y_clusters' in args and args.use_y_clusters),
-                    core_threshold=('core_threshold' in args and args.core_threshold) or 0.95,
-                    output_dir=args.output_dir,
-                    genome_id=args.genome_id,
-                )
+            partial(
+                add_clusters,
+                args.cluster_data,
+                use_y_clusters=('use_y_clusters' in args and args.use_y_clusters),
+                core_threshold=('core_threshold' in args and args.core_threshold) or 0.95,
+                output_dir=args.output_dir,
+                genome_id=args.genome_id,
             )
+        )
         has_clusters = True
-
 
     # try:
     #     if args.recombinase_hits:

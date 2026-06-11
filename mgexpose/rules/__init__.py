@@ -14,8 +14,7 @@ def get_recombinase_rules(fn, for_recombinase_scan=False,):
 
         return read_mge_rules(fn, for_recombinase_scan=for_recombinase_scan,)
 
-
-    mge_rules = MGE_RULES
+    mge_rules = dict(MGE_RULES)
     if not for_recombinase_scan:
         for rule in mge_rules.values():
             rule._tn3_ce_modify()

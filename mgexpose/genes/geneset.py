@@ -128,6 +128,6 @@ class GeneSet(dict):
             for _, gene in self.items():
 
                 gene.to_gff(gffstream, add_header=add_header,)
-                add_header=False
+                add_header = False
 
         return list(self.values())

@@ -130,7 +130,7 @@ class Gene:
             strand=cols[6],
             recombinase=attribs.get("recombinase"),
             cluster=attribs.get("cluster") or attribs.get("Cluster"),
-            #is_core=(attribs.get("genome_type") == "COR" if attribs.get("genome_type") else None),
+            # is_core=(attribs.get("genome_type") == "COR" if attribs.get("genome_type") else None),
             is_core=(genome_type == "COR" if genome_type is not None else genome_type),
             phage=attribs.get("phage"),
             conjugation_systems=attribs.get("conjugation_systems", "").split(","),

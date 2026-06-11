@@ -73,6 +73,7 @@ def add_genes_to_precomputed_islands(genes, islands):
                 logger.info("GenomicIsland %s created.", str(island))
                 yield island
 
+
 def generate_contig_islands(genes):
     """ docstring """
     islands = {}

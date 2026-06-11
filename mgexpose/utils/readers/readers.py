@@ -87,7 +87,6 @@ def read_recombinase_hits(f):
         for gene_id, (_, mge) in best_hits.items():
             yield gene_id, mge
 
-
         # for line in _in:
         #     line = line.strip()
         #     if line and line[0] != "#":

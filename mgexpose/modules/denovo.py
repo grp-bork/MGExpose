@@ -41,7 +41,6 @@ def denovo(args):
         encoding="UTF-8",
     )
 
-
     with gene_info_out, gene_info_gff:
         annotated_genes = genes.annotate(
             annotations, stream=gene_info_out, gffstream=gene_info_gff,

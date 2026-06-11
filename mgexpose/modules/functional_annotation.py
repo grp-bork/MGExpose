@@ -1,4 +1,4 @@
-# pylint: disable=C0301,C0303
+# pylint: disable=C0301,C0303
 """module docstring"""
 import os
 import subprocess
@@ -8,12 +8,12 @@ def run_emapper(args):
     """ docstring """
 
     cmd = f"emapper.py " \
-            f"-i {args.proteins_fasta} " \
-            f"--cpu {args.threads} " \
-            f"--data_dir {args.eggnog_db} " \
-            f"--dmnd_db {os.path.join(args.eggnog_db, 'eggnog_proteins.dmnd')} " \
-            f"--output {os.path.join(args.output_dir, args.genome_id)} " \
-            "-m diamond --dmnd_algo 0"
+        f"-i {args.proteins_fasta} " \
+        f"--cpu {args.threads} " \
+        f"--data_dir {args.eggnog_db} " \
+        f"--dmnd_db {os.path.join(args.eggnog_db, 'eggnog_proteins.dmnd')} " \
+        f"--output {os.path.join(args.output_dir, args.genome_id)} " \
+        "-m diamond --dmnd_algo 0"
 
     with subprocess.Popen(
         cmd, shell=True,
@@ -24,7 +24,7 @@ def run_emapper(args):
 
         if process.returncode != 0:
             raise ValueError(
-                f"Error: eggnog-mapper annotation failed with error code {process.returncode}:\n\n" 
+                f"Error: eggnog-mapper annotation failed with error code {process.returncode}:\n\n"
                 f"{out.decode()}\n"
                 f"{err.decode()}\n"
             )
@@ -120,7 +120,7 @@ def run_emapper(args):
 #     set_data_path(data_dir)
 
 #     try:
-#         start_time = time.time()        
+#         start_time = time.time()
 
 #         args = generate_args(
 #             emapper_input, output_prefix, output_dir, data_dir, scratch_dir, override, resume, n_cpus=n_cpus,
