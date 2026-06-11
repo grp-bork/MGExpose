@@ -111,3 +111,38 @@ def extract_mge_seqs(genome_seqs, islands, out_prefix):
                     seq[island.start - 1: island.end],
                     sep="\n", file=_out,
                 )
+
+# from refactor/gff_output_20250411 branch
+def write_contig(f, contig, length):
+    print(
+        contig, ".", "contig", 1,
+        "." if length is None else length,
+        ".", ".", ".", f"ID={contig}",
+        file=f,
+        sep="\t",
+    )
+
+# from refactor/gff_output_20250411 branch
+def write_island_gff(fn, islands_by_contig, contig_data, dbformat, write_genes_to_gff=True, add_functional_annotation=True, intermediate_dump=False,):
+    with open(fn, "wt", encoding="UTF-8") as gff_outstream:
+        # GFF3 header
+        print("##gff-version 3", file=gff_outstream)
+
+        for contig, contig_islands in islands_by_contig.items():
+            write_contig(
+                gff_outstream,
+                contig,
+                None if contig_data is None else contig_data.get(contig),
+            )
+            
+            for island in contig_islands:            
+                # GFF3: add individual genes annotation;
+                # parent lines are recombinase islands, children lines are genes
+                # GFF3 parent term: recombinase island
+                    island.to_gff(
+                        gff_outstream,
+                        source_db=dbformat,
+                        write_genes=write_genes_to_gff,
+                        add_functional_annotation=add_functional_annotation,
+                        intermediate_dump=intermediate_dump,
+                    )

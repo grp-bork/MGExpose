@@ -207,6 +207,7 @@ class GenomicIsland:
         island_id = self.get_id()
         attribs = {
             "ID": island_id,
+            "parent": self.contig,
             "genome": self.genome,
             "genome_type": Gene.rtype(self.is_core),
             "size": len(self),
@@ -617,7 +618,8 @@ class MgeGenomicIsland(AnnotatedGenomicIsland):
         # }
         # if self.name:
         #     attribs["name"] = self.name
-        attribs = self.get_attribs()
+        attribs = {"ID": None, "parent": self.contig,}
+        attribs.update(self.get_attribs())
         attrib_str = ";".join(f"{item[0]}={item[1]}" for item in attribs.items() if item[1])
         # Format the source column
         source = ("proMGE", f"proMGE_{source_db}")[bool(source_db)]
