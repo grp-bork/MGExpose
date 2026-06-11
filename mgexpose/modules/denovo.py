@@ -1,3 +1,4 @@
+""" module docstring """
 import os
 
 from ..genes.annotation.annotate import compile_annotations
@@ -5,10 +6,11 @@ from ..genes.geneset import GeneSet
 from ..islands.island_processing import annotate_islands, evaluate_islands, prepare_islands
 from ..rules import get_recombinase_rules
 from ..utils.readers import read_precomputed_islands
-from ..utils.writers import extract_mge_seqs, write_final_results
+from ..utils.writers import write_final_results
 
 
 def denovo(args):
+    """ docstring """
     genomic_islands = None
 
     genes = GeneSet.from_file(
@@ -41,7 +43,9 @@ def denovo(args):
 
 
     with gene_info_out, gene_info_gff:
-        annotated_genes = genes.annotate(annotations, stream=gene_info_out, gffstream=gene_info_gff,)
+        annotated_genes = genes.annotate(
+            annotations, stream=gene_info_out, gffstream=gene_info_gff,
+        )
 
         precomputed_islands = None
         if args.single_island or args.precomputed_islands:
@@ -53,7 +57,9 @@ def denovo(args):
 
         if has_clusters or precomputed_islands or args.contigs_are_islands:
             genomic_islands = prepare_islands(
-                annotated_genes, precomputed_islands=precomputed_islands, contigs_are_islands=args.contigs_are_islands,
+                annotated_genes,
+                precomputed_islands=precomputed_islands,
+                contigs_are_islands=args.contigs_are_islands,
             )
 
             annotated_islands = annotate_islands(genomic_islands,)

@@ -1,3 +1,4 @@
+""" Module docstring """
 import os
 
 from ..genes.annotation.annotate import compile_annotations
@@ -11,10 +12,13 @@ from ..utils.writers import extract_mge_seqs
 
 
 def reannotate(args):
+    """ docstring """
     if args.annotation_mode == "mges":
         genomic_islands = read_mge_genomic_islands_gff(args.input_gff)
     elif args.annotation_mode == "raw_islands":
         genomic_islands = read_genomic_islands_gff(args.input_gff)
+    else:
+        raise ValueError(f"Unknown annotation_mode: {args.annotation_mode}")
 
     out_prefix = os.path.join(
         args.output_dir,
@@ -37,7 +41,7 @@ def reannotate(args):
         for ct, island in enumerate(genomic_islands):
             # strip previous mge classification from islands (as we want to reannotate)
             island = GenomicIsland.from_island(island, genome_id=args.genome_id,)
-            
+
             # extract and reannotate the island's genes
             genes = GeneSet.from_island(
                 island, composite_gene_ids=args.annotation_mode == "raw_islands",
@@ -58,6 +62,6 @@ def reannotate(args):
             )
 
             mge_islands.setdefault(mge_island.contig, []).append(mge_island)
-        
+
     if args.genome_fasta:
         extract_mge_seqs(args.genome_fasta, mge_islands, out_prefix)

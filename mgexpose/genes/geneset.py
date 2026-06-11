@@ -125,7 +125,7 @@ class GeneSet(dict):
 
         if gffstream is not None:
             add_header = True
-            for gene_id, gene in self.items():
+            for _, gene in self.items():
 
                 gene.to_gff(gffstream, add_header=add_header,)
                 add_header=False

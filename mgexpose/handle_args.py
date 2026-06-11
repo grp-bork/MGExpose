@@ -3,20 +3,31 @@
 
 import argparse
 import logging
-import os
 
 from . import __version__
 
 
 def add_data_args(ap):
+    """
+    Set up data arguments shared by different modules.
+    """
     ap.add_argument("genome_id", type=str)
     ap.add_argument("--input_genes", type=str)
     ap.add_argument("--recombinases", "--recombinase_hits", dest="recombinases", type=str)
     ap.add_argument("--mge_rules", type=str)
     ap.add_argument("--speci", "--species", dest="species", type=str, default="unknown_species")
-    ap.add_argument("--conjugation_data", "--secretion_data", "--txs_macsy_report", dest="conjugation_data", type=str)
-    ap.add_argument("--conjugation_rules", "--secretion_rules", "--txs_macsy_rules", dest="conjugation_rules", type=str)
-    ap.add_argument("--phage_and_cargo_data", "--phage_eggnog_data", dest="phage_and_cargo_data", type=str)
+    ap.add_argument(
+        "--conjugation_data", "--secretion_data", "--txs_macsy_report",
+        dest="conjugation_data", type=str
+    )
+    ap.add_argument(
+        "--conjugation_rules", "--secretion_rules", "--txs_macsy_rules",
+        dest="conjugation_rules", type=str
+    )
+    ap.add_argument(
+        "--phage_and_cargo_data", "--phage_eggnog_data",
+        dest="phage_and_cargo_data", type=str
+    )
     ap.add_argument("--phage_filter_terms", type=str)
     ap.add_argument("--cluster_data", type=str)
     ap.add_argument("--genome_fasta", type=str)
@@ -84,9 +95,9 @@ def handle_args(args):
     )
 
     add_data_args(denovo_ap)
-        
+
     denovo_ap.add_argument("--core_threshold", type=float, default=0.95)
-    
+
     denovo_ap.add_argument(
         "--use_y_clusters",
         action="store_true",
@@ -119,7 +130,6 @@ def handle_args(args):
 
     # denovo_ap.add_argument("--extract_islands", type=str)
 
-    
     denovo_ap.set_defaults(func=None)  # TODO
 
     # identify_mobile_islands_ap = subparsers.add_parser(
@@ -140,12 +150,11 @@ def handle_args(args):
 
     add_data_args(reannotate_ap)
 
-    # reannotate_ap.add_argument("--extract_islands", type=str)
     reannotate_ap.add_argument(
         "--annotation_mode",
         type=str, choices=("mges", "raw_islands"), default="mges",
     )
-    
+
     reannotate_ap.set_defaults(func=None)  # TODO
 
     call_genes_ap = subparsers.add_parser(
@@ -175,15 +184,15 @@ def handle_args(args):
     annotate_recombinases_ap.set_defaults(func=None)  # TODO
 
 
-        # functional_annotation_ap = subparsers.add_parser(
-        #     "functional_annotation",
-        #     help="Orthology-based functional protein annotation with eggnog-mapper",
-        #     parents=(parent_subparser,),
-        # )
+    # functional_annotation_ap = subparsers.add_parser(
+    #     "functional_annotation",
+    #     help="Orthology-based functional protein annotation with eggnog-mapper",
+    #     parents=(parent_subparser,),
+    # )
 
-        # functional_annotation_ap.add_argument("proteins_fasta", type=str)
-        # functional_annotation_ap.add_argument("genome_id", type=str)
-        # functional_annotation_ap.add_argument("--threads", "-t", type=int, default=1)
-        # functional_annotation_ap.add_argument("--eggnog_db", type=str,)
-    
+    # functional_annotation_ap.add_argument("proteins_fasta", type=str)
+    # functional_annotation_ap.add_argument("genome_id", type=str)
+    # functional_annotation_ap.add_argument("--threads", "-t", type=int, default=1)
+    # functional_annotation_ap.add_argument("--eggnog_db", type=str,)
+
     return ap.parse_args()

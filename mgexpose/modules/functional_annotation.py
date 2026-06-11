@@ -1,13 +1,11 @@
+# pylint: disable=C0301,C0303
+"""module docstring"""
 import os
-# import time
-# import traceback
 import subprocess
-# import sys
-
-# from argparse import Namespace
 
 
-def run_emapper(args):        
+def run_emapper(args):
+    """ docstring """
 
     cmd = f"emapper.py " \
             f"-i {args.proteins_fasta} " \
@@ -127,7 +125,7 @@ def run_emapper(args):
 #         args = generate_args(
 #             emapper_input, output_prefix, output_dir, data_dir, scratch_dir, override, resume, n_cpus=n_cpus,
 #         )
-        
+
 #         emapper = Emapper(
 #             args.itype, args.genepred, args.mode, (not args.no_annot),
 #             args.excel, args.report_orthologs, args.decorate_gff,
@@ -137,16 +135,12 @@ def run_emapper(args):
 
 #         # n, elapsed_time = emapper.run(args, args.input, args.annotate_hits_table, args.cache_file)
 #         n, elapsed_time = emapper.run(args, args.input, args.annotate_hits_table, args.cache_file)
-
-
-
 #         elapsed_time = time.time() - start_time
 
 #         addons = [args.mode, args.genepred]
 #         print(get_citation(addons))
 #         print(f'Total hits processed: {n}')
 #         print(f'Total time: {elapsed_time:.0f} secs')
-
 
 #     except EmapperException as ee:
 #         print(ee)

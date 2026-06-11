@@ -130,7 +130,8 @@ class Gene:
             strand=cols[6],
             recombinase=attribs.get("recombinase"),
             cluster=attribs.get("cluster") or attribs.get("Cluster"),
-            is_core=(genome_type == "COR" if genome_type is not None else genome_type),  # (attribs.get("genome_type") == "COR" if attribs.get("genome_type") else None),
+            #is_core=(attribs.get("genome_type") == "COR" if attribs.get("genome_type") else None),
+            is_core=(genome_type == "COR" if genome_type is not None else genome_type),
             phage=attribs.get("phage"),
             conjugation_systems=attribs.get("conjugation_systems", "").split(","),
             conjugation_rules=literal_eval(f"[{conjugation_rules}]") if conjugation_rules else [],
@@ -254,7 +255,10 @@ class Gene:
 
         # conjugation_systems=attribs.get("conjugation_systems", "").split(","),
         # conjugation_rules=literal_eval(f"[{conjugation_rules}]") if conjugation_rules else [],
-        conjugation_systems = kwargs.get("conjugation_system", kwargs.get("conjugation_systems", ""))
+        conjugation_systems = kwargs.get(
+            "conjugation_system",
+            kwargs.get("conjugation_systems", "")
+        )
         if conjugation_systems is None:
             conjugation_systems = []
 

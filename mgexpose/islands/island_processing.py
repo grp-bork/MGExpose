@@ -74,6 +74,7 @@ def add_genes_to_precomputed_islands(genes, islands):
                 yield island
 
 def generate_contig_islands(genes):
+    """ docstring """
     islands = {}
 
     for gene in genes:

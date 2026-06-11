@@ -88,7 +88,7 @@ class MgeRule:
                 c_tn += 1
 
         return c_tn
-        
+
         # if self.is_tn and not self.cellular and not self.ce and not self.phage:
         #     # IS_Tn
         #     c_tn += 1

@@ -5,10 +5,9 @@ import pathlib
 
 import pyhmmer
 
-from ...recombinases import MGE_ALIASES
-from ...rules import get_recombinase_rules
-from ..gffio import read_prodigal_gff
-from ..readers import read_mge_rules
+from ..recombinases import MGE_ALIASES
+from ..rules import get_recombinase_rules
+from ..utils.gffio import read_prodigal_gff
 
 
 RECOMBINASE_SCAN_HEADER = (
@@ -38,7 +37,7 @@ def run_pyhmmer(args):
     proteins = get_protein_coords(args.gff)
 
     mge_rules = get_recombinase_rules(args.mge_rules, for_recombinase_scan=True,)
-    
+
     with pyhmmer.easel.SequenceFile(
         args.proteins_fasta,
         digital=True,

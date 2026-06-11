@@ -48,7 +48,7 @@ def read_recombinase_hits(f):
 
     Returns (gene_id, mge_name) tuples via generator.
     """
-    
+
     best_hits = {}
 
     with open(f, "rt", encoding="UTF-8") as _in:
@@ -59,7 +59,7 @@ def read_recombinase_hits(f):
             fmt = "gff3"
         elif lines[0].startswith("#unigene"):
             fmt = "mge_pred"
-        elif lines[0][0] == "#" and line[0].endswith("domain number estimation ----"):
+        elif lines[0][0] == "#" and lines[0][0].endswith("domain number estimation ----"):
             fmt = "raw"
         elif lines[0][0] != "#":
             fmt = "best"
@@ -83,7 +83,7 @@ def read_recombinase_hits(f):
                 else:
                     gene_id, mge = line.split("\t")[:2]
                     best_hits[gene_id] = (0.0, mge)
-        
+
         for gene_id, (_, mge) in best_hits.items():
             yield gene_id, mge
 
@@ -146,7 +146,7 @@ def parse_macsyfinder_report(f, f_rules):
 
     if f_rules:
         rules = parse_macsyfinder_rules(f_rules)
-    else:        
+    else:
         rules = CONJSCAN_RULES
 
     with open(f, "rt", encoding="UTF-8") as _in:

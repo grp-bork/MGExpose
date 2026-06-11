@@ -5,8 +5,6 @@
 """ Mobile genetic element annotation """
 
 import logging
-import os
-import pathlib
 import sys
 
 from .handle_args import handle_args
@@ -26,7 +24,7 @@ def main():
     logger.info("ARGS: %s", str(args))
 
     if args.command == "denovo":
-        denovo(args)            
+        denovo(args)
 
     elif args.command == "reannotate":
         reannotate(args)
