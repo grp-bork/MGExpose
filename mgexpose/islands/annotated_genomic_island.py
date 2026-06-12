@@ -30,22 +30,6 @@ logger = logging.getLogger(__name__)
 class AnnotatedGenomicIsland(GenomicIsland):
     '''The following class extends generic Genomic Island with MGE machinery annotations.'''
 
-    TABLE_HEADERS = (
-        "contig",
-        "start",
-        "end",
-        "island_size",
-        "prot_count",
-        "mgeR_count",
-        "Plasmid_PA",
-        "phage_count",
-        "all_conj_count",
-        "CONJ_T4SS",
-        "SS_present_mandatoryG",
-        "entire_ss",
-        "mgeR",
-    )
-
     phage_count: int = 0
     conj_count: int = 0
     conj_man_count: int = 0

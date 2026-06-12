@@ -39,25 +39,6 @@ class MgeGenomicIsland(AnnotatedGenomicIsland):
     The class attributes are used to describe the MGE properties.
     It also contains functionality to save the MGEs in gff3 or tsv formats.'''
 
-    TABLE_HEADERS = (
-        "tn",
-        "phage",
-        "phage_like",
-        "ce",
-        "integron",
-        "mi",
-        "nmi",
-        "nov",
-        "cellular",
-        "contig",
-        "start",
-        "end",
-        "size",
-        "n_genes",
-        "phage_count",
-        "conj_man_count",
-        "recombinases",
-    )
     GFFTYPE = "mobile_genetic_element"
     ID_PREFIX = "MGE"
 
