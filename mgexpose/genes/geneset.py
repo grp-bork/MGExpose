@@ -48,7 +48,7 @@ class GeneSet(dict):
 
             self[gene.id] = gene
 
-    def dump(self, outstream, with_header=True,):
+    def to_info_txt(self, outstream, with_header=True,):
         """ Write gene info to stream. """
 
         if with_header:
@@ -121,13 +121,10 @@ class GeneSet(dict):
         for f_ann in annotations:
             f_ann(genes=self)
 
-        self.dump(stream, with_header=with_header,)
+        self.to_info_txt(stream, with_header=with_header,)
 
         if gffstream is not None:
-            add_header = True
             for _, gene in self.items():
-
-                gene.to_gff(gffstream, add_header=add_header,)
-                add_header = False
+                gene.to_gff(gffstream, add_header=False,)
 
         return list(self.values())

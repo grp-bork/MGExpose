@@ -151,7 +151,7 @@ def handle_args(args):
 
     reannotate_ap.add_argument(
         "--annotation_mode",
-        type=str, choices=("mges", "raw_islands"), default="mges",
+        type=str, choices=("mges", "raw_islands", "genes"), default="mges",
     )
 
     reannotate_ap.set_defaults(func=None)  # TODO

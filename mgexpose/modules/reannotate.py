@@ -17,6 +17,8 @@ def reannotate(args):
         genomic_islands = read_mge_genomic_islands_gff(args.input_gff)
     elif args.annotation_mode == "raw_islands":
         genomic_islands = read_genomic_islands_gff(args.input_gff)
+    elif args.annotation_mode == "genes":
+        raise NotImplementedError()
     else:
         raise ValueError(f"Unknown annotation_mode: {args.annotation_mode}")
 
@@ -26,15 +28,19 @@ def reannotate(args):
     )
 
     gene_info_out = open(
-        os.path.join(args.output_dir, f"{args.genome_id}.gene_info.txt",),
-        "wt", encoding="UTF-8",
+        f"{out_prefix}.gene_info.txt", "wt", encoding="UTF-8",
+    )
+
+    gene_info_gff = open(
+        f"{out_prefix}.gene_info.gff3", "wt", encoding="UTF-8",
     )
 
     gff_out = open(f"{out_prefix}.gff3", "wt", encoding="UTF-8",)
 
     mge_islands = {}
-    with gene_info_out, gff_out:
+    with gene_info_out, gff_out, gene_info_gff:
         print("##gff-version 3", file=gff_out)
+        print("##gff-version 3", file=gene_info_gff)
 
         annotations = compile_annotations(args, multi_run=True,)
 
@@ -47,7 +53,7 @@ def reannotate(args):
                 island, composite_gene_ids=args.annotation_mode == "raw_islands",
             )
             _ = genes.annotate(
-                annotations, gene_info_out, with_header=ct == 0,
+                annotations, gene_info_out, with_header=ct == 0, gffstream=gene_info_gff,
             )
 
             # reevaluate annotations and reclassify the island
