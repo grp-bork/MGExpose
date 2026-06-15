@@ -62,7 +62,11 @@ def read_recombinase_hits(f):
         elif lines[0][0] == "#" and lines[0][0].endswith("domain number estimation ----"):
             fmt = "raw"
         elif lines[0][0] != "#":
-            fmt = "best"
+            fields = re.split(r"\s+", lines[0])
+            if fields[1] == "-":
+                fmt = "raw"
+            else:
+                fmt = "best"
 
         for line in lines:
             line = line.strip()
