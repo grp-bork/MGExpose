@@ -8,19 +8,23 @@ import pyrodigal
 from ..utils.readers import read_fasta
 
 
-def run_pyrodigal(args):
+def run_pyrodigal(genome_fasta, genome_id, output_dir, pr_meta=False,):
     """ Call genes with pyrodigal. """
-    gf = pyrodigal.GeneFinder(mask=True, meta=args.meta,)
+    gf = pyrodigal.GeneFinder(mask=True, meta=pr_meta,)
 
-    ids, seqs = zip(*read_fasta(args.genome_fasta))
+    ids, seqs = zip(*read_fasta(genome_fasta))
     _ = gf.train(*seqs)
 
-    outpath = pathlib.Path(args.output_dir)
+    outpath = pathlib.Path(output_dir)
     outpath.mkdir(exist_ok=True, parents=True,)
 
-    faa_out = open(outpath / f"{args.genome_id}.faa", "wt", encoding="UTF-8",)
-    ffn_out = open(outpath / f"{args.genome_id}.ffn", "wt", encoding="UTF-8",)
-    gff_out = open(outpath / f"{args.genome_id}.gff", "wt", encoding="UTF-8",)
+    faa = outpath / f"{genome_id}.faa"
+    ffn = outpath / f"{genome_id}.ffn"
+    gff = outpath / f"{genome_id}.gff"
+
+    faa_out = open(faa, "wt", encoding="UTF-8",)
+    ffn_out = open(ffn, "wt", encoding="UTF-8",)
+    gff_out = open(gff, "wt", encoding="UTF-8",)
 
     with faa_out, ffn_out, gff_out:
         for sid, seq in zip(ids, seqs):
@@ -29,3 +33,5 @@ def run_pyrodigal(args):
             genes.write_translations(faa_out, sid)
             genes.write_genes(ffn_out, sid)
             genes.write_gff(gff_out, sid, full_id=False,)
+
+    return faa, ffn, gff

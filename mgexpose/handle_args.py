@@ -156,31 +156,32 @@ def handle_args(args):
 
     reannotate_ap.set_defaults(func=None)  # TODO
 
-    call_genes_ap = subparsers.add_parser(
+    gene_calling_ap = subparsers.add_parser(
         "call_genes",
         help="Call genes with Pyrodigal",
         parents=(parent_subparser,),
     )
 
-    call_genes_ap.add_argument("genome_fasta", type=str)
-    call_genes_ap.add_argument("genome_id", type=str)
-    call_genes_ap.add_argument("--meta", action="store_true")
-    call_genes_ap.add_argument("--threads", "-t", type=int, default=1)
-    call_genes_ap.set_defaults(func=None)  # TODO
+    gene_calling_ap.add_argument("genome_fasta", type=str)
+    gene_calling_ap.add_argument("genome_id", type=str)
+    gene_calling_ap.add_argument("--meta", action="store_true")
+    gene_calling_ap.add_argument("--threads", "-t", type=int, default=1)
+    gene_calling_ap.set_defaults(func=None)  # TODO
 
-    annotate_recombinases_ap = subparsers.add_parser(
+    recombinase_scan_ap = subparsers.add_parser(
         "recombinase_scan",
         help="Detect recombinases with PyHMMer",
         parents=(parent_subparser,),
     )
 
-    annotate_recombinases_ap.add_argument("proteins_fasta", type=str)
-    annotate_recombinases_ap.add_argument("gff", type=str)
-    annotate_recombinases_ap.add_argument("recombinase_hmms", type=str)
-    annotate_recombinases_ap.add_argument("genome_id", type=str)
-    annotate_recombinases_ap.add_argument("--mge_rules", type=str)
-    annotate_recombinases_ap.add_argument("--threads", "-t", type=int, default=1)
-    annotate_recombinases_ap.set_defaults(func=None)  # TODO
+    recombinase_scan_ap.add_argument("recombinase_hmms", type=str)
+    recombinase_scan_ap.add_argument("genome_id", type=str)
+    recombinase_scan_ap.add_argument("--genome_fasta", type=str)
+    recombinase_scan_ap.add_argument("--protein_fasta", type=str)
+    recombinase_scan_ap.add_argument("--protein_coords", type=str)
+    recombinase_scan_ap.add_argument("--mge_rules", type=str)
+    recombinase_scan_ap.add_argument("--threads", "-t", type=int, default=1)
+    recombinase_scan_ap.set_defaults(func=None)  # TODO
 
     # functional_annotation_ap = subparsers.add_parser(
     #     "functional_annotation",

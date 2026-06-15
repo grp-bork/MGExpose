@@ -5,6 +5,7 @@ import pathlib
 
 import pyhmmer
 
+from .gene_calling import run_pyrodigal
 from ..recombinases import MGE_ALIASES
 from ..rules.recombinases import get_recombinase_rules
 from ..utils.gffio import read_prodigal_gff
@@ -31,35 +32,53 @@ def get_protein_coords(gff):
     return proteins
 
 
-def run_pyhmmer(args):
+
+def recombinase_scan(args):
+    faa, gff = args.protein_fasta and args.protein_coords
+    has_genome_input = bool(args.genome_fasta)
+    has_proteome_input = faa and gff
+
+    if has_genome_input and has_proteome_input:
+        raise ValueError("Please specify either proteome input or genome input. Not both.")
+    if not (has_genome_input or has_proteome_input):
+        raise ValueError("Please specify either genome input (--genome_fasta) or proteome input (--protein_fasta & --protein_coords).")
+
+    if has_genome_input:
+        faa, _, gff = run_pyrodigal(args.genome_fasta, args.genome_id, args.output_dir, pr_meta=args.meta,)
+    
+    run_pyhmmer(faa, gff, args.genome_id, args.recombinase_hmms, args.output_dir,
+                mge_rules=args.mge_rules, threads=args.threads,)
+
+
+def run_pyhmmer(faa, gff, genome_id, recombinase_hmms, output_dir, mge_rules=None, threads=1,):
     """ Detect and annotate recombinases via pyhmmer. """
 
-    proteins = get_protein_coords(args.gff)
+    proteins = get_protein_coords(gff)
 
-    mge_rules = get_recombinase_rules(args.mge_rules, for_recombinase_scan=True,)
+    mge_rules = get_recombinase_rules(mge_rules, for_recombinase_scan=True,)
 
     with pyhmmer.easel.SequenceFile(
-        args.proteins_fasta,
+        faa,
         digital=True,
         alphabet=pyhmmer.easel.Alphabet.amino(),
     ) as seq_file:
         protein_seqs = list(seq_file)
-    with pyhmmer.plan7.HMMFile(args.recombinase_hmms) as hmm_file:
+    with pyhmmer.plan7.HMMFile(recombinase_hmms) as hmm_file:
         hmm_hits = list(
             pyhmmer.hmmsearch(
                 hmm_file,
                 protein_seqs,
-                cpus=args.threads,
+                cpus=threads,
                 backend="multiprocessing",
                 bit_cutoffs="gathering",
             )
         )
 
-    outpath = pathlib.Path(args.output_dir)
+    outpath = pathlib.Path(output_dir)
     outpath.mkdir(exist_ok=True, parents=True,)
 
     raw_table_out = open(
-        outpath / f"{args.genome_id}.recombinase_hmmsearch.out",
+        outpath / f"{genome_id}.recombinase_hmmsearch.out",
         "wb"
     )
 
@@ -79,7 +98,7 @@ def run_pyhmmer(args):
     if seen:
         recombinases = []
         with open(
-            outpath / f"{args.genome_id}.recombinase_scan.tsv",
+            outpath / f"{genome_id}.recombinase_scan.tsv",
             "wt",
             encoding="UTF-8",
         ) as rscan_out:
@@ -121,7 +140,6 @@ def run_pyhmmer(args):
                             (protein_id, recombinase, hmm_name, ",".join(mges), hit.evalue, hit.score, confidence,)
                         )
                     )
-                    # attrib_str = ";".join(f"{item[0]}={item[1]}" for item in protein.attribs.items() if item[1])
                     recombinases.append(
                         (
                             protein_id[:protein_id.rfind("_")],
@@ -132,14 +150,13 @@ def run_pyhmmer(args):
                             f"{hit.score:.5f}",
                             protein.strand,
                             ".",
-                            # ";".join((mge_attribs, attrib_str,))
                             mge_attribs,
                         )
                     )
         print(*recombinases, sep="\n")
 
         with open(
-            outpath / f"{args.genome_id}.recombinase_scan.gff3",
+            outpath / f"{genome_id}.recombinase_scan.gff3",
             "wt",
             encoding="UTF-8",
         ) as rscan_gff:
