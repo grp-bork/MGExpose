@@ -119,6 +119,7 @@ class GeneSet(dict):
     def annotate(self, annotations, stream=sys.stdout, with_header=True, gffstream=None,):
         """ Annotate genes with MGE-relevant data. """
         for f_ann in annotations:
+            print(f"{f_ann=}")
             f_ann(genes=self)
 
         self.to_info_txt(stream, with_header=with_header,)
