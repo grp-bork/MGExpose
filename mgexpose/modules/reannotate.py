@@ -14,9 +14,9 @@ from ..utils.writers import extract_mge_seqs
 def reannotate(args):
     """ docstring """
     if args.annotation_mode == "mges":
-        genomic_islands = read_mge_genomic_islands_gff(args.input_gff)
+        genomic_islands = read_mge_genomic_islands_gff(args.input_genes)
     elif args.annotation_mode == "raw_islands":
-        genomic_islands = read_genomic_islands_gff(args.input_gff)
+        genomic_islands = read_genomic_islands_gff(args.input_genes)
     elif args.annotation_mode == "genes":
         raise NotImplementedError()
     else:
