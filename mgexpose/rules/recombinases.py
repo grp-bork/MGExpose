@@ -1,6 +1,10 @@
 """ Recombinase rules. """
 
+import pathlib
+
+
 from ..recombinases import MgeRule
+from ..utils.readers import read_mge_rules
 
 
 MGE_RULES = {
@@ -73,3 +77,19 @@ MGE_RULES = {
     'rve_3': MgeRule('rve_3', 1, 1, 0, 0, 0,),
     'cas1': MgeRule('cas1', 1, 0, 0, 0, 0,),
 }
+
+
+def get_recombinase_rules(fn, for_recombinase_scan=False,):
+    """ Obtain recombinase rules """
+    if fn:
+        if not pathlib.Path(fn).is_file():
+            raise ValueError(f"Cannot read mge_rules from {fn}.")
+
+        return read_mge_rules(fn, for_recombinase_scan=for_recombinase_scan,)
+
+    mge_rules = dict(MGE_RULES)
+    if not for_recombinase_scan:
+        for rule in mge_rules.values():
+            rule.tn3_ce_modify()
+
+    return mge_rules
