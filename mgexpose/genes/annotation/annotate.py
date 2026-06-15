@@ -183,6 +183,6 @@ def compile_annotations(args, multi_run=False,):
     # except AttributeError as err:
     #     print(f"ERR: {err}")
 
-    print(f"{annotations=} {has_clusters=}")
+    # print(f"{annotations=} {has_clusters=}")
 
     return annotations, has_clusters
