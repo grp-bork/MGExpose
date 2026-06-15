@@ -42,7 +42,7 @@ def reannotate(args):
         print("##gff-version 3", file=gff_out)
         print("##gff-version 3", file=gene_info_gff)
 
-        annotations = compile_annotations(args, multi_run=True,)
+        annotations, _ = compile_annotations(args, multi_run=True,)
 
         for ct, island in enumerate(genomic_islands):
             # strip previous mge classification from islands (as we want to reannotate)
