@@ -4,7 +4,7 @@ import os
 from ..genes.annotation.annotate import annotate_genes, compile_annotations
 from ..genes.geneset import GeneSet
 from ..islands.island_processing import annotate_islands, evaluate_islands, prepare_islands
-from ..rules import get_recombinase_rules
+from ..rules.recombinases import get_recombinase_rules
 from ..utils.readers import read_precomputed_islands
 from ..utils.writers import write_final_results
 
