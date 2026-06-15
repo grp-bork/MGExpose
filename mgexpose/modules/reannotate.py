@@ -6,7 +6,7 @@ from ..genes.geneset import GeneSet
 from ..islands.annotated_genomic_island import AnnotatedGenomicIsland
 from ..islands.genomic_island import GenomicIsland
 from ..islands.mge_genomic_island import MgeGenomicIsland
-from ..rules import get_recombinase_rules
+from ..rules.recombinases import get_recombinase_rules
 from ..utils.gffio import read_genomic_islands_gff, read_mge_genomic_islands_gff
 from ..utils.writers import extract_mge_seqs
 

@@ -6,7 +6,7 @@ import pathlib
 import pyhmmer
 
 from ..recombinases import MGE_ALIASES
-from ..rules import get_recombinase_rules
+from ..rules.recombinases import get_recombinase_rules
 from ..utils.gffio import read_prodigal_gff
 
 
