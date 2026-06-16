@@ -85,7 +85,7 @@ def extract_mge_seqs(genome_seqs, islands, out_prefix):
                     sep="\n", file=mges_ffn,
                 )
 
-            for gene in island.genes:
-                gseq = seq[gene.start - 1: gene.end]
-                print(f">{gene.id}\n{gseq}", file=genes_ffn)
-                print(f">{gene.id}\n{gseq}", file=proteins_faa)
+                for gene in island.genes:
+                    gseq = seq[gene.start - 1: gene.end]
+                    print(f">{gene.id}\n{gseq}", file=genes_ffn)
+                    print(f">{gene.id}\n{gseq}", file=proteins_faa)
