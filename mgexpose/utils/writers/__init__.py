@@ -87,5 +87,42 @@ def extract_mge_seqs(genome_seqs, islands, out_prefix):
 
                 for gene in island.genes:
                     gseq = seq[gene.start - 1: gene.end]
+                    if gene.strand == "-":
+                        gseq = "".join(reverse_complement(gseq))
+                    pseq = "".join(translate(gseq))
+                    
+
                     print(f">{gene.id}\n{gseq}", file=genes_ffn)
-                    print(f">{gene.id}\n{gseq}", file=proteins_faa)
+                    print(f">{gene.id}\n{pseq}", file=proteins_faa)
+
+
+CODONS = { 
+    'AAA': 'K', 'AAC': 'N', 'AAG': 'K', 'AAT': 'N',
+    'ACA': 'T', 'ACC': 'T', 'ACG': 'T', 'ACT': 'T',
+    'AGA': 'R', 'AGC': 'S', 'AGG': 'R', 'AGT': 'S',
+    'ATA': 'I', 'ATC': 'I', 'ATG': 'M', 'ATT': 'I',
+    'CAA': 'Q', 'CAC': 'H', 'CAG': 'Q', 'CAT': 'H',
+    'CCA': 'P', 'CCC': 'P', 'CCG': 'P', 'CCT': 'P',
+    'CGA': 'R', 'CGC': 'R', 'CGG': 'R', 'CGT': 'R',
+    'CTA': 'L', 'CTC': 'L', 'CTG': 'L', 'CTT': 'L',
+    'GAA': 'E', 'GAC': 'D', 'GAG': 'E', 'GAT': 'D',
+    'GCA': 'A', 'GCC': 'A', 'GCG': 'A', 'GCT': 'A',
+    'GGA': 'G', 'GGC': 'G', 'GGG': 'G', 'GGT': 'G',
+    'GTA': 'V', 'GTC': 'V', 'GTG': 'V', 'GTT': 'V',
+    'TAA': '*', 'TAC': 'Y', 'TAG': '*', 'TAT': 'Y',
+    'TCA': 'S', 'TCC': 'S', 'TCG': 'S', 'TCT': 'S',
+    'TGA': '*', 'TGC': 'C', 'TGG': 'W', 'TGT': 'C',
+    'TTA': 'L', 'TTC': 'F', 'TTG': 'L', 'TTT': 'F', 
+}
+
+BASES = {
+    "A": "T", "C": "G", "G": "C", "T": "A",
+}
+
+def reverse_complement(seq):
+    for c in seq[::-1].upper():
+        yield BASES.get(c, "N")
+
+def translate(seq):
+    for i in range(0, len(seq) - 3, 3):
+        yield CODONS.get(seq[i:i + 3].upper(), "X").replace("*", "")
