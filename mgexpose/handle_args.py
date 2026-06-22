@@ -48,6 +48,15 @@ def add_data_args(ap):
         ),
     )  # deprecated
 
+    ap.add_argument(
+        "--use_y_clusters",
+        action="store_true",
+        help=(
+            "Gene clustering is performed against annotated"
+            " and redundancy-reduced reference sets."
+        ),
+    )
+
     ap.add_argument("--pyhmmer_input", action="store_true")  # deprecated
 
 
@@ -97,14 +106,14 @@ def handle_args(args):
 
     denovo_ap.add_argument("--core_threshold", type=float, default=0.95)
 
-    denovo_ap.add_argument(
-        "--use_y_clusters",
-        action="store_true",
-        help=(
-            "Gene clustering is performed against annotated"
-            " and redundancy-reduced reference sets."
-        ),
-    )
+    # denovo_ap.add_argument(
+    #     "--use_y_clusters",
+    #     action="store_true",
+    #     help=(
+    #         "Gene clustering is performed against annotated"
+    #         " and redundancy-reduced reference sets."
+    #     ),
+    # )
     denovo_ap.add_argument(
         "--single_island",
         type=str,
