@@ -57,6 +57,8 @@ def add_data_args(ap):
         ),
     )
 
+    ap.add_argument("--core_threshold", type=float, default=0.95)
+
     ap.add_argument("--pyhmmer_input", action="store_true")  # deprecated
 
 
@@ -104,7 +106,7 @@ def handle_args(args):
 
     add_data_args(denovo_ap)
 
-    denovo_ap.add_argument("--core_threshold", type=float, default=0.95)
+    # denovo_ap.add_argument("--core_threshold", type=float, default=0.95)
 
     # denovo_ap.add_argument(
     #     "--use_y_clusters",
