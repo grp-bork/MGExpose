@@ -11,7 +11,7 @@ from .handle_args import handle_args
 from .modules.denovo import denovo
 from .modules.gene_calling import run_pyrodigal
 from .modules.reannotate import reannotate
-from .modules.recombinase_scan import run_pyhmmer
+from .modules.recombinase_scan import recombinase_scan
 
 
 logger = logging.getLogger(__name__)
@@ -33,7 +33,7 @@ def main():
         run_pyrodigal(args)
 
     elif args.command == "recombinase_scan":
-        run_pyhmmer(args)
+        recombinase_scan(args)
 
     else:
         raise NotImplementedError(f"{args.command} module not implemented.")

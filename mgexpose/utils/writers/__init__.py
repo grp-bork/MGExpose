@@ -66,7 +66,7 @@ def write_final_results(recombinase_islands, args):
 def extract_mge_seqs(genome_seqs, islands, out_prefix):
     """ Extract MGE sequences from genomic sequences. """
     with gzip.open(
-        f"{out_prefix}.ffn.gz",
+        f"{out_prefix}.fna.gz",
         "wt",
     ) as _out:
         for header, seq in read_fasta(genome_seqs):
