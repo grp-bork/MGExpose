@@ -34,7 +34,7 @@ def get_protein_coords(gff):
 
 
 def recombinase_scan(args):
-    faa, gff = args.protein_fasta and args.protein_coords
+    faa, gff = args.protein_fasta, args.protein_coords
     has_genome_input = bool(args.genome_fasta)
     has_proteome_input = faa and gff
 
