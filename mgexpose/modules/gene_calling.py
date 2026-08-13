@@ -8,6 +8,13 @@ import pyrodigal
 from ..utils.readers import read_fasta
 
 
+def gene_calling(args):
+
+    if not args.genome_fasta:
+        raise ValueError("Please specify genome input.")
+
+    run_pyrodigal(args.genome_fasta, args.genome_id, args.output_dir, pr_meta=args.meta)
+
 def run_pyrodigal(genome_fasta, genome_id, output_dir, pr_meta=False,):
     """ Call genes with pyrodigal. """
     gf = pyrodigal.GeneFinder(mask=True, meta=pr_meta,)

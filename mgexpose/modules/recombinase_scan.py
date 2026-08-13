@@ -40,7 +40,7 @@ def recombinase_scan(args):
 
     if has_genome_input and has_proteome_input:
         raise ValueError("Please specify either proteome input or genome input. Not both.")
-    if not (has_genome_input or has_proteome_input):
+    if not has_genome_input and not has_proteome_input:
         raise ValueError("Please specify either genome input (--genome_fasta) or proteome input (--protein_fasta & --protein_coords).")
 
     if has_genome_input:

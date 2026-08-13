@@ -9,7 +9,7 @@ import sys
 
 from .handle_args import handle_args
 from .modules.denovo import denovo
-from .modules.gene_calling import run_pyrodigal
+from .modules.gene_calling import gene_calling
 from .modules.reannotate import reannotate
 from .modules.recombinase_scan import recombinase_scan
 
@@ -30,7 +30,7 @@ def main():
         reannotate(args)
 
     elif args.command == "call_genes":
-        run_pyrodigal(args)
+        gene_calling(args)
 
     elif args.command == "recombinase_scan":
         recombinase_scan(args)
