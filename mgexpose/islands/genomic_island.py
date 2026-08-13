@@ -41,7 +41,7 @@ class GenomicIsland:
     Importantly, the set of genes does not include the non-coding regions.
     '''
     RAW_TABLE_HEADER = (
-        "specI",
+        "species",
         "genome_accession",
         "panG",
         "contig",
@@ -52,7 +52,7 @@ class GenomicIsland:
     GFFTYPE = "region"
     ID_PREFIX = "GIL"
 
-    speci: str = None
+    species: str = None
     genome: str = None
     is_core: bool = None
     contig: str = None
@@ -91,7 +91,7 @@ class GenomicIsland:
             "first_recombinase",
             "island_size",
             "genome",
-            "specI",
+            "species",
             "core_acc",
             "contig",
             "first_gene_start",
@@ -111,7 +111,7 @@ class GenomicIsland:
     def from_gene(cls, gene):
         """ Creates island from starting gene. """
         island = cls(
-            gene.speci,
+            gene.species,
             gene.genome,
             gene.is_core,
             gene.contig,
@@ -206,7 +206,7 @@ class GenomicIsland:
                 )
                 if self.recombinases else ""
             ),
-            "specI": self.speci,
+            "species": self.species,
         }
         if self.name:
             attribs["name"] = self.name
@@ -219,10 +219,13 @@ class GenomicIsland:
         recombinases = attribs.get("recombinases", "")
         recombinases = parse_recombinase_string(recombinases) if recombinases else Counter()
 
+        genome_type = attribs.get("genome_type")
+
         return cls(
-            attribs.get("specI"),
+            attribs.get("species"),
             attribs.get("genome"),
-            attribs.get("genome_type") == "COR",
+            # attribs.get("genome_type") == "COR",
+            (genome_type == "COR" if genome_type is not None else genome_type),
             cols[0],  # contig
             int(cols[3]),  # start
             int(cols[4]),  # end

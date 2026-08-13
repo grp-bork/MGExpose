@@ -19,14 +19,14 @@ class GeneSet(dict):
         self,
         genes,
         genome_id=None,
-        speci=None,
+        species=None,
         composite_gene_ids=False,
     ):
         super().__init__()
 
         logger.info(
-            "Creating new %s for genome=%s specI=%s",
-            self.__class__, genome_id, speci,
+            "Creating new %s for genome=%s species=%s",
+            self.__class__, genome_id, species,
         )
 
         for gene in genes:
@@ -43,20 +43,20 @@ class GeneSet(dict):
 
             if genome_id is not None and gene.genome is None:
                 gene.genome = genome_id
-            if speci is not None and gene.speci is None:
-                gene.speci = speci
+            if species is not None and gene.species is None:
+                gene.species = species
 
             self[gene.id] = gene
 
-    def dump(self, outstream, with_header=True,):
+    def to_info_txt(self, outstream, with_header=True,):
         """ Write gene info to stream. """
 
         if with_header:
             headers = list(Gene().__dict__.keys())
             headers.remove("eggnog")
-            headers.remove("secretion_systems")
-            headers.remove("secretion_rules")
-            headers += ("secretion_systems", "secretion_rules",)
+            headers.remove("conjugation_systems")
+            headers.remove("conjugation_rules")
+            headers += ("conjugation_systems", "conjugation_rules",)
             headers += EMAPPER_FIELDS["v2.1.2"]
             headers.remove("description")
             print(*headers, sep="\t", file=outstream)
@@ -71,16 +71,16 @@ class GeneSet(dict):
                 if k != "description"
             )
 
-            secretion_systems, secretion_rules = None, None
-            if gene.secretion_systems:
-                secretion_systems = ",".join(gene.secretion_systems)
-            if gene.secretion_rules:
-                secretion_rules = ",".join(str(s) for s in gene.secretion_rules)
+            conjugation_systems, conjugation_rules = None, None
+            if gene.conjugation_systems:
+                conjugation_systems = ",".join(gene.conjugation_systems)
+            if gene.conjugation_rules:
+                conjugation_rules = ",".join(str(s) for s in gene.conjugation_rules)
 
             print(
                 gene,
-                secretion_systems,
-                secretion_rules,
+                conjugation_systems,
+                conjugation_rules,
                 *eggnog_cols,
                 sep="\t",
                 file=outstream
@@ -91,7 +91,7 @@ class GeneSet(dict):
         cls,
         fn,
         genome_id=None,
-        speci=None,
+        species=None,
         gene_type="prodigal",
         composite_gene_ids=False,
     ):
@@ -104,7 +104,7 @@ class GeneSet(dict):
         return cls(
             read_f(fn),
             genome_id=genome_id,
-            speci=speci,
+            species=species,
             composite_gene_ids=composite_gene_ids,
         )
 
@@ -112,15 +112,20 @@ class GeneSet(dict):
     def from_island(cls, island, composite_gene_ids=False,):
         """ Generate a GeneSet from a GenomicIsland or subclasses. """
         return cls(
-            island.genes, island.genome, island.speci,
+            island.genes, island.genome, island.species,
             composite_gene_ids=composite_gene_ids,
         )
 
-    def annotate(self, annotations, stream=sys.stdout, with_header=True,):
+    def annotate(self, annotations, stream=sys.stdout, with_header=True, gffstream=None,):
         """ Annotate genes with MGE-relevant data. """
         for f_ann in annotations:
+            # print(f"{f_ann=}")
             f_ann(genes=self)
 
-        self.dump(stream, with_header=with_header,)
+        self.to_info_txt(stream, with_header=with_header,)
+
+        if gffstream is not None:
+            for _, gene in self.items():
+                gene.to_gff(gffstream, add_header=False,)
 
         return list(self.values())

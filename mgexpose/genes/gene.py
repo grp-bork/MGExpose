@@ -14,13 +14,13 @@ from .annotation.eggnog import EMAPPER_FIELDS
 class Gene:
     '''The following class describes a Gene sequence with its attributes.
     Each gene can contribute to the definition of a MGE Island by being
-    1. MGE machinery i.e. phage, secretion system, secretion rule
+    1. MGE machinery i.e. phage, conjugation system, conjugation rule
     2. Recombinase i.e. mge (naming is confusing but is kept for historical reasons)
     Eventually each gene has additional annotations coming from EggNOG mapper and
     associated with it and can be extended. '''
     id: str = None
     genome: str = None
-    speci: str = None
+    species: str = None
     contig: str = None
     start: int = None
     end: int = None
@@ -31,8 +31,8 @@ class Gene:
 
     phage: str = None
     eggnog: tuple = None
-    secretion_systems: list = field(default_factory=list)
-    secretion_rules: list = field(default_factory=list)
+    conjugation_systems: list = field(default_factory=list)
+    conjugation_rules: list = field(default_factory=list)
 
     parent: str = None
 
@@ -41,8 +41,8 @@ class Gene:
     # otherwise output will be suppressed.
     OPTIONAL_ANNOTATIONS = (
         "phage",
-        "secretion_systems",
-        "secretion_rules",
+        "conjugation_systems",
+        "conjugation_rules",
         "recombinase",
         "eggnog",
         "parent",
@@ -78,19 +78,19 @@ class Gene:
 
     def is_cargo(self):
         """ Checks if gene can be classified as cargo. """
-        return self.phage is None and self.recombinase is None and not self.secretion_systems
+        return self.phage is None and self.recombinase is None and not self.conjugation_systems
 
     def __str__(self):
         """ String representation. """
 
-        speci = self.speci
-        if not isinstance(speci, str):
+        species = self.species
+        if not isinstance(species, str):
             # converts non-string speci annotation (coreg mode) to string.
-            speci = ":".join(sorted(speci))
+            species = ":".join(sorted(species))
 
         return "\t".join(
-            f"{v if k != 'speci' else speci}" for k, v in self.__dict__.items()
-            if k not in ("eggnog", "secretion_systems", "secretion_rules",)
+            f"{v if k != 'species' else species}" for k, v in self.__dict__.items()
+            if k not in ("eggnog", "conjugation_systems", "conjugation_rules",)
         )
 
     def __hash__(self):
@@ -116,21 +116,25 @@ class Gene:
         """ construct gene from gff record """
         attribs = dict(item.split("=") for item in cols[-1].strip(";").split(";"))
 
-        secretion_rules = attribs.get("secretion_rules")
+        conjugation_rules = attribs.get("conjugation_rules")
+
+        genome_type = attribs.get("genome_type")
+
         return cls(
             id=attribs["ID"],
             genome=attribs.get("genome"),
-            speci=attribs.get("speci", "no_speci"),
+            species=attribs.get("species", "unknown_species"),
             contig=cols[0],
             start=int(cols[3]),
             end=int(cols[4]),
             strand=cols[6],
             recombinase=attribs.get("recombinase"),
             cluster=attribs.get("cluster") or attribs.get("Cluster"),
-            is_core=attribs.get("genome_type") == "COR",
+            # is_core=(attribs.get("genome_type") == "COR" if attribs.get("genome_type") else None),
+            is_core=(genome_type == "COR" if genome_type is not None else genome_type),
             phage=attribs.get("phage"),
-            secretion_systems=attribs.get("secretion_systems", "").split(","),
-            secretion_rules=literal_eval(f"[{secretion_rules}]") if secretion_rules else [],
+            conjugation_systems=attribs.get("conjugation_systems", "").split(","),
+            conjugation_rules=literal_eval(f"[{conjugation_rules}]") if conjugation_rules else [],
             eggnog=tuple(
                 (k, attribs.get(k))
                 for k in EMAPPER_FIELDS["v2.1.2"]
@@ -155,19 +159,19 @@ class Gene:
             "Parent": self.parent,
             "cluster": self.cluster,
             "size": len(self),
-            "secretion_systems": ",".join(
-                self.secretion_systems
-            ) if self.secretion_systems else None,
-            "secretion_rules": ",".join(
-                str(s) for s in self.secretion_rules
-            ) if self.secretion_rules else None,
+            "conjugation_systems": ",".join(
+                self.conjugation_systems
+            ) if self.conjugation_systems else None,
+            "conjugation_rules": ",".join(
+                str(s) for s in self.conjugation_rules
+            ) if self.conjugation_rules else None,
             "phage": self.phage,
             "recombinase": self.recombinase,
             "genome_type": self.rtype(self.is_core),
         }
         if intermediate_dump:
             attribs["genome"] = self.genome
-            attribs["speci"] = self.speci
+            attribs["species"] = self.species
             attribs["cluster"] = self.cluster
             attribs["is_core"] = self.is_core
 
@@ -195,7 +199,7 @@ class Gene:
         """ Parse a gene from a gene_info line:
         - id
         - genome
-        - speci
+        - species
         - contig
         - start
         - end
@@ -204,8 +208,8 @@ class Gene:
         - cluster
         - is_core
         - phage
-        - secretion_system
-        - secretion_rule
+        - conjugation_system
+        - conjugation_rule
         - cog_fcat
         - seed_eggNOG_ortholog
         - seed_ortholog_evalue
@@ -229,15 +233,15 @@ class Gene:
         if composite_gene_id:
             gene_id = f"{genome_id}.{gene_id}"
 
-        secretion_rules = kwargs.get("secretion_rule", kwargs.get("secretion_rules"))
-        if secretion_rules is None:
-            secretion_rules = []
+        conjugation_rules = kwargs.get("conjugation_rule", kwargs.get("conjugation_rules"))
+        if conjugation_rules is None:
+            conjugation_rules = []
         else:
-            secretion_rules = secretion_rules.strip()
-            if re.match(r"\[(\{'mandatory': [0-9]+, 'accessory': [0-9]+\})+\]", secretion_rules):
-                secretion_rules = literal_eval(secretion_rules)
+            conjugation_rules = conjugation_rules.strip()
+            if re.match(r"\[(\{'mandatory': [0-9]+, 'accessory': [0-9]+\})+\]", conjugation_rules):
+                conjugation_rules = literal_eval(conjugation_rules)
             else:
-                secretion_rules = []
+                conjugation_rules = []
 
         def parse_is_core(s: str):
             if s is None:
@@ -249,16 +253,19 @@ class Gene:
                 return None
             return literal_eval(s)
 
-        # secretion_systems=attribs.get("secretion_systems", "").split(","),
-        # secretion_rules=literal_eval(f"[{secretion_rules}]") if secretion_rules else [],
-        secretion_systems = kwargs.get("secretion_system", kwargs.get("secretion_systems", ""))
-        if secretion_systems is None:
-            secretion_systems = []
+        # conjugation_systems=attribs.get("conjugation_systems", "").split(","),
+        # conjugation_rules=literal_eval(f"[{conjugation_rules}]") if conjugation_rules else [],
+        conjugation_systems = kwargs.get(
+            "conjugation_system",
+            kwargs.get("conjugation_systems", "")
+        )
+        if conjugation_systems is None:
+            conjugation_systems = []
 
         return cls(
             id=gene_id,
             genome=genome_id,
-            speci=kwargs.get("speci"),
+            species=kwargs.get("species"),
             contig=kwargs.get("contig"),
             start=int(kwargs.get("start")),
             end=int(kwargs.get("end")),
@@ -268,8 +275,8 @@ class Gene:
             # is_core=kwargs.get("is_core") == "True",
             is_core=parse_is_core(kwargs.get("is_core", "None")),
             phage=kwargs.get("phage"),
-            secretion_systems=secretion_systems.split(",") if secretion_systems else [],
-            secretion_rules=secretion_rules,
+            conjugation_systems=conjugation_systems.split(",") if conjugation_systems else [],
+            conjugation_rules=conjugation_rules,
             eggnog=tuple(
                 (k, kwargs.get(k))
                 for k in EMAPPER_FIELDS["v2.1.2"]

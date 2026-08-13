@@ -30,22 +30,6 @@ logger = logging.getLogger(__name__)
 class AnnotatedGenomicIsland(GenomicIsland):
     '''The following class extends generic Genomic Island with MGE machinery annotations.'''
 
-    TABLE_HEADERS = (
-        "contig",
-        "start",
-        "end",
-        "island_size",
-        "prot_count",
-        "mgeR_count",
-        "Plasmid_PA",
-        "phage_count",
-        "all_conj_count",
-        "CONJ_T4SS",
-        "SS_present_mandatoryG",
-        "entire_ss",
-        "mgeR",
-    )
-
     phage_count: int = 0
     conj_count: int = 0
     conj_man_count: int = 0
@@ -55,16 +39,16 @@ class AnnotatedGenomicIsland(GenomicIsland):
 
     def __post_init__(self):
         """ Apply annotations. """
-        secretion_systems = {}
+        conjugation_systems = {}
         cm_counts = Counter()
 
         for gene in self.genes:
             self.phage_count += gene.phage is not None
-            if gene.secretion_systems:
+            if gene.conjugation_systems:
                 self.conj_count += 1
 
                 has_mandatory_system = False
-                for system, rule in zip(gene.secretion_systems, gene.secretion_rules):
+                for system, rule in zip(gene.conjugation_systems, gene.conjugation_rules):
                     try:
                         _, system = system.split(":")
                     except ValueError:
@@ -74,23 +58,23 @@ class AnnotatedGenomicIsland(GenomicIsland):
                     if rule is not None:
                         cm_counts[(system, False)] += 1
                         cm_counts[(system, True)] += 1
-                        secretion_systems[system] = rule
+                        conjugation_systems[system] = rule
 
                 self.conj_man_count += has_mandatory_system
 
-                logger.info("Secretion system: Gene %s -> conj_count = %s", gene.id, self.conj_man_count)
+                logger.info("conjugation system: Gene %s -> conj_count = %s", gene.id, self.conj_man_count)
                 # self.conj_man_count += (
-                #     # gene.secretion_system.upper()[:4] in ("CONJ", "T4SS",)
-                #     gene.secretion_system.split("_")[0] in ("dCONJ", "T4SS", "MOB",)
+                #     # gene.conjugation_system.upper()[:4] in ("CONJ", "T4SS",)
+                #     gene.conjugation_system.split("_")[0] in ("dCONJ", "T4SS", "MOB",)
                 # )
-                # if gene.secretion_rule is not None:
-                #     cm_counts[(gene.secretion_system, False)] += 1
-                #     cm_counts[(gene.secretion_system, True)] += 1
+                # if gene.conjugation_rule is not None:
+                #     cm_counts[(gene.conjugation_system, False)] += 1
+                #     cm_counts[(gene.conjugation_system, True)] += 1
 
-                #     secretion_systems[gene.secretion_system] = gene.secretion_rule
+                #     conjugation_systems[gene.conjugation_system] = gene.conjugation_rule
 
         # TODO: validate if still works
-        for system, rule in secretion_systems.items():
+        for system, rule in conjugation_systems.items():
             self.valid_mandatory |= (cm_counts[(system, True)] >= rule["mandatory"] / 2)
             self.valid_accessory |= (cm_counts[(system, False)] >= rule["accessory"] / 2)
             self.valid_entire |= (
