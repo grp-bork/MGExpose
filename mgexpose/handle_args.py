@@ -142,6 +142,17 @@ def handle_args(args):
     reannotate_ap.add_argument("--pyhmmer_input", action="store_true")
     reannotate_ap.add_argument("--phage_eggnog_data", type=str)
     reannotate_ap.add_argument("--phage_filter_terms", type=str)
+    reannotate_ap.add_argument("--cluster_data", type=str)
+
+    reannotate_ap.add_argument("--core_threshold", type=float, default=0.95)
+    reannotate_ap.add_argument(
+        "--use_y_clusters",
+        action="store_true",
+        help=(
+            "Gene clustering is performed against annotated"
+            " and redundancy-reduced reference sets."
+        ),
+    )
 
     reannotate_ap.set_defaults(func=None)  # TODO
 

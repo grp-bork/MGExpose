@@ -18,7 +18,7 @@ def compile_annotations(args, multi_run=False,):
     """ Compile annotation functions according to input parameters. """
     annotations = []
 
-    if getattr(args, "recombinase_hits"):
+    if getattr(args, "recombinase_hits", None,):
 
         recombinases = read_recombinase_hits(
             args.recombinase_hits, pyhmmer=args.pyhmmer_input,
@@ -33,7 +33,7 @@ def compile_annotations(args, multi_run=False,):
             )
         )
     
-    if getattr(args, "txs_macsy_report") and getattr(args, "txs_macsy_rules"):
+    if getattr(args, "txs_macsy_report", None,) and getattr(args, "txs_macsy_rules", None,):
 
         secretion_systems = parse_macsyfinder_report(
             args.txs_macsy_report, args.txs_macsy_rules,
@@ -48,7 +48,7 @@ def compile_annotations(args, multi_run=False,):
             )
         )
     
-    if getattr(args, "phage_eggnog_data") and getattr(args, "phage_filter_terms"):
+    if getattr(args, "phage_eggnog_data", None,) and getattr(args, "phage_filter_terms", None,):
 
         eggnog_annotations = parse_emapper(
             args.phage_eggnog_data,
@@ -64,13 +64,13 @@ def compile_annotations(args, multi_run=False,):
             )
         )
 
-    if getattr(args, "cluster_data"):
+    if getattr(args, "cluster_data", None,):
         annotations.append(
             partial(
                 add_clusters,
                 args.cluster_data,
-                use_y_clusters=('use_y_clusters' in args and args.use_y_clusters),
-                core_threshold=('core_threshold' in args and args.core_threshold) or 0.95,
+                use_y_clusters=getattr(args, "use_y_clusters", None) is not None,
+                core_threshold=getattr(args, 'core_threshold', 0.95),
                 output_dir=args.output_dir,
                 genome_id=args.genome_id,
             )
