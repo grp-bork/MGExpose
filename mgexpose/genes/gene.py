@@ -157,7 +157,7 @@ class Gene:
             "size": len(self),
             "secretion_systems": ",".join(
                 self.secretion_systems
-            ) if self.secretion_systems else None,
+            ).strip(",") if self.secretion_systems else None,
             "secretion_rules": ",".join(
                 str(s) for s in self.secretion_rules
             ) if self.secretion_rules else None,
