@@ -154,6 +154,7 @@ class GenomicIsland:
             self.genes.add(gene)
 
     def update_recombinases(self):
+        self.recombinases.clear()
         self.recombinases.update(
             gene.recombinase
             for gene in self.genes
