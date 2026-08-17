@@ -167,7 +167,7 @@ def main():
             }
             out_prefix = os.path.join(
                 args.output_dir,
-                f"{args.genome_id}.mge_islands.liftover"
+                f"GENOME_ID.mge_islands.liftover"
             )
             gff_out = open(f"{out_prefix}.gff3", "wt", encoding="UTF-8",)
 
