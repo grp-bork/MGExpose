@@ -182,7 +182,7 @@ def main():
                         for src_gene, dst_gene in zip(src.genes, new_island.genes):
                             dst_gene.liftover(src_gene)
                         new_island.update_recombinases()
-                        annotated_island = AnnotatedGenomicIsland.from_island(island)
+                        annotated_island = AnnotatedGenomicIsland.from_island(new_island)
                         mge_island = MgeGenomicIsland.from_island(annotated_island)
                         mge_island.evaluate_recombinases(mge_rules)
                         mge_island.to_gff(
