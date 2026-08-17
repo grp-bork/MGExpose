@@ -53,13 +53,13 @@ class Gene:
     CLUSTER_ANNOTATIONS = ("cluster", "is_core",)
 
     def liftover(self, other):
-        self.recombinase = str(other.recombinase)
-        self.cluster = str(other.cluster)
-        self.is_core = bool(other.is_core)
-        self.phage = str(other.phage)
-        self.eggnog = copy.deepcopy(other.eggnog)
-        self.secretion_systems = copy.deepcopy(other.secretion_systems)
-        self.secretion_rules = copy.deepcopy(other.secretion_rules)
+        self.recombinase = other.recombinase
+        self.cluster = other.cluster
+        self.is_core = other.is_core
+        self.phage = other.phage
+        self.eggnog = copy.deepcopy(other.eggnog) if other.eggnog is not None else None
+        self.secretion_systems = copy.deepcopy(other.secretion_systems) if other.secretion_systems is not None else None
+        self.secretion_rules = copy.deepcopy(other.secretion_rules) if other.secretion_rules is not None else None
 
     @staticmethod
     def rtype(is_core):
