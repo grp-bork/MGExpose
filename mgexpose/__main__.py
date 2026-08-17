@@ -175,21 +175,25 @@ def main():
                 for id1, dst in dest_islands.items():
                     id2 = island_mapping.get(id1)
                     src = source_islands.get(id2)
+                    new_island = GenomicIsland.from_island(dst, dst.genome,)
                     if src is None:
-                        dst.to_gff(gff_out, source_db=None,)
+                        new_island.update_recombinases()
+                        annotated_island = AnnotatedGenomicIsland.from_island(new_island)
+                        mge_island = MgeGenomicIsland.from_island(annotated_island)
+                        mge_island.evaluate_recombinases(mge_rules)
                     else:
-                        new_island = GenomicIsland.from_island(dst, dst.genome,)
+                        # new_island = GenomicIsland.from_island(dst, dst.genome,)
                         for src_gene, dst_gene in zip(src.genes, new_island.genes):
                             dst_gene.liftover(src_gene)
                         new_island.update_recombinases()
                         annotated_island = AnnotatedGenomicIsland.from_island(new_island)
                         mge_island = MgeGenomicIsland.from_island(annotated_island)
                         mge_island.evaluate_recombinases(mge_rules)
-                        mge_island.to_gff(
-                            gff_out,
-                            source_db=None,
-                        )
-                        mge_islands.setdefault(mge_island.contig, []).append(mge_island)
+                    mge_island.to_gff(
+                        gff_out,
+                        source_db=None,
+                    )
+                    mge_islands.setdefault(mge_island.contig, []).append(mge_island)
             if args.extract_islands:
                 extract_mge_seqs(args.extract_islands, mge_islands, out_prefix)
 
