@@ -164,7 +164,7 @@ def handle_args(args):
     )
     liftover_ap.add_argument("--mge_rules", type=str)
     liftover_ap.add_argument("--source_islands", type=str,)
-    liftover_ap.add_argument("--destination_islands", type=str,)
+    liftover_ap.add_argument("--dest_islands", "--destination_islands", type=str,)
     liftover_ap.add_argument("--island_mapping", type=str,)
     liftover_ap.add_argument("--extract_islands", type=str)
     liftover_ap.set_defaults(func=None)
