@@ -156,6 +156,19 @@ def handle_args(args):
 
     reannotate_ap.set_defaults(func=None)  # TODO
 
+
+    liftover_ap = subparsers.add_parser(
+        "liftover",
+        help="Lift over gene annotations between identical islands",
+        parents=(parent_subparser,),
+    )
+    liftover_ap.add_argument("--mge_rules", type=str)
+    liftover_ap.add_argument("--source_islands", type=str,)
+    liftover_ap.add_argument("--destination_islands", type=str,)
+    liftover_ap.add_argument("--island_mapping", type=str,)
+    liftover_ap.add_argument("--extract_islands", type=str)
+    liftover_ap.set_defaults(func=None)
+
     call_genes_ap = subparsers.add_parser(
         "call_genes",
         help="Call genes with Pyrodigal",

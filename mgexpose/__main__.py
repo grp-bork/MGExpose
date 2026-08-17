@@ -146,6 +146,59 @@ def main():
                 if args.extract_islands:
                     extract_mge_seqs(args.extract_islands, mge_islands, out_prefix)
 
+        elif args.command == "liftover":
+            mge_islands = {}
+            mge_rules = read_mge_rules(args.mge_rules)
+            with open(args.island_mapping, "rt") as _in:
+                # island mapping format:
+                # source -> dest, hence we need to reverse
+                # as we're checking the dest islands only
+                island_mapping = dict(
+                    line.strip().split()[::-1]
+                    for line in _in
+                )
+            source_islands = {
+                island.get_id(): island
+                for island in read_mge_genomic_islands_gff(args.source_islands)
+            }
+            dest_islands = {
+                island.get_id(): island
+                for island in read_mge_genomic_islands_gff(args.dest_islands)
+            }
+            out_prefix = os.path.join(
+                args.output_dir,
+                f"{args.genome_id}.mge_islands.liftover"
+            )
+            gff_out = open(f"{out_prefix}.gff3", "wt", encoding="UTF-8",)
+
+            with gff_out:
+                for id1, dst in dest_islands.items():
+                    id2 = island_mapping.get(id1)
+                    src = source_islands.get(id2)
+                    if src is None:
+                        dst.to_gff(gff_out, source_db=None,)
+                    else:
+                        new_island = GenomicIsland.from_island(dst, dst.genome,)
+                        for src_gene, dst_gene in zip(src.genes, new_island.genes):
+                            dst_gene.liftover(src_gene)
+                        new_island.update_recombinases()
+                        annotated_island = AnnotatedGenomicIsland.from_island(island)
+                        mge_island = MgeGenomicIsland.from_island(annotated_island)
+                        mge_island.evaluate_recombinases(mge_rules)
+                        mge_island.to_gff(
+                            gff_out,
+                            source_db=None,
+                        )
+                        mge_islands.setdefault(mge_island.contig, []).append(mge_island)
+            if args.extract_islands:
+                extract_mge_seqs(args.extract_islands, mge_islands, out_prefix)
+
+
+                
+
+
+            
+
         elif args.command == "annotate_genes":
             raise NotImplementedError
 

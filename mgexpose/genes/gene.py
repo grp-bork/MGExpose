@@ -2,6 +2,7 @@
 
 """ Gene module """
 
+import copy
 import re
 
 from ast import literal_eval
@@ -50,6 +51,15 @@ class Gene:
     # these are only optional when core genome calculations
     # are disabled, e.g. co-transferred region inputs
     CLUSTER_ANNOTATIONS = ("cluster", "is_core",)
+
+    def liftover(self, other):
+        self.recombinase = str(other.recombinase)
+        self.cluster = str(other.cluster)
+        self.is_core = bool(other.is_core)
+        self.phage = str(other.phage)
+        self.eggnog = copy.deepcopy(other.eggnog)
+        self.secretion_systems = copy.deepcopy(other.secretion_systems)
+        self.secretion_rules = copy.deepcopy(other.secretion_rules)
 
     @staticmethod
     def rtype(is_core):
