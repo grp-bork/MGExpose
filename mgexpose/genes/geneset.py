@@ -132,6 +132,9 @@ class GeneSet(dict):
         source_orientation = tuple((g.strand, len(g)) for g in source_genes)
         dest_orientation = tuple((g.strand, len(g)) for g in dest_genes)
 
+        print(source_orientation)
+        print(dest_orientation)
+
         genes = None
         if source_orientation == dest_orientation:
             genes = zip(source_genes, dest_genes)
