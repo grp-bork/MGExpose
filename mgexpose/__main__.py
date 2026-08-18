@@ -173,6 +173,9 @@ def main():
             )
             gff_out = open(f"{out_prefix}.gff3", "wt", encoding="UTF-8",)
 
+            print("source_islands", *source_islands, sep="\n")
+            print("dest_islands", *dest_islands, sep="\n")
+
             with gff_out:
                 print("##gff-version 3", file=gff_out)
                 for id1, dst in dest_islands.items():
