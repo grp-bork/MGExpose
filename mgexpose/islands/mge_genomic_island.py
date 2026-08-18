@@ -371,8 +371,8 @@ class MgeGenomicIsland(AnnotatedGenomicIsland):
             file=outstream,
         )
 
-    def get_genes(self):
-        yield from sorted(self.genes, key=lambda g: (g.start, g.end,))
+    # def get_genes(self):
+    #     yield from sorted(self.genes, key=lambda g: (g.start, g.end,))
 
     def get_cargo(self):
         return [gene for gene in self.genes if gene.is_cargo()]

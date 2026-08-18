@@ -281,3 +281,6 @@ class GenomicIsland:
         #         island.recombinases[gene.recombinase] += 1
 
         return island
+
+    def get_genes(self):
+            yield from sorted(self.genes, key=lambda g: (g.start, g.end,))
