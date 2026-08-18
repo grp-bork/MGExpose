@@ -149,14 +149,15 @@ def main():
         elif args.command == "liftover":
             mge_islands = {}
             mge_rules = read_mge_rules(args.mge_rules)
-            with open(args.island_mapping, "rt") as _in:
-                # island mapping format:
-                # source -> dest, hence we need to reverse
-                # as we're checking the dest islands only
-                island_mapping = dict(
-                    line.strip().split()[::-1]
-                    for line in _in
-                )
+            # with open(args.island_mapping, "rt") as _in:
+            #     # island mapping format:
+            #     # source -> dest, hence we need to reverse
+            #     # as we're checking the dest islands only
+            #     island_mapping = dict(
+            #         line.strip().split()[::-1]
+            #         for line in _in
+            #     )
+            island_mapping = dict([args.island_mapping.strip().split(",")])
             source_islands = {
                 island.get_id(): island
                 for island in read_mge_genomic_islands_gff(args.source_islands)
@@ -183,8 +184,9 @@ def main():
                         mge_island.evaluate_recombinases(mge_rules)
                     else:
                         # new_island = GenomicIsland.from_island(dst, dst.genome,)
-                        for src_gene, dst_gene in zip(src.genes, new_island.genes):
-                            dst_gene.liftover(src_gene)
+                        # for src_gene, dst_gene in zip(src.genes, new_island.genes):
+                        #     dst_gene.liftover(src_gene)
+                        GeneSet.liftover(src.genes, new_island.genes)
                         new_island.update_recombinases()
                         annotated_island = AnnotatedGenomicIsland.from_island(new_island)
                         mge_island = MgeGenomicIsland.from_island(annotated_island)

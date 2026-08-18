@@ -162,12 +162,16 @@ def handle_args(args):
         help="Lift over gene annotations between identical islands",
         parents=(parent_subparser,),
     )
+
+    liftover_ap.add_argument("--genome_id", type=str)
     liftover_ap.add_argument("--mge_rules", type=str)
     liftover_ap.add_argument("--source_islands", type=str,)
     liftover_ap.add_argument("--dest_islands", "--destination_islands", type=str,)
     liftover_ap.add_argument("--island_mapping", type=str,)
+    # liftover_ap.add_argument("--island_mapping_file", type=str,)
     liftover_ap.add_argument("--extract_islands", type=str)
     liftover_ap.set_defaults(func=None)
+
 
     call_genes_ap = subparsers.add_parser(
         "call_genes",

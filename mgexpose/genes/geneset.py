@@ -124,3 +124,12 @@ class GeneSet(dict):
         self.dump(stream, with_header=with_header,)
 
         return list(self.values())
+
+    @staticmethod
+    def liftover(source_genes, dest_genes,):
+        for src_gene, dst_gene in zip(source_genes, dest_genes):
+            dst_gene.liftover(src_gene)
+
+
+
+    
