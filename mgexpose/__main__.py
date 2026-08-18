@@ -157,7 +157,7 @@ def main():
             #         line.strip().split()[::-1]
             #         for line in _in
             #     )
-            island_mapping = dict([args.island_mapping.strip().split(",")])
+            island_mapping = dict([args.island_mapping.strip().split(",")[::-1]])
             print("ISLAND_MAPPING", island_mapping)
             source_islands = {
                 island.get_id(): island
