@@ -158,6 +158,7 @@ def main():
             #         for line in _in
             #     )
             island_mapping = dict([args.island_mapping.strip().split(",")])
+            print("ISLAND_MAPPING", island_mapping)
             source_islands = {
                 island.get_id(): island
                 for island in read_mge_genomic_islands_gff(args.source_islands)
@@ -177,6 +178,7 @@ def main():
                 for id1, dst in dest_islands.items():
                     id2 = island_mapping.get(id1)
                     src = source_islands.get(id2)
+                    print(f"{id1=}, {id2=}, {src=}")
                     new_island = GenomicIsland.from_island(dst, dst.genome,)
                     if src is None:
                         new_island.update_recombinases()
