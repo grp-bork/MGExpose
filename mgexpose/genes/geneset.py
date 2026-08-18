@@ -127,9 +127,22 @@ class GeneSet(dict):
 
     @staticmethod
     def liftover(source_genes, dest_genes,):
-        for src_gene, dst_gene in zip(source_genes, dest_genes):
-            dst_gene.liftover(src_gene)
+        # if len(self) == len(other) and self.strand == other.strand:
 
+        source_orientation = tuple((g.strand, len(g)) for g in source_genes)
+        dest_orientation = tuple((g.strand, len(g)) for g in dest_genes)
 
+        genes = None
+        if source_orientation == dest_orientation:
+            genes = zip(source_genes, dest_genes)
+        else:
+            dest_orientation = tuple(
+                (None if strand is None else "+-"[strand == "+"], length)
+                for strand, length in dest_orientation[::-1]
+            )
+            if source_orientation == dest_orientation:
+                genes = zip(source_genes, dest_genes[::-1])
 
-    
+        if genes is not None:
+            for src_gene, dst_gene in genes:
+                dst_gene.liftover(src_gene)

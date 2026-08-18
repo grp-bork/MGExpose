@@ -173,6 +173,7 @@ def main():
             gff_out = open(f"{out_prefix}.gff3", "wt", encoding="UTF-8",)
 
             with gff_out:
+                print("##gff-version 3", file=gff_out)
                 for id1, dst in dest_islands.items():
                     id2 = island_mapping.get(id1)
                     src = source_islands.get(id2)
