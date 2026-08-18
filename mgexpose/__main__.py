@@ -192,7 +192,7 @@ def main():
                         # new_island = GenomicIsland.from_island(dst, dst.genome,)
                         # for src_gene, dst_gene in zip(src.genes, new_island.genes):
                         #     dst_gene.liftover(src_gene)
-                        GeneSet.liftover(src.genes, new_island.genes)
+                        GeneSet.liftover(tuple(src.get_genes()), tuple(new_island.get_genes()))
                         new_island.update_recombinases()
                         annotated_island = AnnotatedGenomicIsland.from_island(new_island)
                         mge_island = MgeGenomicIsland.from_island(annotated_island)
