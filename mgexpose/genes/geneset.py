@@ -147,5 +147,6 @@ class GeneSet(dict):
                 genes = zip(source_genes, dest_genes[::-1])
 
         if genes is not None:
+            print("commencing liftover")
             for src_gene, dst_gene in genes:
                 dst_gene.liftover(src_gene)
