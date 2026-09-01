@@ -157,7 +157,17 @@ def main():
             #         line.strip().split()[::-1]
             #         for line in _in
             #     )
-            island_mapping = dict([args.island_mapping.strip().split(",")[::-1]])
+            if args.island_mapping is None:
+                raise ValueError("No islands to map specified.")
+            island_mapping = dict()
+            if pathlib.Path(args.island_mapping).is_file():
+                with open(args.island_mapping, "rt") as _in:
+                    island_mapping = dict(
+                        l.strip().split(",")[::-1]
+                        for l in _in
+                    )
+            elif args.island_mapping != "all":
+                island_mapping = dict([args.island_mapping.strip().split(",")[::-1]])
             print("ISLAND_MAPPING", island_mapping)
             source_islands = {
                 island.get_id(): island
@@ -171,7 +181,14 @@ def main():
                 args.output_dir,
                 f"{args.genome_id}.mge_islands.liftover"
             )
-            gff_out = open(f"{out_prefix}.gff3", "wt", encoding="UTF-8",)
+
+            out_gff3 = f"{out_prefix}.gff3"
+            i = 1
+            while os.path.isfile(out_gff3):
+                out_gff3 = f"{out_gff3}.{i}"
+                i += 1
+
+            gff_out = open(out_gff3, "wt", encoding="UTF-8",)
 
             print("source_islands", *source_islands, sep="\n")
             print("dest_islands", *dest_islands, sep="\n")
@@ -179,7 +196,7 @@ def main():
             with gff_out:
                 print("##gff-version 3", file=gff_out)
                 for id1, dst in dest_islands.items():
-                    id2 = island_mapping.get(id1)
+                    id2 = island_mapping.get(id1) if island_mapping else id1
                     src = source_islands.get(id2)
                     print(f"{id1=}, {id2=}, {src=}")
                     new_island = GenomicIsland.from_island(dst, dst.genome,)
