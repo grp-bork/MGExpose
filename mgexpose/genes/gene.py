@@ -52,14 +52,15 @@ class Gene:
     # are disabled, e.g. co-transferred region inputs
     CLUSTER_ANNOTATIONS = ("cluster", "is_core",)
 
-    def liftover(self, other, with_recombinase=False, with_cluster=False,):
+    def liftover(self, other, with_recombinase=False, with_cluster=False, with_eggnog=False,):
         if with_recombinase:
             self.recombinase = other.recombinase
         if with_cluster:
             self.cluster = other.cluster
             self.is_core = other.is_core
+        if with_eggnog:
+            self.eggnog = copy.deepcopy(other.eggnog) if other.eggnog is not None else None
         self.phage = other.phage
-        self.eggnog = copy.deepcopy(other.eggnog) if other.eggnog is not None else None
         self.secretion_systems = copy.deepcopy(other.secretion_systems) if other.secretion_systems is not None else None
         self.secretion_rules = copy.deepcopy(other.secretion_rules) if other.secretion_rules is not None else None
 
@@ -280,7 +281,7 @@ class Gene:
             # is_core=kwargs.get("is_core") == "True",
             is_core=parse_is_core(kwargs.get("is_core", "None")),
             phage=kwargs.get("phage"),
-            secretion_systems=secretion_systems.split(",") if secretion_systems else [],
+            secretion_systems=secretion_systems.lstrip(",").split(",") if secretion_systems else [],
             secretion_rules=secretion_rules,
             eggnog=tuple(
                 (k, kwargs.get(k))
