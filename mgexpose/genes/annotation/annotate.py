@@ -50,9 +50,16 @@ def compile_annotations(args, multi_run=False,):
     
     if getattr(args, "phage_eggnog_data", None,) and getattr(args, "phage_filter_terms", None,):
 
+        which = {"phage": True, "cargo": True,}
+        if args.phage_filter_terms == "cargo_only":
+            which["phage"] = False
+            filter_terms = None
+        else:
+            filter_terms = PhageDetection(args.phage_filter_terms)
+
         eggnog_annotations = parse_emapper(
             args.phage_eggnog_data,
-            phage_annotation=PhageDetection(args.phage_filter_terms),
+            phage_annotation=filter_terms,
         )
         if multi_run:
             eggnog_annotations = list(eggnog_annotations)
@@ -61,6 +68,7 @@ def compile_annotations(args, multi_run=False,):
             partial(
                 add_eggnog_annotation,
                 eggnog_annotations,
+                which,
             )
         )
 
