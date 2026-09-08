@@ -15,6 +15,7 @@ consisting of Genes.
 It can be saved in a tsv or gff3 format together with its attributes and gene annotations.
 The MGE type of each MGE Genomic Island is defined by applying MGE Rule.
 """
+import itertools as it
 import logging
 
 from collections import Counter
@@ -64,7 +65,11 @@ class AnnotatedGenomicIsland(GenomicIsland):
                 self.conj_count += 1
 
                 has_mandatory_system = False
-                for system, rule in zip(gene.secretion_systems, gene.secretion_rules):
+                # if gene.secretion_rule:
+                #     secretion_data = zip(gene.secretion_systems, gene.secretion_rules)
+                # else:
+                #     secretion_data = it.zip_longest(gene.secretion_systems, gene.secretion_rules, fillvalue=None)
+                for system, rule in it.zip_longest(gene.secretion_systems, gene.secretion_rules, fillvalue=None,):
                     txssscan_signal, conjscan_signal = False, False
                     try:
                         _, system = system.split(":")
