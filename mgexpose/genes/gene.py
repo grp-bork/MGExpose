@@ -142,7 +142,10 @@ class Gene:
             cluster=attribs.get("cluster") or attribs.get("Cluster"),
             is_core=attribs.get("genome_type") == "COR",
             phage=attribs.get("phage"),
-            secretion_systems=attribs.get("secretion_systems", "").split(","),
+            secretion_systems=attribs.get(
+                "secretion_systems",
+                attribs.get("secretion_system", "")
+            ).split(","),
             secretion_rules=literal_eval(f"[{secretion_rules}]") if secretion_rules else [],
             eggnog=tuple(
                 (k, attribs.get(k))
