@@ -292,12 +292,12 @@ class AnnotatedGenomicIsland(GenomicIsland):
 
                 has_mandatory_system = False
                 for system, rule in zip(gene.secretion_systems, gene.secretion_rules):
+                    txssscan_signal = False
                     try:
                         _, system = system.split(":")
                     except ValueError:
-                        continue
+                        txssscan_signal = system.upper()[:4] in ("CONJ", "T4SS",)                        
                     conjscan_signal = system.split("/")[1].split("_")[0] in ("dCONJ", "T4SS", "MOB",)
-                    txssscan_signal = system.upper()[:4] in ("CONJ", "T4SS",)
                     has_mandatory_system |= (conjscan_signal or txssscan_signal)
                     # if system.split("/")[1].split("_")[0] in ("dCONJ", "T4SS", "MOB",):
                         # has_mandatory_system = True
