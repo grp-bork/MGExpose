@@ -15,6 +15,7 @@ consisting of Genes.
 It can be saved in a tsv or gff3 format together with its attributes and gene annotations.
 The MGE type of each MGE Genomic Island is defined by applying MGE Rule.
 """
+import itertools as it
 import logging
 
 from collections import Counter
@@ -64,13 +65,21 @@ class AnnotatedGenomicIsland(GenomicIsland):
                 self.conj_count += 1
 
                 has_mandatory_system = False
-                for system, rule in zip(gene.secretion_systems, gene.secretion_rules):
+                # if gene.secretion_rule:
+                #     secretion_data = zip(gene.secretion_systems, gene.secretion_rules)
+                # else:
+                #     secretion_data = it.zip_longest(gene.secretion_systems, gene.secretion_rules, fillvalue=None)
+                for system, rule in it.zip_longest(gene.secretion_systems, gene.secretion_rules, fillvalue=None,):
+                    txssscan_signal, conjscan_signal = False, False
                     try:
                         _, system = system.split(":")
                     except ValueError:
-                        continue
-                    if system.split("/")[1].split("_")[0] in ("dCONJ", "T4SS", "MOB",):
-                        has_mandatory_system = True
+                        txssscan_signal = system.upper()[:4] in ("CONJ", "T4SS",)                        
+                    else:
+                        conjscan_signal = system.split("/")[1].split("_")[0] in ("dCONJ", "T4SS", "MOB",)
+                    has_mandatory_system |= (conjscan_signal or txssscan_signal)
+                    # if system.split("/")[1].split("_")[0] in ("dCONJ", "T4SS", "MOB",):
+                    #     has_mandatory_system = True
                     if rule is not None:
                         cm_counts[(system, False)] += 1
                         cm_counts[(system, True)] += 1
