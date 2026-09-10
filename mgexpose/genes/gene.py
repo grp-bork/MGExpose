@@ -2,6 +2,7 @@
 
 """ Gene module """
 
+import copy
 import re
 
 from ast import literal_eval
@@ -50,6 +51,18 @@ class Gene:
     # these are only optional when core genome calculations
     # are disabled, e.g. co-transferred region inputs
     CLUSTER_ANNOTATIONS = ("cluster", "is_core",)
+
+    def liftover(self, other, with_recombinase=False, with_cluster=False, with_eggnog=False,):
+        if with_recombinase:
+            self.recombinase = other.recombinase
+        if with_cluster:
+            self.cluster = other.cluster
+            self.is_core = other.is_core
+        if with_eggnog:
+            self.eggnog = copy.deepcopy(other.eggnog) if other.eggnog is not None else None
+        self.phage = other.phage
+        self.secretion_systems = copy.deepcopy(other.secretion_systems) if other.secretion_systems is not None else None
+        self.secretion_rules = copy.deepcopy(other.secretion_rules) if other.secretion_rules is not None else None
 
     @staticmethod
     def rtype(is_core):
@@ -133,7 +146,10 @@ class Gene:
             # is_core=(attribs.get("genome_type") == "COR" if attribs.get("genome_type") else None),
             is_core=(genome_type == "COR" if genome_type is not None else genome_type),
             phage=attribs.get("phage"),
-            conjugation_systems=attribs.get("conjugation_systems", "").split(","),
+            conjugation_systems=attribs.get("conjugation_systems", attribs.get(
+                "secretion_systems",
+                attribs.get("secretion_system", "")
+            )).strip(",").split(","),
             conjugation_rules=literal_eval(f"[{conjugation_rules}]") if conjugation_rules else [],
             eggnog=tuple(
                 (k, attribs.get(k))
@@ -275,7 +291,7 @@ class Gene:
             # is_core=kwargs.get("is_core") == "True",
             is_core=parse_is_core(kwargs.get("is_core", "None")),
             phage=kwargs.get("phage"),
-            conjugation_systems=conjugation_systems.split(",") if conjugation_systems else [],
+            conjugation_systems=conjugation_systems.lstrip(",").split(",") if conjugation_systems else [],
             conjugation_rules=conjugation_rules,
             eggnog=tuple(
                 (k, kwargs.get(k))

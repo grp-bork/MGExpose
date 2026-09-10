@@ -10,6 +10,7 @@ import sys
 from .handle_args import handle_args
 from .modules.denovo import denovo
 from .modules.gene_calling import gene_calling
+from .modules.liftover import liftover
 from .modules.reannotate import reannotate
 from .modules.recombinase_scan import recombinase_scan
 
@@ -34,6 +35,9 @@ def main():
 
     elif args.command == "recombinase_scan":
         recombinase_scan(args)
+
+    elif args.command == "liftover":
+        liftover(args)
 
     else:
         raise NotImplementedError(f"{args.command} module not implemented.")

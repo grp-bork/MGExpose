@@ -129,3 +129,29 @@ class GeneSet(dict):
                 gene.to_gff(gffstream, add_header=False,)
 
         return list(self.values())
+
+    @staticmethod
+    def liftover(source_genes, dest_genes,):
+        # if len(self) == len(other) and self.strand == other.strand:
+
+        source_orientation = tuple((g.strand, len(g)) for g in source_genes)
+        dest_orientation = tuple((g.strand, len(g)) for g in dest_genes)
+
+        print(source_orientation)
+        print(dest_orientation)
+
+        genes = None
+        if source_orientation == dest_orientation:
+            genes = zip(source_genes, dest_genes)
+        else:
+            dest_orientation = tuple(
+                (None if strand is None else "+-"[strand == "+"], length)
+                for strand, length in dest_orientation[::-1]
+            )
+            if source_orientation == dest_orientation:
+                genes = zip(source_genes, dest_genes[::-1])
+
+        if genes is not None:
+            print("commencing liftover")
+            for src_gene, dst_gene in genes:
+                dst_gene.liftover(src_gene)

@@ -24,7 +24,7 @@ def reannotate(args):
 
     out_prefix = os.path.join(
         args.output_dir,
-        f"{args.genome_id}.mge_islands"
+        f"{args.genome_id}"
     )
 
     gene_info_out = open(
@@ -35,7 +35,7 @@ def reannotate(args):
         f"{out_prefix}.gene_info.gff3", "wt", encoding="UTF-8",
     )
 
-    gff_out = open(f"{out_prefix}.gff3", "wt", encoding="UTF-8",)
+    gff_out = open(f"{out_prefix}.mge_islands.gff3", "wt", encoding="UTF-8",)
 
     mge_islands = {}
     with gene_info_out, gff_out, gene_info_gff:

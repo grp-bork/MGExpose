@@ -154,6 +154,7 @@ class GenomicIsland:
             self.genes.add(gene)
 
     def update_recombinases(self):
+        self.recombinases.clear()
         self.recombinases.update(
             gene.recombinase
             for gene in self.genes
@@ -283,3 +284,6 @@ class GenomicIsland:
         #         island.recombinases[gene.recombinase] += 1
 
         return island
+
+    def get_genes(self):
+            yield from sorted(self.genes, key=lambda g: (g.start, g.end,))

@@ -58,10 +58,10 @@ def annotate_genes(args):
 def compile_annotations(args, multi_run=False,):
     """ Compile annotation functions according to input parameters. """
     annotations = []
-    has_clusters = False
 
-    if hasattr(args, "recombinases") and args.recombinases:
-        recombinases = read_recombinase_hits(args.recombinases,)
+    if getattr(args, "recombinases", None,):
+
+        recombinases = read_recombinase_hits(args.recombinases,)  # ?? pyhmmer=args.pyhmmer_input,
         if multi_run:
             recombinases = list(recombinases)
 
@@ -71,25 +71,34 @@ def compile_annotations(args, multi_run=False,):
                 recombinases=recombinases,
             )
         )
+    
+    if getattr(args, "conjugation_data", None,) and getattr(args, "conjugation_rules", None,):
 
-    if hasattr(args, "conjugation_data") and args.conjugation_data:
         conjugation_systems = parse_macsyfinder_report(
             args.conjugation_data, args.conjugation_rules,
         )
         if multi_run:
-            conjugation_systems = list(conjugation_systems)
+            conjugation_systems_systems = list(conjugation_systems)
 
         annotations.append(
             partial(
                 add_conjugation_systems,
-                conjugation_systems=conjugation_systems,
+                secretion_systems=conjugation_systems,
             )
         )
+    
+    if getattr(args, "phage_and_cargo_data", None,):  # and getattr(args, "phage_filter_terms", None,):
 
-    if hasattr(args, "phage_and_cargo_data") and args.phage_and_cargo_data:
+        which = {"phage": True, "cargo": True,}
+        if args.phage_filter_terms == "cargo_only":
+            which["phage"] = False
+            filter_terms = None
+        else:
+            filter_terms = PhageDetection(args.phage_filter_terms)
+
         eggnog_annotations = parse_emapper(
-            args.phage_and_cargo_data,
-            phage_annotation=PhageDetection(args.phage_filter_terms),
+            args.phage_cargo_data,
+            phage_annotation=filter_terms,
         )
         if multi_run:
             eggnog_annotations = list(eggnog_annotations)
@@ -98,16 +107,17 @@ def compile_annotations(args, multi_run=False,):
             partial(
                 add_eggnog_annotation,
                 eggnog_annotations,
+                which,
             )
         )
 
-    if hasattr(args, "cluster_data") and args.cluster_data:
+    if getattr(args, "cluster_data", None,):
         annotations.append(
             partial(
                 add_clusters,
                 args.cluster_data,
-                use_y_clusters=('use_y_clusters' in args and args.use_y_clusters),
-                core_threshold=('core_threshold' in args and args.core_threshold) or 0.95,
+                use_y_clusters=getattr(args, "use_y_clusters", None) is not None,
+                core_threshold=getattr(args, 'core_threshold', 0.95),
                 output_dir=args.output_dir,
                 genome_id=args.genome_id,
             )
