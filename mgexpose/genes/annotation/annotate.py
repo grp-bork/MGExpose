@@ -97,7 +97,7 @@ def compile_annotations(args, multi_run=False,):
             filter_terms = PhageDetection(args.phage_filter_terms)
 
         eggnog_annotations = parse_emapper(
-            args.phage_cargo_data,
+            args.phage_and_cargo_data,
             phage_annotation=filter_terms,
         )
         if multi_run:
