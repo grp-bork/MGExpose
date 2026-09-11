@@ -16,7 +16,7 @@ def compute_genomic_islands(genes):
     contigs = {}
     for gene in genes:
         if gene.has_basic_annotation():
-            contigs.setdefault((gene.speci, gene.contig), []).append(gene)
+            contigs.setdefault((gene.species, gene.contig), []).append(gene)
 
     for _, genes in sorted(contigs.items()):
         current_island = None
@@ -58,10 +58,10 @@ def add_genes_to_precomputed_islands(genes, islands):
 
                 if gene.is_in_interval(island.start, island.end):
                     add_gene = True
-                    if gene.speci is None or gene.speci == "no_speci":
-                        gene.speci = {island.name}
+                    if gene.species is None or gene.species == "unknown_species":
+                        gene.species = {island.name}
                     else:
-                        gene.speci.add(island.name)
+                        gene.species.add(island.name)
                     gene.parent = island.get_id()
                     island.add_gene(gene)
 
@@ -73,7 +73,9 @@ def add_genes_to_precomputed_islands(genes, islands):
                 logger.info("GenomicIsland %s created.", str(island))
                 yield island
 
+
 def generate_contig_islands(genes):
+    """ docstring """
     islands = {}
 
     for gene in genes:

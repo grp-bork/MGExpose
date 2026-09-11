@@ -1,3 +1,4 @@
+# flake8: noqa
 """ Reader functions. """
 
 from .readers import (
