@@ -1,7 +1,10 @@
 # pylint: disable=E0401
 """ Module for gene calling with pyrodigal. """
 
+import hashlib
 import pathlib
+
+from io import StringIO
 
 import pyrodigal
 
@@ -39,6 +42,24 @@ def run_pyrodigal(genome_fasta, genome_id, output_dir, pr_meta=False,):
             genes = gf.find_genes(seq)
             genes.write_translations(faa_out, sid)
             genes.write_genes(ffn_out, sid)
-            genes.write_gff(gff_out, sid, full_id=False,)
+
+            buf = StringIO()
+            
+            genes.write_gff(buf, sid, full_id=False,)
+
+            # genes.write_gff(gff_out, sid, full_id=False,)
+            # buf.seek(len(buf.getvalue()) - 1)
+            gfflines = buf.getvalue().split("\n")
+            gff_out.write(gfflines[0])
+            gff_out.write(gfflines[1])
+            gff_out.write(gfflines[2])
+            for gene, line in zip(genes, gfflines[3:]):
+                fwd = hashlib.sha256(gene.sequence().encode()).hexdigest()
+                rev = hashlib.sha256(gene.sequence().encode()).hexdigest()
+                gff_out.write(f"{line};{fwd=};{rev=}")
+                
+                
+
+
 
     return faa, ffn, gff
