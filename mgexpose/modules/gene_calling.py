@@ -10,6 +10,16 @@ import pyrodigal
 
 from ..utils.readers import read_fasta
 
+def reverse_complement(sequence):
+    complement = {
+        "A": "T",
+        "C": "G",
+        "G": "C",
+        "T": "A",
+        "N": "N",
+    }
+    return "".join(complement[base] for base in sequence.upper()[::-1])
+
 
 def gene_calling(args):
 
@@ -37,6 +47,7 @@ def run_pyrodigal(genome_fasta, genome_id, output_dir, pr_meta=False,):
     gff_out = open(gff, "wt", encoding="UTF-8",)
 
     with faa_out, ffn_out, gff_out:
+        has_header = False
         for sid, seq in zip(ids, seqs):
             sid = sid[:sid.find(" ")]
             genes = gf.find_genes(seq)
@@ -50,12 +61,14 @@ def run_pyrodigal(genome_fasta, genome_id, output_dir, pr_meta=False,):
             # genes.write_gff(gff_out, sid, full_id=False,)
             # buf.seek(len(buf.getvalue()) - 1)
             gfflines = buf.getvalue().split("\n")
-            gff_out.write(f"{gfflines[0]}\n")
+            if not has_header:
+                gff_out.write(f"{gfflines[0]}\n")
+                has_header = True
             gff_out.write(f"{gfflines[1]}\n")
             gff_out.write(f"{gfflines[2]}\n")
             for gene, line in zip(genes, gfflines[3:]):
                 fwd = hashlib.sha256(gene.sequence().encode()).hexdigest()
-                rev = hashlib.sha256(gene.sequence().encode()).hexdigest()
+                rev = hashlib.sha256(reverse_complement(gene.sequence()).encode()).hexdigest()
                 gff_out.write(f"{line[:-1]};fwd={fwd};rev={rev}\n")
                 
                 
