@@ -50,13 +50,13 @@ def run_pyrodigal(genome_fasta, genome_id, output_dir, pr_meta=False,):
             # genes.write_gff(gff_out, sid, full_id=False,)
             # buf.seek(len(buf.getvalue()) - 1)
             gfflines = buf.getvalue().split("\n")
-            gff_out.write(gfflines[0])
-            gff_out.write(gfflines[1])
-            gff_out.write(gfflines[2])
+            gff_out.write(f"{gfflines[0]}\n")
+            gff_out.write(f"{gfflines[1]}\n")
+            gff_out.write(f"{gfflines[2]}\n")
             for gene, line in zip(genes, gfflines[3:]):
                 fwd = hashlib.sha256(gene.sequence().encode()).hexdigest()
                 rev = hashlib.sha256(gene.sequence().encode()).hexdigest()
-                gff_out.write(f"{line};{fwd=};{rev=}")
+                gff_out.write(f"{line};{fwd=};{rev=}\n")
                 
                 
 
