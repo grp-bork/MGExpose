@@ -82,7 +82,7 @@ def add_clusters(
                         gene_id,
                         str(gene),
                     )
-                    if gene and gene.speci is not None:
+                    if gene and gene.species is not None:
                         gene.cluster = cluster
 
                         if cluster_genes:

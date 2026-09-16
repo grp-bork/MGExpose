@@ -118,7 +118,7 @@ def parse_full_seq_clusters(
 class RefGene:
     """ Y-cluster reference gene class. """
     refset: str = None
-    speci: int = None
+    species: int = None
     refset_id: int = None
     is_core: bool = None
     is_singleton: bool = None

@@ -4,6 +4,8 @@
 
 import re
 
+from ...rules.phage import PHAGE_RULES
+
 
 class PhageDetection:
     """ Class to detect phage signals in freetext functional gene annotation. """
@@ -81,9 +83,11 @@ class PhageDetection:
 
     def __init__(self, phage_filter_file=None):
         self.phage_filter = set()
-        if phage_filter_file is not None:
+        if phage_filter_file:
             with open(phage_filter_file, "rt", encoding="UTF-8") as _in:
                 self.phage_filter = set(line.strip().split("\t")[0] for line in _in)
+        else:
+            self.phage_filter = set(PHAGE_RULES)
 
     def is_phage(self, eggnog_freetext, eggnog_og):
         """ Filters phage-related parsed eggnog mapper output.

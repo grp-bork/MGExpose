@@ -39,25 +39,6 @@ class MgeGenomicIsland(AnnotatedGenomicIsland):
     The class attributes are used to describe the MGE properties.
     It also contains functionality to save the MGEs in gff3 or tsv formats.'''
 
-    TABLE_HEADERS = (
-        "tn",
-        "phage",
-        "phage_like",
-        "ce",
-        "integron",
-        "mi",
-        "nmi",
-        "nov",
-        "cellular",
-        "contig",
-        "start",
-        "end",
-        "size",
-        "n_genes",
-        "phage_count",
-        "conj_man_count",
-        "recombinases",
-    )
     GFFTYPE = "mobile_genetic_element"
     ID_PREFIX = "MGE"
 
@@ -340,10 +321,13 @@ class MgeGenomicIsland(AnnotatedGenomicIsland):
 
         genome_id, *_ = GenomicIsland.parse_id(attribs["ID"], cols[0])
         # TODO: check coordinates and ID overlap
+        genome_type = attribs.get("genome_type")
+
         return cls(
-            "",  # TODO: where to get/ how to handle specI
+            "",  # TODO: where to get/ how to handle species
             genome_id,
-            attribs["genome_type"] == "COR",
+            # attribs["genome_type"] == "COR",
+            (genome_type == "COR" if genome_type is not None else genome_type),
             cols[0],  # contig
             int(cols[3]),  # start
             int(cols[4]),  # end
@@ -380,8 +364,8 @@ class MgeGenomicIsland(AnnotatedGenomicIsland):
     def get_recombinase_genes(self):
         return [gene for gene in self.genes if gene.recombinase]
 
-    def get_secretion_system_genes(self):
-        return [gene for gene in self.genes if gene.secretion_systems]
+    def get_conjugation_system_genes(self):
+        return [gene for gene in self.genes if gene.conjugation_systems]
 
     def get_phage_genes(self):
         return [gene for gene in self.genes if gene.phage]
