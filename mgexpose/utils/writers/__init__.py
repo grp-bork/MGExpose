@@ -5,8 +5,8 @@ import contextlib
 import gzip
 import os
 
-from ...islands.mge_genomic_island import MgeGenomicIsland
 from ..readers import read_fasta
+from . import compute_hash
 
 
 def dump_islands(islands, out_prefix, db,):
@@ -77,8 +77,9 @@ def extract_mge_seqs(genome_seqs, islands, out_prefix):
                     for item in island.get_attribs().items()
                     if item[1] and item[0] not in ("ID", "name")
                 )
+                mge_seq = seq[island.start - 1: island.end]
                 print(
-                    f">{island.get_id()} {attrib_str}",
-                    seq[island.start - 1: island.end],
+                    f">{island.get_id()} {attrib_str} {compute_hash(mge_seq)}",
+                    mge_seq,
                     sep="\n", file=_out,
                 )

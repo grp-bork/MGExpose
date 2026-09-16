@@ -9,16 +9,7 @@ from io import StringIO
 import pyrodigal
 
 from ..utils.readers import read_fasta
-
-def reverse_complement(sequence):
-    complement = {
-        "A": "T",
-        "C": "G",
-        "G": "C",
-        "T": "A",
-        "N": "N",
-    }
-    return "".join(complement[base] for base in sequence.upper()[::-1])
+from ..utils import compute_hash
 
 
 def gene_calling(args):
@@ -67,12 +58,6 @@ def run_pyrodigal(genome_fasta, genome_id, output_dir, pr_meta=False,):
             gff_out.write(f"{gfflines[1]}\n")
             gff_out.write(f"{gfflines[2]}\n")
             for gene, line in zip(genes, gfflines[3:]):
-                fwd = hashlib.sha256(gene.sequence().encode()).hexdigest()
-                rev = hashlib.sha256(reverse_complement(gene.sequence()).encode()).hexdigest()
-                gff_out.write(f"{line[:-1]};fwd={fwd};rev={rev}\n")
-                
-                
-
-
+                gff_out.write(f"{line[:-1]};sha256={compute_hash(gene.sequence())}\n")
 
     return faa, ffn, gff
