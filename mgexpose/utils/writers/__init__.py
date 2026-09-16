@@ -79,7 +79,7 @@ def extract_mge_seqs(genome_seqs, islands, out_prefix):
                 )
                 mge_seq = seq[island.start - 1: island.end]
                 print(
-                    f">{island.get_id()} {attrib_str} {compute_hash(mge_seq)}",
+                    f">{island.get_id()} {attrib_str};sha256={compute_hash(mge_seq)}",
                     mge_seq,
                     sep="\n", file=_out,
                 )
