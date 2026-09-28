@@ -58,6 +58,7 @@ def annotate_genes(args):
 def compile_annotations(args, multi_run=False,):
     """ Compile annotation functions according to input parameters. """
     annotations = []
+    has_clusters = False
 
     if getattr(args, "recombinases", None,):
 
