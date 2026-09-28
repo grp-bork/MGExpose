@@ -6,7 +6,7 @@ import gzip
 import os
 
 from ..readers import read_fasta
-from . import compute_hash
+from .. import compute_hash
 
 
 def dump_islands(islands, out_prefix, db,):
