@@ -11,6 +11,7 @@ from ..chunk_reader import get_lines_from_chunks
 from ...genes.gene import Gene
 from ...islands.genomic_island import GenomicIsland
 from ...recombinases import MgeRule
+from ...rules.conjugation import CONJSCAN_RULES
 
 
 def read_preannotated_genes(f):
@@ -42,20 +43,53 @@ def read_fasta(f):
         yield header, "".join(seq)
 
 
-def read_recombinase_hits(f, pyhmmer=True):
+def read_recombinase_hits(f):
     """ Read hmmer output from recombinase scan.
 
     Returns (gene_id, mge_name) tuples via generator.
     """
+
+    best_hits = {}
+
     with open(f, "rt", encoding="UTF-8") as _in:
-        for line in _in:
+        lines = _in.readlines()
+
+        fmt = None
+        if lines[0].startswith("##gff-version 3"):
+            fmt = "gff3"
+        elif lines[0].startswith("#unigene"):
+            fmt = "mge_pred"
+        elif lines[0][0] == "#" and lines[0][0].endswith("domain number estimation ----"):
+            fmt = "raw"
+        elif lines[0][0] != "#":
+            fields = re.split(r"\s+", lines[0])
+            if fields[1] == "-":
+                fmt = "raw"
+            else:
+                fmt = "best"
+
+        for line in lines:
             line = line.strip()
             if line and line[0] != "#":
-                if pyhmmer:
+                if fmt == "gff3":
+                    attribs = dict(item.split("=") for item in line.split("\t")[8].split(";"))
+                    gene_id, mge = attribs.get("ID"), attribs.get("recombinase")
+                    best_hits[gene_id] = (0.0, mge)
+                elif fmt == "mge_pred":
                     gene_id, mge = line.split("\t")[:2]
+                    best_hits[gene_id] = (0.0, mge)
+                elif fmt == "raw":
+                    gene_id, _, mge, _, _, score, *_ = re.split(r"\s+", line)
+                    score = float(score)
+                    seen_score = best_hits.setdefault(gene_id, [0.0, ""])[0]
+                    if score > seen_score:
+                        best_hits[gene_id] = (score, mge)
                 else:
-                    gene_id, _, mge, *_ = re.split(r"\s+", line)
-                yield gene_id, mge
+                    gene_id, mge = line.split("\t")[:2]
+                    best_hits[gene_id] = (0.0, mge)
+
+        for gene_id, (_, mge) in best_hits.items():
+            yield gene_id, mge
 
 
 # would love to add raw scan parsing to annotator,
@@ -79,7 +113,7 @@ def read_recombinase_hits(f, pyhmmer=True):
 # def parse_macsyfinder_rules(f, macsy_version=2):
 #     """ Read macsyfinder rules.
 
-#     Returns dictionary {secretion_system: {mandatory: count, accessory: count}}.
+#     Returns dictionary {conjugation_system: {mandatory: count, accessory: count}}.
 #     """
 #     key_col, mandatory_col, accessory_col = (0, 1, 2) if macsy_version == 2 else (1, 5, 6)
 
@@ -104,7 +138,10 @@ def parse_macsyfinder_report(f, f_rules):
     Returns (gene_id, conjscan_results) tuples via generator.
     """
 
-    rules = parse_macsyfinder_rules(f_rules)
+    if f_rules:
+        rules = parse_macsyfinder_rules(f_rules)
+    else:
+        rules = CONJSCAN_RULES
 
     with open(f, "rt", encoding="UTF-8") as _in:
         d = {}
@@ -128,14 +165,14 @@ def parse_macsyfinder_report(f, f_rules):
         yield from d.items()
 
 
-def read_mge_rules(f, recombinase_scan=False):
+def read_mge_rules(f, for_recombinase_scan=False,):
     """ Read MGE rules.
 
     Returns dictionary {mge: MgeRule}.
     """
     with open(f, "rt", encoding="UTF-8") as _in:
         rules = {
-            row[0].lower(): MgeRule(row[0], *(tuple(map(int, row[1:]))), recombinase_scan)
+            row[0].lower(): MgeRule(row[0], *(tuple(map(int, row[1:]))), for_recombinase_scan)
             for i, row in enumerate(csv.reader(_in, delimiter="\t"))
             if i != 0
         }
