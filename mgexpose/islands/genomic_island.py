@@ -58,7 +58,7 @@ class GenomicIsland:
     contig: str = None
     start: int = None
     end: int = None
-    name: str = "ISLAND"
+    name: str = None
 
     genes: set = field(default_factory=set)
     recombinases: Counter = field(default_factory=Counter)

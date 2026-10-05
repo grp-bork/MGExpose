@@ -6,7 +6,7 @@ from ..genes.geneset import GeneSet
 from ..islands.island_processing import annotate_islands, evaluate_islands, prepare_islands
 from ..rules.recombinases import get_recombinase_rules
 from ..utils.readers import read_precomputed_islands
-from ..utils.writers import write_final_results
+from ..utils.writers import write_final_results, write_islands
 
 
 def denovo(args):
@@ -70,4 +70,19 @@ def denovo(args):
         )
 
         if mge_islands:
-            write_final_results(mge_islands, args)
+            # write_final_results(mge_islands, args)
+
+            # out_prefix = os.path.join(
+                #     args.output_dir,
+                #     f"{args.genome_id}.mge_islands"
+                # )
+            
+                # gff_outstream = open(
+                #     f"{out_prefix}.gff3",
+                #     "wt",
+                #     encoding="UTF-8",
+                # )
+            gff = os.path.join(args.output_dir, f"{args.genome_id}.mge_islands.gff3")
+            fna = os.path.join(args.output_dir, f"{args.genome_id}.mge_islands.fna.gz")
+
+            write_islands(mge_islands, gff, genome_fasta=args.genome_fasta, source_db=args.source_db, fna=fna)

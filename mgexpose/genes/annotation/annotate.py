@@ -24,7 +24,7 @@ def annotate_genes(args):
         genome_id=args.genome_id,
         species=args.species,
         gene_type=args.input_gene_type,
-        composite_gene_ids=args.dbformat != "PG3",
+        composite_gene_ids=args.source_db != "PG3",
     )
 
     annotations, has_clusters = compile_annotations(args, multi_run=False,)

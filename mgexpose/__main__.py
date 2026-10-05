@@ -10,6 +10,8 @@ import sys
 from .handle_args import handle_args
 from .modules.denovo import denovo
 from .modules.gene_calling import gene_calling
+from .modules.gene_hashing import hash_genes
+from .modules.island_calling import island_calling
 from .modules.liftover import liftover
 from .modules.reannotate import reannotate
 from .modules.recombinase_scan import recombinase_scan
@@ -32,6 +34,12 @@ def main():
 
     elif args.command == "call_genes":
         gene_calling(args)
+
+    elif args.command == "hash_genes":
+        hash_genes(args)
+
+    elif args.command == "call_islands":
+        island_calling(args)
 
     elif args.command == "recombinase_scan":
         recombinase_scan(args)

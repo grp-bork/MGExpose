@@ -7,37 +7,52 @@ import logging
 from . import __version__
 
 
-def add_data_args(ap):
+def add_data_args(ap, with_recombinases=True, with_species=True, with_conjugation_data=True, with_phage_and_cargo_data=True, with_cluster_data=True,):
     """
     Set up data arguments shared by different modules.
     """
     ap.add_argument("genome_id", type=str)
     ap.add_argument("--input_genes", type=str)
-    ap.add_argument("--recombinases", "--recombinase_hits", dest="recombinases", type=str)
-    ap.add_argument("--mge_rules", type=str)
-    ap.add_argument("--speci", "--species", dest="species", type=str, default="unknown_species")
-    ap.add_argument(
-        "--conjugation_data", "--secretion_data", "--txs_macsy_report",
-        dest="conjugation_data", type=str
-    )
-    ap.add_argument(
-        "--conjugation_rules", "--secretion_rules", "--txs_macsy_rules",
-        dest="conjugation_rules", type=str
-    )
-    ap.add_argument(
-        "--phage_and_cargo_data", "--phage_eggnog_data",
-        dest="phage_and_cargo_data", type=str
-    )
-    ap.add_argument("--phage_filter_terms", type=str)
-    ap.add_argument("--cluster_data", type=str)
     ap.add_argument("--genome_fasta", type=str)
-
     ap.add_argument(
         "--input_gene_type",
         type=str,
         choices=("prodigal", "preannotated",),
         default="prodigal",
     )
+
+    if with_recombinases:
+        ap.add_argument("--recombinases", "--recombinase_hits", dest="recombinases", type=str)
+        ap.add_argument("--mge_rules", type=str)
+    if with_species:
+        ap.add_argument("--speci", "--species", dest="species", type=str, default="unknown_species")
+    if with_conjugation_data:
+        ap.add_argument(
+            "--conjugation_data", "--secretion_data", "--txs_macsy_report",
+            dest="conjugation_data", type=str
+        )
+        ap.add_argument(
+            "--conjugation_rules", "--secretion_rules", "--txs_macsy_rules",
+            dest="conjugation_rules", type=str
+        )
+    if with_phage_and_cargo_data:
+        ap.add_argument(
+            "--phage_and_cargo_data", "--phage_eggnog_data",
+            dest="phage_and_cargo_data", type=str
+        )
+        ap.add_argument("--phage_filter_terms", type=str)
+
+    if with_cluster_data:
+        ap.add_argument("--cluster_data", type=str)
+        ap.add_argument(
+            "--use_y_clusters",
+            action="store_true",
+            help=(
+                "Gene clustering is performed against annotated"
+                " and redundancy-reduced reference sets."
+            ),
+        )
+        ap.add_argument("--core_threshold", type=float, default=0.95)
 
     ap.add_argument(
         "--allow_batch_data",
@@ -47,17 +62,6 @@ def add_data_args(ap):
             " Ignore those data."
         ),
     )  # deprecated
-
-    ap.add_argument(
-        "--use_y_clusters",
-        action="store_true",
-        help=(
-            "Gene clustering is performed against annotated"
-            " and redundancy-reduced reference sets."
-        ),
-    )
-
-    ap.add_argument("--core_threshold", type=float, default=0.95)
 
     ap.add_argument("--pyhmmer_input", action="store_true")  # deprecated
 
@@ -91,7 +95,7 @@ def handle_args(args):
 
     parent_subparser = argparse.ArgumentParser(add_help=False)
     parent_subparser.add_argument("--output_dir", "-o", type=str, default=".")
-    parent_subparser.add_argument("--dbformat", type=str, choices=("PG3", "SPIRE"))
+    parent_subparser.add_argument("--source_db", "--dbformat", dest="source_db", type=str, choices=("PG3", "SPIRE"))
     parent_subparser.add_argument("--dump_intermediate_steps", action="store_true")  # deprecated
     parent_subparser.add_argument(
         "--output_suffix", type=str, default="mge_islands",
@@ -214,6 +218,29 @@ def handle_args(args):
     gene_calling_ap.add_argument("--meta", action="store_true")
     gene_calling_ap.add_argument("--threads", "-t", type=int, default=1)
     gene_calling_ap.set_defaults(func=None)  # TODO
+
+    gene_hashing_ap = subparsers.add_parser(
+        "hash_genes",
+        help="Compute gene hashes.",
+        parents=(parent_subparser,),
+    )
+    
+    gene_hashing_ap.add_argument("genes_fasta", type=str)
+    gene_hashing_ap.add_argument("genome_id", type=str)
+    gene_hashing_ap.set_defaults(func=None)  # TODO
+
+
+    island_calling_ap = subparsers.add_parser(
+        "call_islands",
+        help="Call genomic islands",
+        parents=(parent_subparser,),
+    )
+
+    island_calling_ap.add_argument("genome_id", type=str)
+    island_calling_ap.set_defaults(func=None)  # TODO
+
+    add_data_args(island_calling_ap, with_recombinases=False, with_species=False, with_conjugation_data=False, with_phage_and_cargo_data=False, with_cluster_data=True,)
+
 
     recombinase_scan_ap = subparsers.add_parser(
         "recombinase_scan",

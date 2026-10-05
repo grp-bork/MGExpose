@@ -9,10 +9,11 @@ from ..readers import read_fasta
 from .. import compute_hash
 
 
-def dump_islands(islands, out_prefix, db,):
+def dump_islands(islands, fn, db=None,):
     """ dump genomic islands to intermediate gff """
     with open(
-        f"{out_prefix}.unannotated_islands.gff3",
+        # f"{out_prefix}.unannotated_islands.gff3",
+        fn,
         "wt", encoding="UTF-8"
     ) as _out:
         print("##gff-version 3", file=_out)
@@ -23,29 +24,31 @@ def dump_islands(islands, out_prefix, db,):
             )
 
 
-def write_final_results(recombinase_islands, args):
+# def write_final_results(recombinase_islands, args):
+def write_islands(islands, gff, genome_fasta=None, source_db=None, fna=None):
     """ write final results """
 
-    outstream = contextlib.nullcontext()
+    # outstream = contextlib.nullcontext()
 
-    out_prefix = os.path.join(
-        args.output_dir,
-        f"{args.genome_id}.mge_islands"
-    )
+    # out_prefix = os.path.join(
+    #     args.output_dir,
+    #     f"{args.genome_id}.mge_islands"
+    # )
 
-    gff_outstream = open(
-        f"{out_prefix}.gff3",
-        "wt",
-        encoding="UTF-8",
-    )
+    # gff_outstream = open(
+    #     f"{out_prefix}.gff3",
+    #     "wt",
+    #     encoding="UTF-8",
+    # )
 
     # Sort the list of MGEGenomicIslands based on contig names
-    sorted_islands = sorted(recombinase_islands, key=lambda isl: isl.contig)
+    sorted_islands = sorted(islands, key=lambda isl: isl.contig)
     islands_by_contig = {}
 
-    with outstream, gff_outstream:
+    # with outstream, gff_outstream:
+    with open(gff, "wt", encoding="UTF-8",) as gff_out:
         # GFF3 header
-        print("##gff-version 3", file=gff_outstream)
+        print("##gff-version 3", file=gff_out)
 
         # Start recording the outputs
         for island in sorted_islands:
@@ -55,21 +58,19 @@ def write_final_results(recombinase_islands, args):
             # parent lines are recombinase islands, children lines are genes
             # GFF3 parent term: recombinase island
             island.to_gff(
-                gff_outstream,
-                source_db=args.dbformat,
+                gff_out,
+                source_db=source_db,
             )
 
-        if args.genome_fasta:
-            extract_mge_seqs(args.genome_fasta, islands_by_contig, out_prefix)
+        if genome_fasta is not None:
+            extract_mge_seqs(genome_fasta, islands_by_contig, fna)
 
 
-def extract_mge_seqs(genome_seqs, islands, out_prefix):
+def extract_mge_seqs(genome_fasta, islands, fna):
     """ Extract MGE sequences from genomic sequences. """
-    with gzip.open(
-        f"{out_prefix}.fna.gz",
-        "wt",
-    ) as _out:
-        for header, seq in read_fasta(genome_seqs):
+    open_f = gzip.open if fna.endswith(".gz") else open
+    with open_f(fna, "wt") as _out:
+        for header, seq in read_fasta(genome_fasta):
             seqid, *_ = header.split(" ")
             for island in islands.get(seqid, []):
                 attrib_str = ";".join(
