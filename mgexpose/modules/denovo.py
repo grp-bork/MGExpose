@@ -6,7 +6,7 @@ from ..genes.geneset import GeneSet
 from ..islands.island_processing import annotate_islands, evaluate_islands, prepare_islands
 from ..rules.recombinases import get_recombinase_rules
 from ..utils.readers import read_precomputed_islands
-from ..utils.writers import write_final_results, write_islands
+from ..utils.writers import write_islands
 
 
 def denovo(args):
