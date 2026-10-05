@@ -11,7 +11,7 @@ def add_data_args(ap, with_recombinases=True, with_species=True, with_conjugatio
     """
     Set up data arguments shared by different modules.
     """
-    ap.add_argument("genome_id", type=str)
+    # ap.add_argument("genome_id", type=str)
     ap.add_argument("--input_genes", type=str)
     ap.add_argument("--genome_fasta", type=str)
     ap.add_argument(
@@ -108,6 +108,7 @@ def handle_args(args):
         parents=(parent_subparser,),
     )
 
+    denovo_ap.add_argument("genome_id", type=str)
     add_data_args(denovo_ap)
 
     # denovo_ap.add_argument("--core_threshold", type=float, default=0.95)
@@ -162,6 +163,7 @@ def handle_args(args):
         parents=(parent_subparser,),
     )
 
+    reannotate_ap.add_argument("genome_id", type=str)
     add_data_args(reannotate_ap)
 
     reannotate_ap.add_argument(
@@ -196,7 +198,7 @@ def handle_args(args):
         parents=(parent_subparser,),
     )
 
-    liftover_ap.add_argument("--genome_id", type=str)
+    liftover_ap.add_argument("genome_id", type=str)
     liftover_ap.add_argument("--mge_rules", type=str)
     liftover_ap.add_argument("--source_islands", type=str,)
     liftover_ap.add_argument("--dest_islands", "--destination_islands", type=str,)
@@ -237,9 +239,10 @@ def handle_args(args):
     )
 
     island_calling_ap.add_argument("genome_id", type=str)
+    add_data_args(island_calling_ap, with_recombinases=False, with_species=False, with_conjugation_data=False, with_phage_and_cargo_data=False, with_cluster_data=True,)
+
     island_calling_ap.set_defaults(func=None)  # TODO
 
-    add_data_args(island_calling_ap, with_recombinases=False, with_species=False, with_conjugation_data=False, with_phage_and_cargo_data=False, with_cluster_data=True,)
 
 
     recombinase_scan_ap = subparsers.add_parser(
