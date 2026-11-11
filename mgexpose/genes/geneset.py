@@ -155,3 +155,12 @@ class GeneSet(dict):
             print("commencing liftover")
             for src_gene, dst_gene in genes:
                 dst_gene.liftover(src_gene)
+
+    def get_gene(self, gene_id):
+        return self.get(
+            gene_id,
+            self.get(
+                f"{self.genome_id}.{gene_id}",
+                self.get(f"{self.genome_id}_{gene_id}")
+            )
+        )

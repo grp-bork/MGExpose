@@ -4,6 +4,6 @@
 def add_recombinases(recombinases, genes,):
     """ Add information from recombinase scan """
     for gene_id, recombinase in recombinases:
-        gene = genes.get(gene_id)
+        gene = genes.get_gene(gene_id)
         if gene is not None:
             gene.recombinase = recombinase

@@ -70,19 +70,26 @@ def add_clusters(
                 cluster, *is_core = cluster
                 is_core = is_core[0].lower() == "true" if is_core else None
                 if genome_id is None or gene_id.startswith(genome_id):
-                    gene = genes.get(
-                        gene_id,
-                        genes.get(
-                            gene_id.replace(genome_id + ".", "")
-                        )
-                    )
+                    # i think this section is still influenced by old data formats?
+                    # that's why i don't use genes.get_gene here for now!
+                    if genome_id is None:
+                        gene = genes.get(gene_id)
+                    else:
+                        gene = genes.get(gene_id.replace(genome_id + ".", ""))
+                    # gene = genes.get(
+                    #     gene_id,
+                    #     genes.get(
+                    #         gene_id.replace(genome_id + ".", "")
+                    #     )
+                    # )
+                    # gene = genes.get_gene(gene_id)
                     logger.info(
                         "Checking cluster %s gene %s... %s",
                         str(cluster),
                         gene_id,
                         str(gene),
                     )
-                    if gene and gene.species is not None:
+                    if gene is not None and gene.species is not None:
                         gene.cluster = cluster
 
                         if cluster_genes:
