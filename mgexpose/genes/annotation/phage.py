@@ -52,7 +52,7 @@ class PhageDetection:
     PHAGE_KEYWORDS = (
         r"(bacterio|pro)?phage",
         r"lamb(da|oid)",
-        r"mu(-like)?"
+        r"\bmu(-like)?\b"
     )
     EXPECTED_PHAGES = re.compile(r"|".join(PHAGE_KEYWORDS))
 
