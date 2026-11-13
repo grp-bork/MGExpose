@@ -58,13 +58,13 @@ def add_clusters(
 ):
     """ Add information from gene clustering to allow for core/accessory gene classification """
 
-    # ("y_precomputed", "y_denovo", "trec", "denovo", "spire", "pg3",), default="y_denovo")
+    # ("y_spire", "y_denovo", "trec", "pg3_denovo", "pg3_precomputed",), default="y_denovo")
     # if use_y_clusters:
     if cluster_type[0] == "y":
         # if core_threshold == -1:
-        if cluster_type == "y_precomputed":
+        if cluster_type == "y_denovo":
             parse_y_clusters(fn, genes)
-        elif cluster_type == "y_denovo":
+        elif cluster_type == "y_spire":
             evaluate_y_clusters(fn, genes, core_threshold=core_threshold,)
         else:
             raise ValueError(f"Unknown {cluster_type=}")
@@ -79,7 +79,7 @@ def add_clusters(
         if fn is not None:
 
             # if core_threshold != -1:
-            if cluster_type == "denovo":
+            if cluster_type == "pg3_denovo":
                 n_genomes, cluster_genes, gene_cluster_map, _ = parse_full_seq_clusters(
                     genes,
                     fn,
@@ -92,7 +92,7 @@ def add_clusters(
                     len(cluster_genes),
                 )
             else:
-                # "pg3"
+                # "pg3_precomputed"
                 gene_cluster_map = list(parse_db_clusters(fn))
 
                 n_genes = len(gene_cluster_map)
