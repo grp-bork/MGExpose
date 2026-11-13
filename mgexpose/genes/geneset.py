@@ -23,6 +23,8 @@ class GeneSet(dict):
         composite_gene_ids=False,
     ):
         super().__init__()
+        self.species = species
+        self.genome_id = genome_id
 
         logger.info(
             "Creating new %s for genome=%s species=%s",
@@ -41,10 +43,10 @@ class GeneSet(dict):
                 # gene.id = f'{gene.contig}_{gene.id.split("_")[-1]}'
                 gene.set_composite_id()
 
-            if genome_id is not None and gene.genome is None:
-                gene.genome = genome_id
-            if species is not None and gene.species is None:
-                gene.species = species
+            if self.genome_id is not None and gene.genome is None:
+                gene.genome = self.genome_id
+            if self.species is not None and gene.species is None:
+                gene.species = self.species
 
             self[gene.id] = gene
 
