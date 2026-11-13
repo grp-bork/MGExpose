@@ -4,7 +4,7 @@ import os
 
 from functools import partial
 
-from .cluster import add_clusters
+from .cluster import add_clusters, add_clusters_trec_format
 from .eggnog import add_eggnog_annotation, parse_emapper
 from ..geneset import GeneSet
 from .phage import PhageDetection
@@ -113,16 +113,28 @@ def compile_annotations(args, multi_run=False,):
         )
 
     if getattr(args, "cluster_data", None,):
-        annotations.append(
-            partial(
+        # fn, genes, genome_id, core_threshold=0.95,
+        cluster_type = getattr(args, "cluster_type", None)
+        if cluster_type is None:
+            raise ValueError(f"Unknown {cluster_type=}")
+        if cluster_type == "trec":
+            cluster_f = partial(
+                add_clusters_trec_format,
+                args.cluster_data,
+                genome_id=args.genome_id,
+                core_threshold=getattr(args, 'core_threshold', 0.95),
+            )
+        else:
+            cluster_f = partial(
                 add_clusters,
                 args.cluster_data,
-                use_y_clusters=getattr(args, "use_y_clusters", None) is not None,
+                cluster_type=getattr(args, "cluster_type", None),
                 core_threshold=getattr(args, 'core_threshold', 0.95),
                 output_dir=args.output_dir,
                 genome_id=args.genome_id,
             )
-        )
+
+        annotations.append(cluster_f)
         has_clusters = True
 
     # try:

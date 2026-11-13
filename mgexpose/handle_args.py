@@ -44,14 +44,15 @@ def add_data_args(ap, with_recombinases=True, with_species=True, with_conjugatio
 
     if with_cluster_data:
         ap.add_argument("--cluster_data", type=str)
-        ap.add_argument(
-            "--use_y_clusters",
-            action="store_true",
-            help=(
-                "Gene clustering is performed against annotated"
-                " and redundancy-reduced reference sets."
-            ),
-        )
+        ap.add_argument("--cluster_type", choices=("y_precomputed", "y_denovo", "trec", "denovo", "pg3",), default="y_denovo")
+        # ap.add_argument(
+        #     "--use_y_clusters",
+        #     action="store_true",
+        #     help=(
+        #         "Gene clustering is performed against annotated"
+        #         " and redundancy-reduced reference sets."
+        #     ),
+        # )
         ap.add_argument("--core_threshold", type=float, default=0.95)
 
     ap.add_argument(

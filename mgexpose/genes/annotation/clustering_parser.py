@@ -43,10 +43,12 @@ def extract_genome_id(gene_id):
 
 def parse_db_clusters(cluster_data):
     """ Parse gene, cluster, is_core from tsv-stream. """
-    return [
-        tuple(line.strip().split("\t"))
-        for line in get_lines_from_chunks(cluster_data)
-    ]
+    for line in get_lines_from_chunks(cluster_data):
+        yield tuple(line.rstrip().split("\t"))
+    # return [
+    #     tuple(line.strip().split("\t"))
+    #     for line in get_lines_from_chunks(cluster_data)
+    # ]
 
 
 def parse_full_seq_clusters(

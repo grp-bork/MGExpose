@@ -17,21 +17,57 @@ from ..gene import Gene
 logger = logging.getLogger(__name__)
 
 
+def add_clusters_trec_format(fn, genes, genome_id=None, core_threshold=0.95,):
+    """
+    trec format cluster:
+    (genome_id)_(gene_id), cluster_id, m=member_genomes n=pangenome_size m/n
+    SAMEA112578415.psa_megahit.semibin.00344_k141_5555417_6 ANI_trec_47531.000096e  2       3       0.66667
+    ------------------genome---------------- -----gene-----
+    """
+
+    n_genes, n_core_genes = 0, 0
+    for n_genes, (gene_id, cluster_id, m, n, occ) in enumerate(parse_db_clusters(fn), start=1):
+
+        gene = genes.get(gene_id.replace(genome_id + "_", ""))
+        
+        logger.info(
+            "Checking cluster %s gene %s... %s",
+            str(cluster_id), gene_id, str(gene),
+        )
+        if gene is not None:
+            gene.is_core = float(occ) > core_threshold
+            n_core_genes += gene.is_core
+            gene.cluster = cluster_id
+
+    logger.info(
+        "Parsed %s precomputed gene-cluster mappings with %s core genes (%s%%)",
+        n_genes,
+        n_core_genes,
+        f"{n_core_genes / n_genes:.3f}",
+    )
+
+
 def add_clusters(
     fn,
     genes,
-    use_y_clusters=False,
+    cluster_type=None,
+    # use_y_clusters=False,
     core_threshold=0.95,
     output_dir=None,
     genome_id=None,
 ):
     """ Add information from gene clustering to allow for core/accessory gene classification """
 
-    if use_y_clusters:
-        if core_threshold == -1:
+    # ("y_precomputed", "y_denovo", "trec", "denovo", "spire", "pg3",), default="y_denovo")
+    # if use_y_clusters:
+    if cluster_type[0] == "y":
+        # if core_threshold == -1:
+        if cluster_type == "y_precomputed":
             parse_y_clusters(fn, genes)
-        else:
+        elif cluster_type == "y_denovo":
             evaluate_y_clusters(fn, genes, core_threshold=core_threshold,)
+        else:
+            raise ValueError(f"Unknown {cluster_type=}")
         return None
 
     write_data = False
@@ -42,7 +78,8 @@ def add_clusters(
     with gene_clusters_out:
         if fn is not None:
 
-            if core_threshold != -1:
+            # if core_threshold != -1:
+            if cluster_type == "denovo":
                 n_genomes, cluster_genes, gene_cluster_map, _ = parse_full_seq_clusters(
                     genes,
                     fn,
@@ -55,7 +92,8 @@ def add_clusters(
                     len(cluster_genes),
                 )
             else:
-                gene_cluster_map = parse_db_clusters(fn)
+                # "pg3"
+                gene_cluster_map = list(parse_db_clusters(fn))
 
                 n_genes = len(gene_cluster_map)
                 n_core_genes = sum(1 for _, _, is_core in gene_cluster_map if is_core)
