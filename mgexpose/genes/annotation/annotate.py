@@ -84,7 +84,7 @@ def compile_annotations(args, multi_run=False,):
         annotations.append(
             partial(
                 add_conjugation_systems,
-                secretion_systems=conjugation_systems,
+                conjugation_systems=conjugation_systems,
             )
         )
     

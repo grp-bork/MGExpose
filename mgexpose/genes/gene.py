@@ -61,8 +61,8 @@ class Gene:
         if with_eggnog:
             self.eggnog = copy.deepcopy(other.eggnog) if other.eggnog is not None else None
         self.phage = other.phage
-        self.secretion_systems = copy.deepcopy(other.secretion_systems) if other.secretion_systems is not None else None
-        self.secretion_rules = copy.deepcopy(other.secretion_rules) if other.secretion_rules is not None else None
+        self.conjugation_systems = copy.deepcopy(other.conjugation_systems) if other.conjugation_systems is not None else None
+        self.conjugation_rules = copy.deepcopy(other.conjugation_rules) if other.conjugation_rules is not None else None
 
     @staticmethod
     def rtype(is_core):
@@ -129,7 +129,7 @@ class Gene:
         """ construct gene from gff record """
         attribs = dict(item.split("=") for item in cols[-1].strip(";").split(";"))
 
-        conjugation_rules = attribs.get("conjugation_rules")
+        conjugation_rules = attribs.get("conjugation_rules", attribs.get("secretion_rules"))
 
         genome_type = attribs.get("genome_type")
 
