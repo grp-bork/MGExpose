@@ -73,13 +73,13 @@ def compile_annotations(args, multi_run=False,):
             )
         )
     
-    if getattr(args, "conjugation_data", None,) and getattr(args, "conjugation_rules", None,):
+    if getattr(args, "conjugation_data", None,):  # and getattr(args, "conjugation_rules", None,):
 
         conjugation_systems = parse_macsyfinder_report(
             args.conjugation_data, args.conjugation_rules,
         )
         if multi_run:
-            conjugation_systems_systems = list(conjugation_systems)
+            conjugation_systems = list(conjugation_systems)
 
         annotations.append(
             partial(
