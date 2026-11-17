@@ -25,15 +25,15 @@ class GeneAnnotator:
     def __init__(
         self,
         genome_id,
-        speci,
+        species,
         genes,
         include_genome_id=False,
         has_batch_data=False,
         composite_gene_ids=False,
     ):
-        logger.info("Creating new %s for genome=%s specI=%s", self.__class__, genome_id, speci)
+        logger.info("Creating new %s for genome=%s species=%s", self.__class__, genome_id, species)
         self.genome_id = genome_id
-        self.speci = speci
+        self.species = species
         self.genes = {}
         self.has_batch_data = has_batch_data
         self.include_genome_id = include_genome_id
@@ -55,14 +55,14 @@ class GeneAnnotator:
             logger.info("Adding gene %s", gene.id)
 
             gene.genome = self.genome_id
-            if gene.speci is None:
-                gene.speci =  self.speci
+            if gene.species is None:
+                gene.species =  self.species
             self.genes[gene.id] = gene
 
             # self.genes[gene_id] = Gene(
             #     id=gene_id,
             #     genome=self.genome_id,
-            #     speci=self.speci,
+            #     species=self.species,
             #     contig=annotation[0],
             #     start=int(annotation[3]),
             #     end=int(annotation[4]),
@@ -141,7 +141,7 @@ class GeneAnnotator:
                             gene_id,
                             str(gene),
                         )
-                        if gene and gene.speci is not None:
+                        if gene and gene.species is not None:
                             gene.cluster = cluster
 
                             if cluster_genes:
